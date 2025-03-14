@@ -4,7 +4,7 @@ import React from 'react'
 const chap2_PPTST = () => {
   return (
     <View>
-      <Text>chap2_PPTST</Text>
+      <Text></Text>
     </View>
   )
 }
