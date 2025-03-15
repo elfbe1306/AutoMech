@@ -2,9 +2,12 @@ import { View, Text } from 'react-native'
 import React from 'react'
 
 const chap2_PPTST = () => {
+
+  const testString = "Hello World";
+
   return (
     <View>
-      <Text></Text>
+      <Text>{testString}</Text>
     </View>
   )
 }

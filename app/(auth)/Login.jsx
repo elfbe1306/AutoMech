@@ -1,9 +1,17 @@
-import { StyleSheet, Text, View, TextInput } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import React from 'react'
+import { useRouter } from 'expo-router'
 
 const Login = () => {
+  const router = useRouter()
+
   return (
     <View style={styles.container}>
+
+      <TouchableOpacity onPress={() => {router.push('/(main)/HomePage')}} style={{marginBottom: 20}}>
+        <Text>Go to Home Page</Text>
+      </TouchableOpacity>
+
       <Text style={styles.loginTitle}>ĐĂNG NHẬP</Text>
       <View style={styles.loginContainer}>
         <Text>Email</Text>
