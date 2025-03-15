@@ -8,8 +8,8 @@ const Login = () => {
   return (
     <View style={styles.container}>
 
-      <TouchableOpacity onPress={() => {router.push('/(main)/HomePage')}} style={{marginBottom: 20}}>
-        <Text>Go to Home Page</Text>
+      <TouchableOpacity onPress={() => {router.push('/(main)/HomePage')}} style={{marginBottom: 20, backgroundColor: 'rgb(33,53,85)', padding: 10}}>
+        <Text style={{color: 'white'}}>Nut tam thoi</Text>
       </TouchableOpacity>
 
       <Text style={styles.loginTitle}>ĐĂNG NHẬP</Text>
