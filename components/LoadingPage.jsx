@@ -8,7 +8,7 @@ export default function LoadingPage() {
     Animated.loop(
       Animated.timing(rotateValue, {
         toValue: 1,
-        duration: 4000, // seconds for a full rotation
+        duration: 4000,
         useNativeDriver: true,
       })
     ).start();
