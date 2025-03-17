@@ -28,4 +28,21 @@ userRoutes.route('/Users').post(async (request, response) => {
   }
 })
 
+//#2 Login
+userRoutes.route('/Users/Login').post(async (request, response) => {
+  let db = database.getDatabase();
+  const user = await db.collection('Users').findOne({ email : request.body.email });
+
+  if (!user) {
+    return response.status(404).json({ success: false, message: "User not found" });
+  }
+
+  let confirmation = await bcrypt.compare(request.body.password, user.password);
+  if (!confirmation) {
+    return response.status(401).json({ success: false, message: "Incorrect password" });
+  }
+
+  response.status(200).json({ success: true, message: "Login successful", userId: user._id });
+});
+
 module.exports = userRoutes

@@ -45,19 +45,14 @@ const SignUp = () => {
     try {
       let response = await userCreateAccount(userData);
       console.log("User created:", response);
+      alert("Đã thành công tạo tài khoản")
     } catch (error) {
-      console.error("Signup error:", error);
-      alert("Có lỗi xảy ra khi đăng ký!");
+      alert(error.response.data.message);
     }
   }
 
   return (
     <View style={styles.container}>
-
-     {/* <TouchableOpacity onPress={() => {router.back()}} style={{marginBottom: 20, backgroundColor: 'rgb(33,53,85)', padding: 10}}>
-        <Text style={{color: 'white'}}>Nut tam thoi</Text>
-      </TouchableOpacity> */}
-
       <Text style={styles.signupTitle}>ĐĂNG KÝ TÀI KHOẢN</Text>
       <View style={styles.signupContainer}>
         <Text style={styles.signupContainerLabel}>Email</Text>

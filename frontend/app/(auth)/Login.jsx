@@ -1,6 +1,8 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { useRouter } from 'expo-router'
+import { userLogin } from '../../api'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
   const router = useRouter()
@@ -18,17 +20,24 @@ const Login = () => {
     setUser({...user, [name]: value})
   }
 
-  function handleSubmit() {
-    
+  async function handleSubmit() {
+    if (!user.email || !user.password) {
+      alert("Vui lòng điền đầy đủ thông tin!");
+      return;
+    }
+
+    try {
+      let response = await userLogin(user);
+      console.log("User Login:", response);
+      await AsyncStorage.setItem("userID", response.userId);
+      router.replace('/(main)/HomePage');
+    } catch (error) {
+      alert(error.response.data.message);
+    }
   }
 
   return (
     <View style={styles.container}>
-
-      {/* <TouchableOpacity onPress={() => {router.back()}} style={{marginBottom: 20, backgroundColor: 'rgb(33,53,85)', padding: 10}}>
-        <Text style={{color: 'white'}}>Nut tam thoi</Text>
-      </TouchableOpacity> */}
-
       <Text style={styles.loginTitle}>ĐĂNG NHẬP</Text>
       <View style={styles.loginContainer}>
         <Text style={styles.loginContainerLabel}>Email</Text>
