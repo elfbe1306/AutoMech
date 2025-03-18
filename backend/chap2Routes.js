@@ -31,9 +31,28 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
     chap2Function.cong_suat_truc_cong_tac(chap2Object.luc_vong_bang_tai, chap2Object.van_toc_bang_tai);
 
   const hieu_suat_chung = 
-    chap2Function.hieu_suat_chung(chap2Object.hieu_suat_noi_truc, chap2Object.hieu_suat_o_lan, chap2Object.hieu_suat_banh_rang, chap2Object.hieu_suat_xich)
+    chap2Function.hieu_suat_chung(chap2Object.hieu_suat_noi_truc, chap2Object.hieu_suat_o_lan, chap2Object.hieu_suat_banh_rang, chap2Object.hieu_suat_xich);
 
-  console.log(hieu_suat_chung);
+  const cong_suat_tuong_duong_truc_cong_tac =
+    chap2Function.cong_suat_tuong_duong_truc_cong_tac(cong_suat_truc_cong_tac, chap2Object.T1_T, chap2Object.T2_T, chap2Object.t1, chap2Object.t2);
+
+  const cong_suat_can_thiet_tren_truc_dong_co =
+    chap2Function.cong_suat_can_thiet_tren_truc_dong_co(cong_suat_tuong_duong_truc_cong_tac, hieu_suat_chung);
+
+  const so_vong_quay_truc_cong_tac = 
+    chap2Function.so_vong_quay_truc_cong_tac(chap2Object.van_toc_bang_tai, chap2Object.duong_kinh_tang_dan);
+
+  const so_vong_quay_so_bo =
+    chap2Function.so_vong_quay_so_bo(so_vong_quay_truc_cong_tac, chap2Object.ty_so_truyen_so_bo);
+
+  console.log(
+    cong_suat_truc_cong_tac,
+    hieu_suat_chung,
+    cong_suat_tuong_duong_truc_cong_tac,
+    cong_suat_can_thiet_tren_truc_dong_co,
+    so_vong_quay_truc_cong_tac,
+    so_vong_quay_so_bo
+  );
 })
 
 module.exports = chap2Routes;
