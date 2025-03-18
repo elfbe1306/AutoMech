@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import axios from 'axios'
 import { useState } from 'react'
 
@@ -11,30 +11,22 @@ const InputPage = () => {
   const [t2, setT2] = useState(0);
   const [T1, setT1M] = useState(0);
   const [T2, setT2M] = useState(0);
+  const [nk, setNk] = useState(0);
+  const [nol, setNol] = useState(0);
+  const [nbr, setNbr] = useState(0);
+  const [nx, setNx] = useState(0);
+  const [uh, setUh] = useState(0);
+  const [ux, setUx] = useState(0);
+  const [usb, setUsb] = useState(0);
 
   const handleSubmit = async () => {
-    setF(0);
-    setV(0);
-    setD(0);
-    setL(0);
-    setT1(0);
-    setT2(0);
-    setT1M(0);
-    setT2M(0);
-    try {
-      const response = await axios.post('http://192.168.0.107:3000/posts', {
-        f, v, D, L, t1, t2, T1, T2
-      });
-      console.log('Data sent successfully:', response.data);
-    } catch (error) {
-      console.error('Error sending data:', error);
-    }
+
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tính toán chọn chi tiết máy</Text>
-      <View style={styles.inputContainer}>
+      <ScrollView style={styles.inputContainer}>
         <Text style={styles.inputContainerTitle}>Hãy nhập các thông số đầu vào</Text>
         <View style={styles.inputFieldContainer}>
           <Text>F(N)</Text>
@@ -68,10 +60,52 @@ const InputPage = () => {
           <Text>T2(momem xoắn)</Text>
           <TextInput style={styles.input} value={T2} onChangeText={setT2M} />
         </View>
+        <View style={styles.inputFieldContainer}>
+          <View>
+            <Text>Hiệu suất</Text>
+            <Text>nối trục (1)</Text>
+          </View>
+          <TextInput style={styles.input} value={nk} onChangeText={setNk} />
+        </View>
+        <View style={styles.inputFieldContainer}>
+          <View>
+            <Text>Hiệu suất</Text>
+            <Text>ổ lăn (0,99 - 0,995)</Text>
+          </View>
+          <TextInput style={styles.input} value={nol} onChangeText={setNol} />
+        </View>
+        <View style={styles.inputFieldContainer}>
+          <View>
+            <Text>Hiệu suất</Text>
+            <Text>bánh răng (0,95 - 0,97)</Text>
+          </View>
+          <TextInput style={styles.input} value={nbr} onChangeText={setNbr} />
+        </View>
+        <View style={styles.inputFieldContainer}>
+          <View>
+            <Text>Hiệu suất</Text>
+            <Text>xích (0,95 - 0,97)</Text>
+          </View>
+          <TextInput style={styles.input} value={nx} onChangeText={setNx} />
+        </View>
+        <View style={styles.inputFieldContainer}>
+          <View>
+            <Text>Tỷ số truyền</Text>
+            <Text>hộp giảm tốc (8 - 40)</Text>
+          </View>
+          <TextInput style={styles.input} value={uh} onChangeText={setUh} />
+        </View>
+        <View style={styles.inputFieldContainer}>
+          <View>
+            <Text>Tỷ số truyền</Text>
+            <Text>xích (2 - 5)</Text>
+          </View>
+          <TextInput style={styles.input} value={ux} onChangeText={setUx} />
+        </View>
         <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit}>
           <Text style={styles.doMathButtonText}>Tính</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   )
 }
@@ -95,6 +129,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#DBE2EC',
     padding: 20,
     borderRadius: 15,
+    marginBottom: 100
   },
   inputFieldContainer: {
     display: 'flex',
@@ -115,14 +150,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     padding: 5,
-    width: 150,
+    flexGrow: 1,
     marginLeft: 20
   },
   doMathButton: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20,
+    marginBottom: 20,
     padding: 10,
     backgroundColor: 'rgb(33,53,85)',
   },

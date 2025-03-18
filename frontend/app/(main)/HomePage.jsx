@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Chap2_PPTST from '../../components/Chap2_PPTST';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
 const HomePage = () => {
   const [userId, setUserId] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserId = async () => {
@@ -23,12 +24,24 @@ const HomePage = () => {
     fetchUserId();
   }, []);
 
+  function handleCalculatePage() {
+    router.push('/InputPage');
+  }
 
   return(
-    <View style={styles.container}>
-      <Text>HomePage {userId}</Text>
-
-      <Chap2_PPTST />
+    <View>
+      <View style={styles.ButtonContainer}>
+        <TouchableOpacity style={styles.CalculateButtonContainer} onPress={handleCalculatePage}>
+          <Image source={require('../../assets/images/calendar-edit.png')}/>
+          <Text style={styles.TextButton}>Tính toán</Text>
+          <Text style={styles.TextButton}>Chọn chi tiết máy</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.CalculateButtonContainer}>
+          <Image source={require('../../assets/images/list-right.png')}/>
+          <Text style={styles.TextButton}>Lịch sử</Text>
+          <Text style={styles.TextButton}>tính toán</Text>
+        </TouchableOpacity>
+      </View>
 
     </View>
   );
@@ -37,7 +50,24 @@ const HomePage = () => {
 export default HomePage
 
 const styles = StyleSheet.create({
-  container: {
-    margin: 'auto'
+  ButtonContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginHorizontal: 'auto',
+    marginTop: '40%',
+    gap: 10
+  },
+  CalculateButtonContainer: {
+    backgroundColor: '#DBE2EC',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 30,
+    width: 170,
+    borderRadius: 15
+  },
+  TextButton: {
+    fontFamily: 'quicksand-bold',
   }
 })
