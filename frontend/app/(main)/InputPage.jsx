@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import axios from 'axios'
 import { useState } from 'react'
+import { chap2Calculation } from '../../api'
 
 const InputPage = () => {
   const [f, setF] = useState(0);
@@ -17,9 +18,82 @@ const InputPage = () => {
   const [nx, setNx] = useState(0);
   const [uh, setUh] = useState(0);
   const [ux, setUx] = useState(0);
-  const [usb, setUsb] = useState(0);
 
   const handleSubmit = async () => {
+    if(f < 0) {
+      alert("Lực vòng băng tải phải lớn hơn 0");
+      return;
+    } else if(v < 0) {
+      alert("Vận tốc băng tải phải lớn hơn 0");
+      return;
+    } else if(D < 0) {
+      alert("Đường kính tang dẫn phải lớn hơn 0")
+      return;
+    } else if(L < 0) {
+      alert("Thời gian phục vụ phải lớn hơn 0")
+      return;
+    } else if(t1 < 0) {
+      alert("t1 phải lớn hơn 0")
+      return;
+    } else if(t2 < 0) {
+      alert("t2 phải lớn hơn 0")
+      return;
+    } else if(T1 < 0) {
+      alert("T1 phải lớn hơn 0")
+      return;
+    } else if(T2 < 0) {
+      alert("T2 phải lớn hơn 0")
+      return;
+    } else if(nk != 1) {
+      alert('Hiệu suất nối trục phải bằng 1');
+      return;
+    } else if((nol < 0.99) || (nol > 0.995)) {
+      alert("Hiệu suất ổ lăn phải nằm trong (0.99 - 0.995)");
+      return;
+    } else if((nbr < 0.96) || (nbr > 0.98)) {
+      alert("Hiệu suất bánh răng phải nằm trong (0.96 - 0.98)");
+      return;
+    } else if((nx < 0.90) || (nx > 0.93)) {
+      alert("Hiệu suất xích phải nằm trong (0.95 - 0.97)");
+      return;
+    } else if((uh < 8) || (uh > 40)) {
+      alert("Tỷ số truyền hộp giảm tốc (8 - 40)");
+      return;
+    } else if((ux < 2) || (ux > 5)) {
+      alert("Tỷ số truyền xích (2 - 5)");
+      return;
+    }
+
+    let T1_numeric = T1.toString().trim() === "T" ? 1 : parseFloat(T1.toString().replace("T", ""));
+    let T2_numeric = T2.toString().trim() === "T" ? 1 : parseFloat(T2.toString().replace("T", ""));
+    const usb = ux * uh;
+
+    let inputObject = {
+      f: f, 
+      v: v,
+      D: D,
+      L: L,
+      t1: t1,
+      t2: t2,
+      T1: T1,
+      T2: T2,
+      nk: nk,
+      nol: nol,
+      nbr: nbr,
+      nx: nx,
+      ux: ux,
+      uh: uh,
+      T1_numeric: T1_numeric,
+      T2_numeric: T2_numeric,
+      usb: usb
+    }
+
+    try {
+      let response = await chap2Calculation(inputObject);
+      console.log("Data sent successfully:", response.data);
+    } catch(error) {
+      alert(error.response.data.message);
+    }
 
   };
 
@@ -70,21 +144,21 @@ const InputPage = () => {
         <View style={styles.inputFieldContainer}>
           <View>
             <Text>Hiệu suất</Text>
-            <Text>ổ lăn (0,99 - 0,995)</Text>
+            <Text>ổ lăn (0.99 - 0.995)</Text>
           </View>
           <TextInput style={styles.input} value={nol} onChangeText={setNol} />
         </View>
         <View style={styles.inputFieldContainer}>
           <View>
             <Text>Hiệu suất</Text>
-            <Text>bánh răng (0,95 - 0,97)</Text>
+            <Text>bánh răng (0.96 - 0.98)</Text>
           </View>
           <TextInput style={styles.input} value={nbr} onChangeText={setNbr} />
         </View>
         <View style={styles.inputFieldContainer}>
           <View>
             <Text>Hiệu suất</Text>
-            <Text>xích (0,95 - 0,97)</Text>
+            <Text>xích (0.90 - 0.93)</Text>
           </View>
           <TextInput style={styles.input} value={nx} onChangeText={setNx} />
         </View>
