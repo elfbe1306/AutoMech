@@ -23,7 +23,7 @@ export async function userLogin(userData) {
 export async function chap2Calculation(userInput) {
   try {
     const response = await axios.post(`${URL}/Chap2`, userInput)
-    return response.data;
+    return response;
   } catch(error) {
     throw error;
   }

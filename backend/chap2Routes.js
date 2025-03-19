@@ -1,12 +1,12 @@
 const express = require('express')
 const database = require('./connect')
 const chap2Function = require('./chap2Function')
+const {ObjectId} = require('mongodb');
 
 let chap2Routes = express.Router();
 
 chap2Routes.route('/Chap2').post(async (request, response) => {
   let chap2Object = {
-    userID: request.body.userID,
     luc_vong_bang_tai: Number(request.body.f),
     van_toc_bang_tai: Number(request.body.v),
     duong_kinh_tang_dan: Number(request.body.D),
@@ -47,7 +47,15 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
   try {
     let db = database.getDatabase();
     let data = await db.collection('UserInput').insertOne(chap2Object);
-    response.json(data);
+    let insertedId = data.insertedId;
+
+    const userId = ObjectId(request.body.userID);
+    await db.collection('Users').updateOne(
+      { _id: userId }, 
+      { $push: { history: insertedId } }
+    );
+
+    response.json({ message: 'Inserted successfully Chap2', _id: data.insertedId });
   } catch(error) {
     response.status(500).json({ message: 'Internal Server Error', error: error.message });
   }

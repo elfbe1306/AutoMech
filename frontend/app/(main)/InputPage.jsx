@@ -111,7 +111,7 @@ const InputPage = () => {
 
     try {
       let response = await chap2Calculation(inputObject);
-      console.log("Data sent successfully Chap2:", response);
+      console.log("Inserted:", response.data);
       router.push('/EngineSelectPage');
     } catch(error) {
       alert(error.response.data.message);
