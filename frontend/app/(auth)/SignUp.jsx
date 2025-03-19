@@ -45,7 +45,8 @@ const SignUp = () => {
     try {
       let response = await userCreateAccount(userData);
       console.log("User created:", response);
-      alert("Đã thành công tạo tài khoản")
+      alert("Đã thành công tạo tài khoản");
+      router.replace('/Login')
     } catch (error) {
       alert(error.response.data.message);
     }
