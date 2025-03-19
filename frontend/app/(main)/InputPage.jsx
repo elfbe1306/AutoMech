@@ -1,23 +1,43 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import axios from 'axios'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { chap2Calculation } from '../../api'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { router } from 'expo-router'
 
 const InputPage = () => {
-  const [f, setF] = useState(0);
-  const [v, setV] = useState(0);
-  const [D, setD] = useState(0);
-  const [L, setL] = useState(0);
-  const [t1, setT1] = useState(0);
-  const [t2, setT2] = useState(0);
-  const [T1, setT1M] = useState(0);
-  const [T2, setT2M] = useState(0);
-  const [nk, setNk] = useState(0);
-  const [nol, setNol] = useState(0);
-  const [nbr, setNbr] = useState(0);
-  const [nx, setNx] = useState(0);
-  const [uh, setUh] = useState(0);
-  const [ux, setUx] = useState(0);
+  const [f, setF] = useState(6000);
+  const [v, setV] = useState(1.5);
+  const [D, setD] = useState(650);
+  const [L, setL] = useState(10);
+  const [t1, setT1] = useState(45);
+  const [t2, setT2] = useState(30);
+  const [T1, setT1M] = useState('T');
+  const [T2, setT2M] = useState('0.8T');
+  const [nk, setNk] = useState(1);
+  const [nol, setNol] = useState(0.993);
+  const [nbr, setNbr] = useState(0.97);
+  const [nx, setNx] = useState(0.91);
+  const [uh, setUh] = useState(8);
+  const [ux, setUx] = useState(2);
+  const [userID, setUserID] = useState("")
+
+  useEffect(() => {
+    const fetchUserID = async () => {
+      try {
+        const storedUserID = await AsyncStorage.getItem("userID");
+        if(storedUserID) {
+          setUserID(storedUserID);
+        } else {
+          console.log("UserId no found in AsyncStorage");
+        }
+      } catch(error) {
+        console.error("Error fetching userID:", error);
+      }
+    }
+
+    fetchUserID();
+  }, [])
 
   const handleSubmit = async () => {
     if(f < 0) {
@@ -69,6 +89,7 @@ const InputPage = () => {
     const usb = ux * uh;
 
     let inputObject = {
+      userID: userID,
       f: f, 
       v: v,
       D: D,
@@ -90,7 +111,8 @@ const InputPage = () => {
 
     try {
       let response = await chap2Calculation(inputObject);
-      console.log("Data sent successfully:", response.data);
+      console.log("Data sent successfully Chap2:", response);
+      router.push('/EngineSelectPage');
     } catch(error) {
       alert(error.response.data.message);
     }
