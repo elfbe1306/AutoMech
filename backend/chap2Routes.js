@@ -1,9 +1,17 @@
 const express = require('express')
 const database = require('./connect')
 const chap2Function = require('./chap2Function')
-const {ObjectId} = require('mongodb');
+const { ObjectId } = require('mongodb');
 
 let chap2Routes = express.Router();
+
+
+
+async function setupIndexes() {
+  
+}
+
+setupIndexes();
 
 chap2Routes.route('/Chap2').post(async (request, response) => {
   let chap2Object = {
@@ -46,16 +54,24 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
   
   try {
     let db = database.getDatabase();
+    await db.collection('EngineList').createIndex({ cong_suat: 1, van_toc_vong_quay: 1 });
+
     let data = await db.collection('UserInput').insertOne(chap2Object);
     let insertedId = data.insertedId;
 
-    const userId = ObjectId(request.body.userID);
+    const userId = new ObjectId(request.body.userID);
     await db.collection('Users').updateOne(
       { _id: userId }, 
       { $push: { history: insertedId } }
     );
 
-    response.json({ message: 'Inserted successfully Chap2', _id: data.insertedId });
+    let engines = await db.collection('EngineList')
+    .find({ cong_suat: { $gte: chap2Object.cong_suat_tuong_duong_truc_cong_tac } })
+    .sort({ van_toc_vong_quay: 1 })
+    .limit(3).toArray();
+
+
+    response.json({ message: 'Inserted successfully Chap2', _id: data.insertedId, engines: engines });
   } catch(error) {
     response.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
