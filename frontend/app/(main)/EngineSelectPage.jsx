@@ -70,7 +70,7 @@ const EngineSelectPage = () => {
   }, [calculateID]);
 
   return (
-    <View>
+    <ScrollView>
       <ReturnButton onPress={() => router.back()}/>
       
       <View style={styles.titleContainer}>
@@ -120,7 +120,7 @@ const EngineSelectPage = () => {
         </View>
 
         <Collapsible collapsed={isCollapsedEngine}>
-          <ScrollView style={styles.engineContainer} contentContainerStyle={{ paddingBottom: 20 }}>
+          <View style={styles.engineContainer} contentContainerStyle={{ paddingBottom: 20 }}>
             {engines?.map((engine) => (
               <EngineCard
                 key={engine._id}
@@ -131,14 +131,13 @@ const EngineSelectPage = () => {
                 onSelect={() => { setSelectedEngineId(engine._id); console.log(selectedEngineId) }}
               />
             ))}
-          </ScrollView>
+          </View>
         </Collapsible>
-        <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Lưu</Text>
-        </TouchableOpacity>
       </View>
-     
-    </View>
+      <TouchableOpacity style={styles.saveButton}>
+                <Text style={styles.saveButtonText}>Lưu</Text>
+      </TouchableOpacity>
+    </ScrollView>
   )
 }
 
@@ -224,7 +223,8 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: 'rgb(33,53,85)',
     borderRadius: 10,
-    marginBottom:10, 
+    marginBottom:'10%', 
+    marginHorizontal:'10%'
   },
 
   saveButtonText: {
