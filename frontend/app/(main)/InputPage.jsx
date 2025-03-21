@@ -132,7 +132,7 @@ const InputPage = () => {
 
   return (
     <View style={styles.container}>
-        <Text style={styles.title}>TÍNH TOÁN{'\n'}CHỌN CHI TIẾT MÁY</Text>
+      <Text style={styles.title}>TÍNH TOÁN{'\n'}CHỌN CHI TIẾT MÁY</Text>
       <ScrollView style={styles.inputContainer}>
         <Text style={styles.inputContainerTitle}>Hãy nhập các thông số đầu vào</Text>
         <View style={styles.displayinputComponent}>
@@ -147,10 +147,10 @@ const InputPage = () => {
             </View>
           ))}
         </View>
-        <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit}>
-          <Text style={styles.doMathButtonText}>Tính toán</Text>
-        </TouchableOpacity>
       </ScrollView>
+      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit}>
+          <Text style={styles.doMathButtonText}>Tính toán</Text>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   container: {
     marginLeft: 'auto',
     marginRight: 'auto',
-    marginTop: '20%',
+    marginTop: '14%',
   },
 
   title: {
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal:20,
     borderRadius: 15,
-   
+    height: '80%',
   },
   inputContainerTitle: {
     fontFamily: 'quicksand-semibold',
@@ -190,13 +190,13 @@ const styles = StyleSheet.create({
   displayinputComponent: {
     display: 'flex',
     flexDirection:'column',
-    gap: 13
   },
   inputComponent: {
     display:'flex',
     flexDirection:'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingBottom: 10
   },
   inputField: {
     color: 'rgb(58, 65, 99)',
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
+    marginTop: 15,
     padding: 10,
     backgroundColor: 'rgb(33,53,85)',
     borderRadius: 10,

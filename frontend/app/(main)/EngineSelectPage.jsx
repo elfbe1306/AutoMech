@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { chap2GetCalculation } from '../../api'
@@ -7,6 +7,7 @@ import { useRouter } from 'expo-router'
 import Collapsible from 'react-native-collapsible';
 import DisplayResult from '@/components/DisplayResult'
 import EngineCard from '@/components/EngineCard'
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const EngineSelectPage = () => {
   const router = useRouter();
@@ -93,9 +94,13 @@ const EngineSelectPage = () => {
           </View>
         </View>
         <Text style={styles.resultTitle}>Kết quả tính toán và chọn động cơ</Text>
-        <TouchableOpacity onPress={() => setIsCollapsedResult(!isCollapsedResult)} style={styles.collapseButton}>
-          <Text style={styles.buttonText}>Kết quả tính toán tổng quan</Text>
-        </TouchableOpacity>
+
+        <View style={[styles.collapseButton, !isCollapsedResult ? styles.collapseButtonActive : null]}>
+          <Text style={[styles.buttonText, !isCollapsedResult ? styles.buttonTextActive : null]}>Kết quả tính toán tổng quan</Text>
+          <TouchableOpacity onPress={() => setIsCollapsedResult(!isCollapsedResult)}>
+            <AntDesign name={isCollapsedResult ? "caretright": "caretdown"} size={28} color={isCollapsedResult ? "rgb(33,53,85)" : "#DBE2EC"} />
+          </TouchableOpacity>
+        </View>
 
         <Collapsible collapsed={isCollapsedResult}>
           <View style={styles.resultContainer}>
@@ -107,28 +112,32 @@ const EngineSelectPage = () => {
             <DisplayResult variable={"Số vòng quay sơ bộ"} value={Number(calculatedData.so_vong_quay_so_bo).toFixed(4)} unit={""} />
           </View>
         </Collapsible>
-
-        <TouchableOpacity onPress={() => setIsCollapsedEngine(!isCollapsedEngine)} style={styles.collapseButton}>
-          <Text style={styles.buttonText}>Chọn động cơ</Text>
+        <View style={[styles.collapseButton, !isCollapsedEngine ? styles.collapseButtonActive : null]}>
+          <Text style={[styles.buttonText, !isCollapsedEngine ? styles.buttonTextActive : null]}>Chọn động cơ</Text>
+          <TouchableOpacity onPress={() => setIsCollapsedEngine(!isCollapsedEngine)}>
+            <AntDesign name={isCollapsedEngine ? "caretright" : "caretdown"}  size={28} color={isCollapsedEngine ? "rgb(33,53,85)" : "#DBE2EC"} />
         </TouchableOpacity>
+        </View>
 
         <Collapsible collapsed={isCollapsedEngine}>
-          <View style={styles.engineContainer}>
-            {engines?.map((engine) => {
-              return(
-                <EngineCard 
-                  key={engine._id} 
-                  kieu_dong_co={engine.kieu_dong_co} 
-                  cong_suat={engine.cong_suat}
-                  van_toc_vong_quay={engine.van_toc_vong_quay}
-                  isSelected={selectedEngineId === engine._id}
-                  onSelect={() => {setSelectedEngineId(engine._id); console.log(selectedEngineId)}}       
-                />
-              )
-            })}
-          </View>
+          <ScrollView style={styles.engineContainer} contentContainerStyle={{ paddingBottom: 20 }}>
+            {engines?.map((engine) => (
+              <EngineCard
+                key={engine._id}
+                kieu_dong_co={engine.kieu_dong_co}
+                cong_suat={engine.cong_suat}
+                van_toc_vong_quay={engine.van_toc_vong_quay}
+                isSelected={selectedEngineId === engine._id}
+                onSelect={() => { setSelectedEngineId(engine._id); console.log(selectedEngineId) }}
+              />
+            ))}
+          </ScrollView>
         </Collapsible>
+        <TouchableOpacity style={styles.saveButton}>
+                <Text style={styles.saveButtonText}>Lưu</Text>
+        </TouchableOpacity>
       </View>
+     
     </View>
   )
 }
@@ -139,11 +148,11 @@ const styles = StyleSheet.create({
   titleContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginTop: '30%'
+    marginTop: '20%'
   },
   title: {
     fontFamily: 'quicksand-bold',
-    fontSize: 24,
+    fontSize: 20,
     color: 'rgb(33, 53, 85)'
   },
   inputContainer: {
@@ -158,34 +167,69 @@ const styles = StyleSheet.create({
   displayRow: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent:'space-between',
     marginTop: 10
   },
   displayColumn: {
-    flex: 1
+    gap: 14
   },
   resultTitle: {
-    marginTop: 10,
+    marginTop: '10%',
     fontFamily: 'quicksand-semibold',
     fontSize: 16,
     color: 'rgb(33, 53, 85)'
   },
   collapseButton: {
-    marginTop: 15,
+    marginTop: '5%',
     padding: 10,
     borderWidth: 1,
     borderColor: 'rgb(33, 53, 85)',
-    borderRadius: 25
+    borderRadius: 24,
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
+  },
+  collapseButtonActive: {
+    backgroundColor:'rgb(33,53,85)',
+    borderBottomRightRadius:0,
+    borderBottomLeftRadius:0
   },
   buttonText: {
     fontFamily: 'quicksand-medium',
-    fontSize: 12,
+    fontSize: 14,
     color: 'rgb(33, 53, 85)'
   },
+  buttonTextActive: {
+    fontFamily: 'quicksand-medium',
+    fontSize: 14,
+    color: '#DBE2EC'
+  },
   resultContainer: {
-
+    paddingVertical: '4%',
+    paddingHorizontal:'8%',
+    backgroundColor:'#F5EFE7',
+    
   },
   engineContainer: {
+    backgroundColor:'#F5EFE7',
+    paddingVertical: '2%',
+  },
 
+  saveButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: 'rgb(33,53,85)',
+    borderRadius: 10,
+    marginBottom:10, 
+  },
+
+  saveButtonText: {
+    color: 'white',
+    fontFamily: 'quicksand-semibold',
+    fontSize: 16
   }
 })
