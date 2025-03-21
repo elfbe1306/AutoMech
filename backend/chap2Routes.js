@@ -110,7 +110,7 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
 chap2Routes.route('/Chap2/:id').get(async (request, response) => {
   try {
     let db = database.getDatabase();
-    let data = await db.collection('UserInput').findOne({_id: new ObjectId(request.params.id)})
+    let data = await db.collection('UserInput').findOne({_id: new ObjectId(request.params.id)});
     if (!data) return response.status(404).json({ error: 'Item not found' });
 
     response.json(data);
@@ -120,16 +120,28 @@ chap2Routes.route('/Chap2/:id').get(async (request, response) => {
 })
 
 // Update more calculation result
-chap2Routes.route('/Chap2/:id').put(async (request, response) => {
+chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
   try {
-    const updateData = request.body;
-    const result = await db.collection('UserInput').updateOne(
-      {_id: new ObjectId(request.params.id)},
-      { $set: updateData}
-    );
-    if(result.matchedCount === 0)
-      return response.status(404).json({error: "Item not found"});
-    response.json({message: 'Item updated successfully'});
+    let db = database.getDatabase();
+    let calculationData = await db.collection('UserInput').findOne({_id: new ObjectId(request.params.idCal)});
+    if (!calculationData) return response.status(404).json({ error: 'Item not found' });
+
+    let engineData = await db.collection('EngineList').findOne({_id: new ObjectId(request.params.idEngine)});
+    if (!engineData) return response.status(400).json({error: 'Item not found' });
+
+    const updateData = {
+      
+    }
+
+    console.log(calculationData, engineData);
+
+    // const result = await db.collection('UserInput').updateOne(
+    //   {_id: new ObjectId(request.params.id)},
+    //   { $set: updateData}
+    // );
+    // if(result.matchedCount === 0)
+    //   return response.status(404).json({error: "Item not found"});
+    // response.json({message: 'Item updated successfully'});
   } catch(error) {
     response.status(500).json({error: error.message});
   }

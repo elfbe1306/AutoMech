@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { chap2GetCalculation } from '../../api'
+import { chap2GetCalculation, chap2UpdateDataAferChoosingEngine } from '../../api'
 import ReturnButton from '@/components/ReturnButton'
 import { useRouter } from 'expo-router'
 import Collapsible from 'react-native-collapsible';
@@ -69,6 +69,15 @@ const EngineSelectPage = () => {
     }
   }, [calculateID]);
 
+  async function handleSubmit() {
+    try {
+      let response = await chap2UpdateDataAferChoosingEngine(calculateID, selectedEngineId)
+      console.log("Inserted Engine Data:", response);
+    } catch(error) {
+      alert(error.response.data.message);
+    }
+  }
+
   return (
     <View>
       <ReturnButton onPress={() => router.back()}/>
@@ -128,13 +137,13 @@ const EngineSelectPage = () => {
                 cong_suat={engine.cong_suat}
                 van_toc_vong_quay={engine.van_toc_vong_quay}
                 isSelected={selectedEngineId === engine._id}
-                onSelect={() => { setSelectedEngineId(engine._id); console.log(selectedEngineId) }}
+                onSelect={() => {setSelectedEngineId(engine._id)}}
               />
             ))}
           </View>
         </Collapsible>
-        <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Lưu</Text>
+        <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
+          <Text style={styles.saveButtonText}>Lưu</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
