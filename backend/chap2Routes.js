@@ -58,11 +58,47 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
     );
 
     let engines = await db.collection('EngineList')
-    .find({ cong_suat: { $gte: chap2Object.cong_suat_tuong_duong_truc_cong_tac } })
-    .sort({ van_toc_vong_quay: 1 })
-    .limit(3).toArray();
+    .aggregate([
+      {
+        $match: {
+          cong_suat: { $gte: chap2Object.cong_suat_can_thiet_tren_truc_dong_co },
+          van_toc_vong_quay: {
+            $gte: chap2Object.so_vong_quay_so_bo * 0.7,
+            $lte: chap2Object.so_vong_quay_so_bo * 1.3
+          }
+        }
+      },
+      {
+        $addFields: {
+          cong_suat_diff: { $subtract: ["$cong_suat", chap2Object.cong_suat_can_thiet_tren_truc_dong_co] },
+          van_toc_diff: { $abs: { $subtract: ["$van_toc_vong_quay", chap2Object.so_vong_quay_so_bo] } }
+        }
+      },
+      { 
+        $sort: { 
+          cong_suat_diff: 1, 
+          van_toc_diff: 1 
+        } 
+      },
+      { $limit: 3 }
+    ]).toArray();
 
-
+    // let engines = await db.collection('EngineList')
+    // .aggregate([
+    //   {
+    //     $match: {
+    //       cong_suat: { $gte: chap2Object.cong_suat_can_thiet_tren_truc_dong_co }
+    //     }
+    //   },
+    //   {
+    //     $addFields: {
+    //       diff: { $subtract: ["$cong_suat", chap2Object.cong_suat_can_thiet_tren_truc_dong_co] }
+    //     }
+    //   },
+    //   { $sort: { diff: 1, van_toc_vong_quay: 1 } },
+    //   { $limit: 3 }
+    // ]).toArray();
+  
     response.json({ message: 'Inserted successfully Chap2', _id: data.insertedId, engines: engines });
   } catch(error) {
     response.status(500).json({ error: error.message });
