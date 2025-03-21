@@ -13,14 +13,21 @@ const EngineSelectPage = () => {
   const [calculateID, setCalculateID] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(true);
 
-  const [F, setF] = useState(0);
-  const [v, setV] = useState(0);
-  const [D, setD] = useState(0);
-  const [L, setL] = useState(0);
-  const [t1, setT1] = useState(0);
-  const [t2, setT2] = useState(0);
-  const [T1, setT1M] = useState(0);
-  const [T2, setT2M] = useState(0);
+  const [calculatedData, setCalculateData] = useState({
+    luc_vong_bang_tai: "",
+    van_toc_bang_tai: "",
+    duong_kinh_tang_dan: "",
+    thoi_gian_phuc_vu: "",
+    T1: "",
+    T2: "",
+    t1: "",
+    t2: "",
+    cong_suat_truc_cong_tac: "",
+    hieu_suat_chung: "",
+    cong_suat_tuong_duong_truc_cong_tac: "",
+    cong_suat_can_thiet_tren_truc_dong_co: "",
+    so_vong_quay_truc_cong_tac: "",
+  });
   
   useEffect(() => {
     const fetchData = async () => {
@@ -45,15 +52,8 @@ const EngineSelectPage = () => {
       const fetchCalculation = async () => {
         try {
           const response = await chap2GetCalculation(calculateID);
+          setCalculateData(response.data);
           console.log('Calculation Data:', response.data);
-          setF(response.data.luc_vong_bang_tai);
-          setV(response.data.van_toc_bang_tai);
-          setD(response.data.duong_kinh_tang_dan);
-          setL(response.data.thoi_gian_phuc_vu);
-          setT1(response.data.t1);
-          setT2(response.data.t2);
-          setT1M(response.data.T1);
-          setT2M(response.data.T2);
         } catch (error) {
           console.error('Error fetching calculation data:', error);
         }
@@ -74,16 +74,16 @@ const EngineSelectPage = () => {
         <Text style={styles.inputTitle}>Các thông số đầu vào</Text>
         <View style={styles.displayRow}>
           <View style={styles.displayColumn}>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>F:</Text> {F} N</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>v:</Text> {v} m/s</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>D:</Text> {D} mm</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>L:</Text> {L} năm</Text>
+            <Text style={styles.displayNum}><Text style={styles.displayVar}>F:</Text> {calculatedData.luc_vong_bang_tai} N</Text>
+            <Text style={styles.displayNum}><Text style={styles.displayVar}>v:</Text> {calculatedData.van_toc_bang_tai} m/s</Text>
+            <Text style={styles.displayNum}><Text style={styles.displayVar}>D:</Text> {calculatedData.duong_kinh_tang_dan} mm</Text>
+            <Text style={styles.displayNum}><Text style={styles.displayVar}>L:</Text> {calculatedData.thoi_gian_phuc_vu} năm</Text>
           </View>
           <View style={styles.displayColumn}>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>t1:</Text> {t1} giây</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>t2:</Text> {t2} giây</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>T1:</Text> {T1} momem xoắn</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>T2:</Text> {T2} momem xoắn</Text>
+            <Text style={styles.displayNum}><Text style={styles.displayVar}>t1:</Text> {calculatedData.t1} giây</Text>
+            <Text style={styles.displayNum}><Text style={styles.displayVar}>t2:</Text> {calculatedData.t2} giây</Text>
+            <Text style={styles.displayNum}><Text style={styles.displayVar}>T1:</Text> {calculatedData.T1} momem xoắn</Text>
+            <Text style={styles.displayNum}><Text style={styles.displayVar}>T2:</Text> {calculatedData.T2} momem xoắn</Text>
           </View>
         </View>
         <Text style={styles.resultTitle}>Kết quả tính toán và chọn động cơ</Text>
@@ -93,7 +93,7 @@ const EngineSelectPage = () => {
 
         <Collapsible collapsed={isCollapsed}>
           <View style={styles.resultContainer}>
-            <Text style={styles.resultText}>Động cơ phù hợp: Động cơ XYZ</Text>
+            <Text style={styles.resultText}></Text>
             <Text style={styles.resultText}>Công suất: 150 kW</Text>
             <Text style={styles.resultText}>Hiệu suất: 90%</Text>
           </View>
