@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { chap2GetCalculation, chap2UpdateDataAferChoosingEngine } from '../../api'
+import apiService from '../../api'
 import ReturnButton from '@/components/ReturnButton'
 import { useRouter } from 'expo-router'
 import Collapsible from 'react-native-collapsible';
@@ -58,9 +58,9 @@ const EngineSelectPage = () => {
     if (calculateID) {
       const fetchCalculation = async () => {
         try {
-          const response = await chap2GetCalculation(calculateID);
-          setCalculateData(response.data);
-          console.log('Calculation Data:', response.data);
+          const response = await apiService.chap2GetCalculation(calculateID);
+          setCalculateData(response);
+          console.log('Calculation Data:', response);
         } catch (error) {
           console.error('Error fetching calculation data:', error);
         }
@@ -71,10 +71,10 @@ const EngineSelectPage = () => {
 
   async function handleSubmit() {
     try {
-      let response = await chap2UpdateDataAferChoosingEngine(calculateID, selectedEngineId)
-      console.log("Inserted Engine Data:", response.data.message);
+      let response = await apiService.chap2UpdateDataAfterChoosingEngine(calculateID, selectedEngineId)
+      console.log("Inserted Engine Data:", response.message);
     } catch(error) {
-      alert(error.response.data.message);
+      alert(error.response.message);
     }
   }
 

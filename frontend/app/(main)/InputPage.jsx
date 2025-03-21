@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native'
 import { useEffect, useState } from 'react'
-import { chap2Calculation } from '../../api'
+import apiService from '../../api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
 
@@ -118,11 +118,11 @@ const InputPage = () => {
     }
 
     try {
-      let response = await chap2Calculation(inputObject);
-      await AsyncStorage.setItem("EngineSelect", JSON.stringify(response.data.engines));
-      await AsyncStorage.setItem("CalculateID", JSON.stringify(response.data._id));
+      let response = await apiService.chap2Calculation(inputObject);
+      await AsyncStorage.setItem("EngineSelect", JSON.stringify(response.engines));
+      await AsyncStorage.setItem("CalculateID", JSON.stringify(response._id));
 
-      console.log("Inserted:", response.data);
+      console.log("Inserted:", response);
       router.push('/EngineSelectPage');
     } catch(error) {
       alert(error.response.data.message);

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { useRouter } from 'expo-router'
-import { userCreateAccount } from '../../api'
+import apiService from '../../api'
 
 const SignUp = () => {
   const router = useRouter();
@@ -43,7 +43,7 @@ const SignUp = () => {
     };
 
     try {
-      let response = await userCreateAccount(userData);
+      let response = await apiService.userCreateAccount(userData);
       console.log("User created:", response);
       alert("Đã thành công tạo tài khoản");
       router.replace('/Login')

@@ -1,5 +1,6 @@
 const PI = 3.141592653589;
 
+// Factory Pattern
 const createMachineCalculator = () => {
   const cong_suat_truc_cong_tac = (f, v) => {
     return Number(f) * Number(v) / 1000;
