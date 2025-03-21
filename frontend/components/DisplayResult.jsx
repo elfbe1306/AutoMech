@@ -18,10 +18,12 @@ export default DisplayResult
 const styles = StyleSheet.create({
   displayVar: {
     fontFamily: 'quicksand-bold',
-    color: 'rgb(33, 53, 85)'
+    color: 'rgb(33, 53, 85)',
+    fontSize:14,
   },
   displayNum: {
     fontFamily: 'quicksand',
-    color: 'rgb(33, 53, 85)'
+    color: 'rgb(33, 53, 85)',
+    fontSize:14,
   },
 })
