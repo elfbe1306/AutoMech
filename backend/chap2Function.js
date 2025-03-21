@@ -65,6 +65,41 @@ const Pm = (P1, eta_k) => {
   return result.toFixed(12);
 }
 
+const n2 = (n1, u1) => {
+  result = Number(n1) / Number (u1);
+  return result.toFixed(12);
+}
+
+const n3 = (n2, u2) => {
+  result = Number(n2) / Number(u2);
+  return result.toFixed(12);
+}
+
+const nbt = (n3, ux) => {
+  result = Number (n3) / Number(ux);
+  return result.toFixed(12);
+}
+
+const T1_ti_so_truyen = (P1, n1) => {
+  result = (9.55 * Math.pow(10, 6) * Number(P1)) / Number(n1);
+  return result.toFixed(12);
+}
+
+const T2_ti_so_truyen = (P2, n2) => {
+  result = (9.55 * Math.pow(10, 6) * Number(P2)) / Number(n2);
+  return result.toFixed(12);
+}
+
+const T3_ti_so_truyen = (P3, n3) => {
+  result = (9.55 * Math.pow(10, 6) * Number(P3)) / Number(n3);
+  return result.toFixed(12);
+}
+
+const Tbt_ti_so_truyen = (Pbt, nbt) => {
+  result = (9.55 * Math.pow(10, 6) * Number(Pbt)) / Number(nbt);
+  return result.toFixed(12);
+}
+
 module.exports = {
   cong_suat_truc_cong_tac,
   hieu_suat_chung,
@@ -74,5 +109,7 @@ module.exports = {
   so_vong_quay_so_bo,
   ty_so_truyen_chung,
   he_so_truyen_dong_xich,
-  Pbt, P3, P2, P1, Pm
+  Pbt, P3, P2, P1, Pm,
+  n2, n3, nbt,
+  T1_ti_so_truyen, T2_ti_so_truyen, T3_ti_so_truyen, Tbt_ti_so_truyen
 }

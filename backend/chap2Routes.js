@@ -59,6 +59,19 @@ const P1 = chap2Function.P1(P2, chap2Object.hieu_suat_banh_rang, chap2Object.hie
 
 const Pm = chap2Function.Pm(P1, chap2Object.hieu_suat_noi_truc);
 
+const n2 =chap2Function.n2(730, 3.08);
+
+const n3 = chap2Function.n3(n2, 2.6);
+
+const nbt = chap2Function.nbt(n3, he_so_truyen_dong_xich);
+
+const T1_ti_so_truyen = chap2Function.T1_ti_so_truyen(P1, 730);
+
+const T2_ti_so_truyen = chap2Function.T2_ti_so_truyen(P2, n2);
+
+const T3_ti_so_truyen = chap2Function.T3_ti_so_truyen(P3,n3);
+
+const Tbt_ti_so_truyen = chap2Function.Tbt_ti_so_truyen(Pbt,nbt);
 
 console.log(
   cong_suat_truc_cong_tac,
@@ -69,7 +82,9 @@ console.log(
   so_vong_quay_so_bo,
   ty_so_truyen_chung,
   he_so_truyen_dong_xich,
-  Pbt, P3, P2, P1, Pm
+  Pbt, P3, P2, P1, Pm,
+  n2, n3, nbt,
+  T1_ti_so_truyen, T2_ti_so_truyen, T3_ti_so_truyen, Tbt_ti_so_truyen, 
 );
 })
 
