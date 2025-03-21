@@ -70,14 +70,14 @@ const EngineSelectPage = () => {
   }, [calculateID]);
 
   return (
-    <ScrollView>
+    <View>
       <ReturnButton onPress={() => router.back()}/>
       
       <View style={styles.titleContainer}>
         <Text style={styles.title}>TÍNH TOÁN</Text>
       </View>
 
-      <View style={styles.inputContainer}>
+      <ScrollView style={styles.inputContainer}>
         <Text style={styles.inputTitle}>Các thông số đầu vào</Text>
         <View style={styles.displayRow}>
           <View style={styles.displayColumn}>
@@ -133,11 +133,11 @@ const EngineSelectPage = () => {
             ))}
           </View>
         </Collapsible>
-      </View>
-      <TouchableOpacity style={styles.saveButton}>
+        <TouchableOpacity style={styles.saveButton}>
                 <Text style={styles.saveButtonText}>Lưu</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        </TouchableOpacity>
+      </ScrollView>
+    </View>
   )
 }
 
@@ -156,7 +156,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginTop: '5%',
-    marginHorizontal: '10%'
+    marginHorizontal: '10%',
+    marginBottom: '30%'
   },
   inputTitle: {
     fontFamily: 'quicksand-semibold',
@@ -219,12 +220,11 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 15,
+    marginTop: 10,
     padding: 10,
     backgroundColor: 'rgb(33,53,85)',
     borderRadius: 10,
     marginBottom:'10%', 
-    marginHorizontal:'10%'
   },
 
   saveButtonText: {
