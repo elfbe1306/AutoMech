@@ -78,6 +78,8 @@ const he_so_truyen_dong_xich = (ty_so_truyen_chung, he_so_truyen_cap_nhanh, he_s
   return Number(result.toFixed(12));
 }
 
+// Code thêm hàm ở đây nha Quin - Khuê
+
 module.exports = {
   cong_suat_truc_cong_tac,
   hieu_suat_chung,
