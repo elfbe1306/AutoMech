@@ -129,14 +129,36 @@ chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
     let engineData = await db.collection('EngineList').findOne({_id: new ObjectId(request.params.idEngine)});
     if (!engineData) return response.status(400).json({error: 'Item not found' });
 
+    const ty_so_truyen_chung = chap2Function.ty_so_truyen_chung(engineData.van_toc_vong_quay, calculationData.so_vong_quay_truc_cong_tac);
+
+    const he_so_truyen_cap_nhanh = chap2Function.he_so_truyen_cap_nhanh(calculationData.ty_so_truyen_hop_giam_toc);
+
+    const he_so_truyen_cap_cham = chap2Function.he_so_truyen_cap_cham(calculationData.ty_so_truyen_hop_giam_toc);
+
+    const he_so_truyen_dong_xich = chap2Function.he_so_truyen_dong_xich(ty_so_truyen_chung, he_so_truyen_cap_nhanh, he_so_truyen_cap_cham);
+
+    // code thêm ở đây nha quin - khuê
+
     const updateData = {
-      
+      ty_so_truyen_chung: ty_so_truyen_chung,
+      he_so_truyen_cap_nhanh: he_so_truyen_cap_nhanh,
+      he_so_truyen_cap_cham: he_so_truyen_cap_cham,
+      he_so_truyen_dong_xich: he_so_truyen_dong_xich
+      // tính xong nhớ truyền biến vô đây
     }
 
-    console.log(calculationData, engineData);
+    // console dùng để debug - 
+    // console.log calculationData và engineData để thấy các biến trong object và lấy ra sử dụng
+    console.log(calculationData, 
+      engineData, 
+      ty_so_truyen_chung,
+      he_so_truyen_cap_nhanh,
+      he_so_truyen_cap_cham,
+      he_so_truyen_dong_xich,
+    );
 
     // const result = await db.collection('UserInput').updateOne(
-    //   {_id: new ObjectId(request.params.id)},
+    //   {_id: new ObjectId(request.params.idCal)},
     //   { $set: updateData}
     // );
     // if(result.matchedCount === 0)

@@ -72,7 +72,7 @@ const EngineSelectPage = () => {
   async function handleSubmit() {
     try {
       let response = await chap2UpdateDataAferChoosingEngine(calculateID, selectedEngineId)
-      console.log("Inserted Engine Data:", response);
+      console.log("Inserted Engine Data:", response.data.message);
     } catch(error) {
       alert(error.response.data.message);
     }

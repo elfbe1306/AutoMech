@@ -41,6 +41,7 @@ export async function chap2GetCalculation(id) {
 export async function chap2UpdateDataAferChoosingEngine(idCal, idEngine) {
   try {
     const response = await axios.put(`${URL}/Chap2/${idCal}/${idEngine}`)
+    return response;
   } catch(error) {
     throw error
   }
