@@ -5,13 +5,18 @@ import { chap2GetCalculation } from '../../api'
 import ReturnButton from '@/components/ReturnButton'
 import { useRouter } from 'expo-router'
 import Collapsible from 'react-native-collapsible';
+import DisplayResult from '@/components/DisplayResult'
+import EngineCard from '@/components/EngineCard'
 
 const EngineSelectPage = () => {
   const router = useRouter();
 
   const [engines, setEngines] = useState(null);
   const [calculateID, setCalculateID] = useState("");
-  const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isCollapsedResult, setIsCollapsedResult] = useState(true);
+  const [isCollapsedEngine, setIsCollapsedEngine] = useState(true);
+  const [selectedEngineId, setSelectedEngineId] = useState(null);
+  
 
   const [calculatedData, setCalculateData] = useState({
     luc_vong_bang_tai: "",
@@ -27,6 +32,7 @@ const EngineSelectPage = () => {
     cong_suat_tuong_duong_truc_cong_tac: "",
     cong_suat_can_thiet_tren_truc_dong_co: "",
     so_vong_quay_truc_cong_tac: "",
+    so_vong_quay_so_bo: ""
   });
   
   useEffect(() => {
@@ -74,28 +80,52 @@ const EngineSelectPage = () => {
         <Text style={styles.inputTitle}>Các thông số đầu vào</Text>
         <View style={styles.displayRow}>
           <View style={styles.displayColumn}>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>F:</Text> {calculatedData.luc_vong_bang_tai} N</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>v:</Text> {calculatedData.van_toc_bang_tai} m/s</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>D:</Text> {calculatedData.duong_kinh_tang_dan} mm</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>L:</Text> {calculatedData.thoi_gian_phuc_vu} năm</Text>
+            <DisplayResult variable={"F"} value={calculatedData.luc_vong_bang_tai} unit={"N"} />
+            <DisplayResult variable={"v"} value={calculatedData.van_toc_bang_tai} unit={"m/s"} />
+            <DisplayResult variable={"D"} value={calculatedData.duong_kinh_tang_dan} unit={"mm"} />
+            <DisplayResult variable={"L"} value={calculatedData.thoi_gian_phuc_vu} unit={"năm"} />
           </View>
           <View style={styles.displayColumn}>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>t1:</Text> {calculatedData.t1} giây</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>t2:</Text> {calculatedData.t2} giây</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>T1:</Text> {calculatedData.T1} momem xoắn</Text>
-            <Text style={styles.displayNum}><Text style={styles.displayVar}>T2:</Text> {calculatedData.T2} momem xoắn</Text>
+            <DisplayResult variable={"t1"} value={calculatedData.t1} unit={"giây"} />
+            <DisplayResult variable={"t2"} value={calculatedData.t2} unit={"giây"} />
+            <DisplayResult variable={"T1"} value={calculatedData.T1} unit={"momem xoắn"} />
+            <DisplayResult variable={"T2"} value={calculatedData.T2} unit={"momem xoắn"} />
           </View>
         </View>
         <Text style={styles.resultTitle}>Kết quả tính toán và chọn động cơ</Text>
-        <TouchableOpacity onPress={() => setIsCollapsed(!isCollapsed)} style={styles.collapseButton}>
+        <TouchableOpacity onPress={() => setIsCollapsedResult(!isCollapsedResult)} style={styles.collapseButton}>
           <Text style={styles.buttonText}>Kết quả tính toán tổng quan</Text>
         </TouchableOpacity>
 
-        <Collapsible collapsed={isCollapsed}>
+        <Collapsible collapsed={isCollapsedResult}>
           <View style={styles.resultContainer}>
-            <Text style={styles.resultText}></Text>
-            <Text style={styles.resultText}>Công suất: 150 kW</Text>
-            <Text style={styles.resultText}>Hiệu suất: 90%</Text>
+            <DisplayResult variable={"Công suất trục công tác"} value={calculatedData.cong_suat_truc_cong_tac} unit={""} />
+            <DisplayResult variable={"Hiệu suất chung"} value={Number(calculatedData.hieu_suat_chung).toFixed(4)} unit={""} />
+            <DisplayResult variable={"Công suất tương đương trục công tác"} value={Number(calculatedData.cong_suat_tuong_duong_truc_cong_tac).toFixed(4)} unit={""} />
+            <DisplayResult variable={"Công suất cần thiết trên trục động cơ"} value={Number(calculatedData.cong_suat_can_thiet_tren_truc_dong_co).toFixed(4)} unit={""} />
+            <DisplayResult variable={"Số vòng quay trục công tác"} value={Number(calculatedData.so_vong_quay_truc_cong_tac).toFixed(4)} unit={""} />
+            <DisplayResult variable={"Số vòng quay sơ bộ"} value={Number(calculatedData.so_vong_quay_so_bo).toFixed(4)} unit={""} />
+          </View>
+        </Collapsible>
+
+        <TouchableOpacity onPress={() => setIsCollapsedEngine(!isCollapsedEngine)} style={styles.collapseButton}>
+          <Text style={styles.buttonText}>Chọn động cơ</Text>
+        </TouchableOpacity>
+
+        <Collapsible collapsed={isCollapsedEngine}>
+          <View style={styles.engineContainer}>
+            {engines?.map((engine) => {
+              return(
+                <EngineCard 
+                  key={engine._id} 
+                  kieu_dong_co={engine.kieu_dong_co} 
+                  cong_suat={engine.cong_suat}
+                  van_toc_vong_quay={engine.van_toc_vong_quay}
+                  isSelected={selectedEngineId === engine._id}
+                  onSelect={() => {setSelectedEngineId(engine._id); console.log(selectedEngineId)}}       
+                />
+              )
+            })}
           </View>
         </Collapsible>
       </View>
@@ -134,14 +164,6 @@ const styles = StyleSheet.create({
   displayColumn: {
     flex: 1
   },
-  displayVar: {
-    fontFamily: 'quicksand-bold',
-    color: 'rgb(33, 53, 85)'
-  },
-  displayNum: {
-    fontFamily: 'quicksand',
-    color: 'rgb(33, 53, 85)'
-  },
   resultTitle: {
     marginTop: 10,
     fontFamily: 'quicksand-semibold',
@@ -159,5 +181,11 @@ const styles = StyleSheet.create({
     fontFamily: 'quicksand-medium',
     fontSize: 12,
     color: 'rgb(33, 53, 85)'
+  },
+  resultContainer: {
+
+  },
+  engineContainer: {
+
   }
 })
