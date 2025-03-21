@@ -5,6 +5,7 @@ const { ObjectId } = require('mongodb');
 
 let chap2Routes = express.Router();
 
+// Create new calculation data
 chap2Routes.route('/Chap2').post(async (request, response) => {
   let chap2Object = {
     luc_vong_bang_tai: Number(request.body.f),
@@ -105,6 +106,7 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
   }
 })
 
+// Retrieve calculation data by ID
 chap2Routes.route('/Chap2/:id').get(async (request, response) => {
   try {
     let db = database.getDatabase();
@@ -114,6 +116,22 @@ chap2Routes.route('/Chap2/:id').get(async (request, response) => {
     response.json(data);
   } catch(error) {
     response.status(500).json({ error: error.message });
+  }
+})
+
+// Update more calculation result
+chap2Routes.route('/Chap2/:id').put(async (request, response) => {
+  try {
+    const updateData = request.body;
+    const result = await db.collection('UserInput').updateOne(
+      {_id: new ObjectId(request.params.id)},
+      { $set: updateData}
+    );
+    if(result.matchedCount === 0)
+      return response.status(404).json({error: "Item not found"});
+    response.json({message: 'Item updated successfully'});
+  } catch(error) {
+    response.status(500).json({error: error.message});
   }
 })
 

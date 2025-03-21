@@ -37,3 +37,11 @@ export async function chap2GetCalculation(id) {
     throw error
   }
 }
+
+export async function chap2UpdateDataAferChoosingEngine(id) {
+  try {
+    const response = await axios.put(`${URL}/Chap2/${id}`)
+  } catch(error) {
+    throw error
+  }
+}
