@@ -1,5 +1,4 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native'
-import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { chap2Calculation } from '../../api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -111,6 +110,9 @@ const InputPage = () => {
 
     try {
       let response = await chap2Calculation(inputObject);
+      await AsyncStorage.setItem("EngineSelect", JSON.stringify(response.data.engines));
+      await AsyncStorage.setItem("CalculateID", JSON.stringify(response.data._id));
+
       console.log("Inserted:", response.data);
       router.push('/EngineSelectPage');
     } catch(error) {

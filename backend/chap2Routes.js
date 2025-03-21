@@ -5,14 +5,6 @@ const { ObjectId } = require('mongodb');
 
 let chap2Routes = express.Router();
 
-
-
-async function setupIndexes() {
-  
-}
-
-setupIndexes();
-
 chap2Routes.route('/Chap2').post(async (request, response) => {
   let chap2Object = {
     luc_vong_bang_tai: Number(request.body.f),
@@ -73,7 +65,19 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
 
     response.json({ message: 'Inserted successfully Chap2', _id: data.insertedId, engines: engines });
   } catch(error) {
-    response.status(500).json({ message: 'Internal Server Error', error: error.message });
+    response.status(500).json({ error: error.message });
+  }
+})
+
+chap2Routes.route('/Chap2/:id').get(async (request, response) => {
+  try {
+    let db = database.getDatabase();
+    let data = await db.collection('UserInput').findOne({_id: new ObjectId(request.params.id)})
+    if (!data) return response.status(404).json({ error: 'Item not found' });
+
+    response.json(data);
+  } catch(error) {
+    response.status(500).json({ error: error.message });
   }
 })
 

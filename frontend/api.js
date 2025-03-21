@@ -28,3 +28,12 @@ export async function chap2Calculation(userInput) {
     throw error;
   }
 }
+
+export async function chap2GetCalculation(id) {
+  try {
+    const response = await axios.get(`${URL}/Chap2/${id}`)
+    return response;
+  } catch(error) {
+    throw error
+  }
+}
