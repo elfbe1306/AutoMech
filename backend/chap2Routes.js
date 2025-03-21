@@ -144,7 +144,7 @@ chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
       he_so_truyen_cap_nhanh: he_so_truyen_cap_nhanh,
       he_so_truyen_cap_cham: he_so_truyen_cap_cham,
       he_so_truyen_dong_xich: he_so_truyen_dong_xich
-      // tính xong nhớ truyền biến vô đây
+      // tính xong nhớ truyền biến vô đây để lưu database
     }
 
     // console dùng để debug - 
