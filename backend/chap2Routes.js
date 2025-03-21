@@ -157,6 +157,9 @@ chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
       he_so_truyen_dong_xich,
     );
 
+    // Khuê code xong phần tính toán thì uncomment đạo code ở dưới, khởi động lại backend
+    // Đồng thời qua trang EngineSelectPage uncomment rồi chạy lại 
+
     // const result = await db.collection('UserInput').updateOne(
     //   {_id: new ObjectId(request.params.idCal)},
     //   { $set: updateData}
