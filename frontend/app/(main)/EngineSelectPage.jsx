@@ -75,7 +75,7 @@ const EngineSelectPage = () => {
       console.log("Inserted Engine Data:", response.message);
 
       // Uncomment này nè khuê
-      // router.push('/DisplayChap2Page');
+      router.push('/DisplayChap2Page');
     } catch(error) {
       alert(error.response.message);
     }

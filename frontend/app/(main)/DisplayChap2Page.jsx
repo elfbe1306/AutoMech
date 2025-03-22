@@ -62,7 +62,21 @@ const DisplayChap2 = () => {
       <DisplayResult variable={"Hệ số truyền động xích"} value={Number(calculatedData.he_so_truyen_dong_xich).toFixed(4)} unit={""} />
       
       {/* Làm thêm mấy cái giống vậy */}
-
+      <DisplayResult variable={"Pbt"} value={Number(calculatedData.Pbt).toFixed(4)} unit={"kW"} />
+      <DisplayResult variable={"P3"} value={Number(calculatedData.P3).toFixed(4)} unit={"kW"} />
+      <DisplayResult variable={"P2"} value={Number(calculatedData.P2).toFixed(4)} unit={"kW"} />
+      <DisplayResult variable={"P1"} value={Number(calculatedData.P1).toFixed(4)} unit={"kW"} />
+      <DisplayResult variable={"Pm"} value={Number(calculatedData.Pm).toFixed(4)} unit={"kW"} />
+      <DisplayResult variable={"nđc"} value={Number(calculatedData.ndc)} unit={"vòng/phút"} />
+      <DisplayResult variable={"n1"} value={Number(calculatedData.n1)} unit={"vòng/phút"} />
+      <DisplayResult variable={"n2"} value={Number(calculatedData.n2).toFixed(4)} unit={"vòng/phút"} />
+      <DisplayResult variable={"n3"} value={Number(calculatedData.n3).toFixed(4)} unit={"vòng/phút"} />
+      <DisplayResult variable={"nbt"} value={Number(calculatedData.nbt).toFixed(4)} unit={"vòng/phút"} />
+      <DisplayResult variable={"Tm"} value={Number(calculatedData.Tm).toFixed(4)} unit={"N.mm"} />
+      <DisplayResult variable={"T1"} value={Number(calculatedData.T1_ti_so_truyen).toFixed(4)} unit={"N.mm"} />
+      <DisplayResult variable={"T2"} value={Number(calculatedData.T2_ti_so_truyen).toFixed(4)} unit={"N.mm"} />
+      <DisplayResult variable={"T3"} value={Number(calculatedData.T3_ti_so_truyen).toFixed(4)} unit={"N.mm"} />
+      <DisplayResult variable={"Tbt"} value={Number(calculatedData.Tbt_ti_so_truyen).toFixed(4)} unit={"N.mm"} />
     </View>
   )
 }

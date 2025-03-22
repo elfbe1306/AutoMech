@@ -81,7 +81,77 @@ const createMachineCalculator = () => {
   }
 
   // Code thêm hàm ở đây nha Quin - Khuê
+  const Pbt = (Plv, eta_ol) => {
+    result = Number(Plv) / Number(eta_ol);
+    return Number(result.toFixed(12));
+  }
 
+  const P3 = (Pbt, eta_x, eta_ol) => {
+    result = Number(Pbt) / (Number(eta_x) * Number(eta_ol));
+    return Number(result.toFixed(12));
+  }
+
+  const P2 = (P3, eta_brt, eta_ol) => {
+    result = Number(P3) / (Number(eta_brt) * Number(eta_ol));
+    return Number(result.toFixed(12));
+  }
+  
+  const P1 = (P2, eta_brt, eta_ol) => {
+    result = Number(P2) / (Number(eta_brt) * Number(eta_ol));
+    return Number(result.toFixed(12));
+  }
+  
+  const Pm = (P1, eta_k) => {
+    result = Number(P1) / Number(eta_k);
+    return Number(result.toFixed(12));
+  }
+
+  const ndc = (ndc) => {
+    return Number(ndc.toFixed(12));
+  }
+  
+  const n1 = (n1) => {
+    return Number(n1.toFixed(12));
+  }
+
+  const n2 = (n1, u1) => {
+    result = Number(n1) / Number (u1);
+    return Number(result.toFixed(12));
+  }
+  
+  const n3 = (n2, u2) => {
+    result = Number(n2) / Number(u2);
+    return Number(result.toFixed(12));
+  }
+  
+  const nbt = (n3, ux) => {
+    result = Number (n3) / Number(ux);
+    return Number(result.toFixed(12));
+  }
+
+  const T1_ti_so_truyen = (P1, n1) => {
+    result = (9.55 * Math.pow(10, 6) * Number(P1)) / Number(n1);
+    return Number(result.toFixed(12));
+  }
+
+  const Tm = (T1) => {
+    return Number(T1.toFixed(12));
+  }
+  
+  const T2_ti_so_truyen = (P2, n2) => {
+    result = (9.55 * Math.pow(10, 6) * Number(P2)) / Number(n2);
+    return Number(result.toFixed(12));
+  }
+  
+  const T3_ti_so_truyen = (P3, n3) => {
+    result = (9.55 * Math.pow(10, 6) * Number(P3)) / Number(n3);
+    return Number(result.toFixed(12));
+  }
+  
+  const Tbt_ti_so_truyen = (Pbt, nbt) => {
+    result = (9.55 * Math.pow(10, 6) * Number(Pbt)) / Number(nbt);
+    return Number(result.toFixed(12));
+  }
 
   return {
     cong_suat_truc_cong_tac,
@@ -93,7 +163,22 @@ const createMachineCalculator = () => {
     ty_so_truyen_chung,
     he_so_truyen_cap_nhanh,
     he_so_truyen_cap_cham,
-    he_so_truyen_dong_xich
+    he_so_truyen_dong_xich,
+    Pbt, 
+    P3,
+    P2,
+    P1,
+    Pm, 
+    ndc,
+    n1,
+    n2,
+    n3,
+    nbt,
+    T1_ti_so_truyen,
+    Tm,
+    T2_ti_so_truyen,
+    T3_ti_so_truyen,
+    Tbt_ti_so_truyen
   };
 }
 

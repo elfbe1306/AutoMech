@@ -136,14 +136,59 @@ chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
     const he_so_truyen_cap_cham = machineCalculator.he_so_truyen_cap_cham(calculationData.ty_so_truyen_hop_giam_toc);
 
     const he_so_truyen_dong_xich = machineCalculator.he_so_truyen_dong_xich(ty_so_truyen_chung, he_so_truyen_cap_nhanh, he_so_truyen_cap_cham);
+    //Levy làm
+    const Pbt = machineCalculator.Pbt(calculationData.cong_suat_truc_cong_tac, calculationData.hieu_suat_o_lan);
 
+    const P3 = machineCalculator.P3(Pbt, calculationData.hieu_suat_xich, calculationData.hieu_suat_o_lan);
+
+    const P2 = machineCalculator.P2(P3, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
+
+    const P1 = machineCalculator.P1(P2, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
+
+    const Pm = machineCalculator.Pm(P1, calculationData.hieu_suat_noi_truc);
+
+    const ndc = machineCalculator.ndc(engineData.van_toc_vong_quay);
+
+    const n1 = machineCalculator.n1(engineData.van_toc_vong_quay);
+
+    const n2 = machineCalculator.n2(n1, he_so_truyen_cap_nhanh);
+
+    const n3 = machineCalculator.n3(n2, he_so_truyen_cap_cham);
+
+    const nbt = machineCalculator.nbt(n3, he_so_truyen_dong_xich);
+
+    const T1_ti_so_truyen = machineCalculator.T1_ti_so_truyen(P1, engineData.van_toc_vong_quay);
+
+    const Tm = machineCalculator.Tm(T1_ti_so_truyen);
+
+    const T2_ti_so_truyen = machineCalculator.T2_ti_so_truyen(P2, n2);
+
+    const T3_ti_so_truyen = machineCalculator.T3_ti_so_truyen(P3, n3);
+
+    const Tbt_ti_so_truyen = machineCalculator.Tbt_ti_so_truyen(Pbt,nbt);
     // code thêm ở đây nha quin - khuê
 
     const updateData = {
       ty_so_truyen_chung: ty_so_truyen_chung,
       he_so_truyen_cap_nhanh: he_so_truyen_cap_nhanh,
       he_so_truyen_cap_cham: he_so_truyen_cap_cham,
-      he_so_truyen_dong_xich: he_so_truyen_dong_xich
+      he_so_truyen_dong_xich: he_so_truyen_dong_xich,
+      //Levy làm
+      Pbt: Pbt,
+      P3: P3,
+      P2: P2,
+      P1: P1,
+      Pm: Pm,
+      ndc: ndc,
+      n1: n1,
+      n2: n2,
+      n3: n3,
+      nbt: nbt,
+      T1_ti_so_truyen: T1_ti_so_truyen,
+      Tm: Tm,
+      T2_ti_so_truyen: T2_ti_so_truyen,
+      T3_ti_so_truyen: T3_ti_so_truyen,
+      Tbt_ti_so_truyen: Tbt_ti_so_truyen
       // tính xong nhớ truyền biến vô đây để lưu database
     }
 
@@ -155,18 +200,33 @@ chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
       he_so_truyen_cap_nhanh,
       he_so_truyen_cap_cham,
       he_so_truyen_dong_xich,
+      Pbt,
+      P3,
+      P2,
+      P1,
+      Pm,
+      ndc,
+      n1,
+      n2,
+      n3,
+      nbt,
+      Tm,
+      T1_ti_so_truyen,
+      T2_ti_so_truyen,
+      T3_ti_so_truyen,
+      Tbt_ti_so_truyen
     );
 
     // Khuê code xong phần tính toán thì uncomment đạo code ở dưới, khởi động lại backend
     // Đồng thời qua trang EngineSelectPage uncomment rồi chạy lại 
 
-    // const result = await db.collection('UserInput').updateOne(
-    //   {_id: new ObjectId(request.params.idCal)},
-    //   { $set: updateData}
-    // );
-    // if(result.matchedCount === 0)
-    //   return response.status(404).json({error: "Item not found"});
-    // response.json({message: 'Item updated successfully'});
+    const result = await db.collection('UserInput').updateOne(
+      {_id: new ObjectId(request.params.idCal)},
+      { $set: updateData}
+    );
+    if(result.matchedCount === 0)
+      return response.status(404).json({error: "Item not found"});
+    response.json({message: 'Item updated successfully'});
   } catch(error) {
     response.status(500).json({error: error.message});
   }
