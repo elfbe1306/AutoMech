@@ -19,6 +19,7 @@ userRoutes.route('/Users').post(async (request, response) => {
     let userCreateAccount = {
       email: request.body.email,
       password: hashPassword,
+      history: []
     };
 
     let data = await db.collection('Users').insertOne(userCreateAccount);
