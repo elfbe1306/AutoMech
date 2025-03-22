@@ -60,8 +60,6 @@ const DisplayChap2 = () => {
       <DisplayResult variable={"Hệ số truyền cấp nhanh"} value={Number(calculatedData.he_so_truyen_cap_nhanh).toFixed(4)} unit={""} />
       <DisplayResult variable={"Hệ số truyền cấp chậm"} value={Number(calculatedData.he_so_truyen_cap_cham).toFixed(4)} unit={""} />
       <DisplayResult variable={"Hệ số truyền động xích"} value={Number(calculatedData.he_so_truyen_dong_xich).toFixed(4)} unit={""} />
-      
-      {/* Làm thêm mấy cái giống vậy */}
       <DisplayResult variable={"Pbt"} value={Number(calculatedData.Pbt).toFixed(4)} unit={"kW"} />
       <DisplayResult variable={"P3"} value={Number(calculatedData.P3).toFixed(4)} unit={"kW"} />
       <DisplayResult variable={"P2"} value={Number(calculatedData.P2).toFixed(4)} unit={"kW"} />
