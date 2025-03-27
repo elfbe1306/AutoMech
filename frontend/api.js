@@ -56,6 +56,15 @@ class ApiService {
       throw error;
     }
   }
+
+  async chap3PreDataForChoosingGear(id, preData) {
+    try {
+      const response = await this.api.post(`/Chap3/${id}`, preData);
+      return response.data
+    } catch(error) {
+      throw error
+    }
+  }
 }
 
 // Singleton instance
