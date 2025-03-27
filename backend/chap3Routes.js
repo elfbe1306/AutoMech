@@ -35,8 +35,8 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
 
     // Buoc 4 - In ra man hinh kiem tra tinh toan
     console.log(
-      Chap2Data, 
-      request.body, 
+      Chap2Data, // Lấy biến (kết quả chương 2) ở trong đối tượng này
+      request.body, // Lấy biến (hệ số chương 3) ở trong đối tượng này
       Z1, 
       Z2,
 
