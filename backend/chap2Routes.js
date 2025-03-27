@@ -121,7 +121,10 @@ chap2Routes.route('/Chap2/:id').get(async (request, response) => {
 chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
   try {
     let db = database.getDatabase();
-    let calculationData = await db.collection('UserInput').findOne({_id: new ObjectId(request.params.idCal)});
+    let calculationHistory = await db.collection('CalculationHistory').findOne({_id: new ObjectId(request.params.idCal)});
+    if (!calculationHistory) return response.status(404).json({ error: 'Item not found' });
+
+    let calculationData = await db.collection('Chap2Calculation').findOne({_id: new ObjectId(calculationHistory.Chap2ID)});
     if (!calculationData) return response.status(404).json({ error: 'Item not found' });
 
     let engineData = await db.collection('EngineList').findOne({_id: new ObjectId(request.params.idEngine)});
@@ -187,8 +190,13 @@ chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
       Tbt_ti_so_truyen: Tbt_ti_so_truyen
     }
 
-    const result = await db.collection('UserInput').updateOne(
+    const updateCalculationHistory = await db.collection('CalculationHistory').updateOne(
       {_id: new ObjectId(request.params.idCal)},
+      { $set: {engineID: new ObjectId(request.params.idEngine)}}
+    )
+
+    const result = await db.collection('Chap2Calculation').updateOne(
+      {_id: new ObjectId(calculationData._id)},
       { $set: updateData}
     );
     if(result.matchedCount === 0)
