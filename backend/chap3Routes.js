@@ -18,6 +18,10 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
 
     const Z2 = machineCalculator.Z2(Chap2Data.he_so_truyen_dong_xich, Z1);
 
+    //Buoc 3 - Tao bien de luu gia tri tinh toan
+
+
+    // Buoc 5 - Luu du lieu database
     const Chap3Object = {
       k0: request.body.k0,
       k1: request.body.k1,
@@ -29,11 +33,13 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
       Z2: Z2
     }
 
+    // Buoc 4 - In ra man hinh kiem tra tinh toan
     console.log(
       Chap2Data, 
       request.body, 
       Z1, 
       Z2,
+
     );
 
   } catch(error) {

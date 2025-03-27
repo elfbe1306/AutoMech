@@ -1,3 +1,4 @@
+const PI = 3.141592653589;
 
 // Factory Pattern
 const Chap3Calculator = () => {
@@ -16,6 +17,10 @@ const Chap3Calculator = () => {
     return roundToOdd(result);
   };
 
+  //Buoc 1 - Them ham tinh toan
+
+
+  // Buoc 2 - Tra ham tinh toan để có thể gọi ở route
   return {
     Z1,
     Z2,
