@@ -29,9 +29,9 @@ class ApiService {
     }
   }
 
-  async chap2Calculation(userInput) {
+  async chap2Calculation(userId, userInput) {
     try {
-      const response = await this.api.post(`/Chap2`, userInput);
+      const response = await this.api.post(`/Chap2/${userId}`, userInput);
       return response.data;
     } catch (error) {
       throw error;

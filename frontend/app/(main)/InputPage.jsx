@@ -97,7 +97,6 @@ const InputPage = () => {
     const usb = ux * uh;
 
     let inputObject = {
-      userID: userID,
       f: f, 
       v: v,
       D: D,
@@ -118,7 +117,7 @@ const InputPage = () => {
     }
 
     try {
-      let response = await apiService.chap2Calculation(inputObject);
+      let response = await apiService.chap2Calculation(userID, inputObject);
       await AsyncStorage.setItem("EngineSelect", JSON.stringify(response.engines));
       await AsyncStorage.setItem("CalculateID", JSON.stringify(response._id));
 

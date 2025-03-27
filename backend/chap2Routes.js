@@ -6,7 +6,7 @@ const { ObjectId } = require('mongodb');
 let chap2Routes = express.Router();
 
 // Create new calculation data
-chap2Routes.route('/Chap2').post(async (request, response) => {
+chap2Routes.route('/Chap2/:userId').post(async (request, response) => {
   let chap2Object = {
     luc_vong_bang_tai: Number(request.body.f),
     van_toc_bang_tai: Number(request.body.v),
@@ -52,7 +52,7 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
     let data = await db.collection('UserInput').insertOne(chap2Object);
     let insertedId = data.insertedId;
 
-    const userId = new ObjectId(request.body.userID);
+    const userId = new ObjectId(request.params.userId);
     await db.collection('Users').updateOne(
       { _id: userId }, 
       { $push: { history: insertedId } }
