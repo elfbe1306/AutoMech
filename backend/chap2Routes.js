@@ -6,7 +6,7 @@ const { ObjectId } = require('mongodb');
 let chap2Routes = express.Router();
 
 // Create new calculation data
-chap2Routes.route('/Chap2/:userId').post(async (request, response) => {
+chap2Routes.route('/Chap2/:userId/:id?').post(async (request, response) => {
   let chap2Object = {
     luc_vong_bang_tai: Number(request.body.f),
     van_toc_bang_tai: Number(request.body.v),
@@ -49,13 +49,32 @@ chap2Routes.route('/Chap2/:userId').post(async (request, response) => {
     let db = database.getDatabase();
     await db.collection('EngineList').createIndex({ cong_suat: 1, van_toc_vong_quay: 1 });
 
-    let data = await db.collection('UserInput').insertOne(chap2Object);
-    let insertedId = data.insertedId;
+    let calculationHistoryId;
+    if(request.params.id) {
+      let chap2data = await db.collection('CalculationHistory').findOne({ _id: new ObjectId(request.params.id) });
+      if (chap2data) {
+        await db.collection('Chap2Calculation').updateOne(
+          { _id: new ObjectId(chap2data.Chap2ID) },
+          { $set: chap2Object }
+        );
+        calculationHistoryId = chap2data._id;
+      } else {
+        return response.status(404).json({ error: "Calculation history not found" });
+      }
+    } else {
+      let chap2data = await db.collection('Chap2Calculation').insertOne(chap2Object);
+      let calculationData = {
+        Chap2ID: chap2data.insertedId,
+        CreateDate: new Date()
+      };
+      let calculationHistory = await db.collection('CalculationHistory').insertOne(calculationData);
+      calculationHistoryId = calculationHistory.insertedId;
+    }
 
     const userId = new ObjectId(request.params.userId);
     await db.collection('Users').updateOne(
       { _id: userId }, 
-      { $push: { history: insertedId } }
+      { $push: { history: calculationHistoryId } }
     );
 
     let engines = await db.collection('EngineList')
@@ -76,7 +95,7 @@ chap2Routes.route('/Chap2/:userId').post(async (request, response) => {
       { $limit: 3 }
     ]).toArray();
   
-    response.json({ message: 'Inserted successfully Chap2', _id: data.insertedId, engines: engines });
+    response.json({ message: 'Inserted successfully Chap2', _id: calculationHistoryId, engines: engines });
   } catch(error) {
     response.status(500).json({ error: error.message });
   }
@@ -86,7 +105,10 @@ chap2Routes.route('/Chap2/:userId').post(async (request, response) => {
 chap2Routes.route('/Chap2/:id').get(async (request, response) => {
   try {
     let db = database.getDatabase();
-    let data = await db.collection('UserInput').findOne({_id: new ObjectId(request.params.id)});
+    let CalculationData = await db.collection('CalculationHistory').findOne({_id: new ObjectId(request.params.id)});
+    if (!CalculationData) return response.status(404).json({ error: 'Item not found' });
+
+    let data = await db.collection('Chap2Calculation').findOne({_id: new ObjectId(CalculationData.Chap2ID)});
     if (!data) return response.status(404).json({ error: 'Item not found' });
 
     response.json(data);

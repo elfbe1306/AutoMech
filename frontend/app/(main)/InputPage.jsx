@@ -117,9 +117,13 @@ const InputPage = () => {
     }
 
     try {
-      let response = await apiService.chap2Calculation(userID, inputObject);
-      await AsyncStorage.setItem("EngineSelect", JSON.stringify(response.engines));
-      await AsyncStorage.setItem("CalculateID", JSON.stringify(response._id));
+      const CalculateId = await AsyncStorage.getItem("CalculateID");
+      const response = await apiService.chap2Calculation(userID, JSON.parse(CalculateId), inputObject);
+
+      await AsyncStorage.multiSet([
+        ["EngineSelect", JSON.stringify(response.engines)],
+        ["CalculateID", JSON.stringify(response._id)]
+      ]);
 
       console.log("Inserted:", response);
       router.push('/EngineSelectPage');
