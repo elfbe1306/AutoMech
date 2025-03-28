@@ -1,30 +1,74 @@
 import axios from "axios";
 
-const URL = "https://9b02-2405-4802-35-ea40-f1bf-7812-9f6c-fc7a.ngrok-free.app";
 
-export async function userCreateAccount(userData) {
-  try {
-    const response = await axios.post(`${URL}/Users`, userData);
-    return response.data;
-  } catch(error) {
-    throw error;
+class ApiService {
+  static instance = null;
+
+  constructor(baseURL) {
+    if (ApiService.instance) {
+      return ApiService.instance;
+    }
+    this.api = axios.create({ baseURL });
+    ApiService.instance = this;
+  }
+
+  async userCreateAccount(userData) {
+    try {
+      const response = await this.api.post(`/Users`, userData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async userLogin(userData) {
+    try {
+      const response = await this.api.post(`/Users/Login`, userData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async chap2Calculation(userId, id = null, userInput) {
+    try {
+      const url = id ? `/Chap2/${userId}/${id}` : `/Chap2/${userId}`;
+      const response = await this.api.post(url, userInput);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async chap2GetCalculation(id) {
+    try {
+      const response = await this.api.get(`/Chap2/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async chap2UpdateDataAfterChoosingEngine(idCal, idEngine) {
+    try {
+      const response = await this.api.put(`/Chap2/${idCal}/${idEngine}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async chap3PreDataForChoosingGear(id, preData) {
+    try {
+      const response = await this.api.post(`/Chap3/${id}`, preData);
+      return response.data
+    } catch(error) {
+      throw error
+    }
   }
 }
 
-export async function userLogin(userData) {
-  try {
-    const response = await axios.post(`${URL}/Users/Login`, userData);
-    return response.data;
-  } catch(error) {
-    throw error;
-  }
-}
+// Singleton instance
+const apiService = new ApiService("http://localhost:3000");
 
-export async function chap2Calculation(userInput) {
-  try {
-    const response = await axios.post(`${URL}/Chap2`, userInput)
-    return response.data;
-  } catch(error) {
-    throw error;
-  }
-}
+export default apiService;

@@ -1,91 +1,210 @@
 const express = require('express')
 const database = require('./connect')
-const chap2Function = require('./chap2Function')
+const machineCalculator = require('./chap2Function')
+const { ObjectId } = require('mongodb');
 
 let chap2Routes = express.Router();
 
-chap2Routes.route('/Chap2').post(async (request, response) => {
-  let db = database.getDatabase();
-
+// Create new calculation data
+chap2Routes.route('/Chap2/:userId/:id?').post(async (request, response) => {
   let chap2Object = {
-    luc_vong_bang_tai: request.body.f,
-    van_toc_bang_tai: request.body.v,
-    duong_kinh_tang_dan: request.body.D,
-    thoi_gian_phuc_vu: request.body.L,
-    t1: request.body.t1,
-    t2: request.body.t2,
+    luc_vong_bang_tai: Number(request.body.f),
+    van_toc_bang_tai: Number(request.body.v),
+    duong_kinh_tang_dan: Number(request.body.D),
+    thoi_gian_phuc_vu: Number(request.body.L),
+    t1: Number(request.body.t1),
+    t2: Number(request.body.t2),
     T1: request.body.T1,
     T2: request.body.T2,
-    T1_T: request.body.T1_numeric,
-    T2_T: request.body.T2_numeric,
-    hieu_suat_noi_truc: request.body.nk,
-    hieu_suat_o_lan: request.body.nol,
-    hieu_suat_banh_rang: request.body.nbr,
-    hieu_suat_xich: request.body.nx,
-    ty_so_truyen_hop_giam_toc: request.body.uh,
-    ty_so_truyen_xich: request.body.ux,
-    ty_so_truyen_so_bo: request.body.usb
+    T1_T: Number(request.body.T1_numeric),
+    T2_T: Number(request.body.T2_numeric),
+    hieu_suat_noi_truc: Number(request.body.nk),
+    hieu_suat_o_lan: Number(request.body.nol),
+    hieu_suat_banh_rang: Number(request.body.nbr),
+    hieu_suat_xich: Number(request.body.nx),
+    ty_so_truyen_hop_giam_toc: Number(request.body.uh),
+    ty_so_truyen_xich: Number(request.body.ux),
+    ty_so_truyen_so_bo: Number(request.body.usb)
   }
 
-const cong_suat_truc_cong_tac = 
-  chap2Function.cong_suat_truc_cong_tac(chap2Object.luc_vong_bang_tai, chap2Object.van_toc_bang_tai);
+  chap2Object.cong_suat_truc_cong_tac = 
+    machineCalculator.cong_suat_truc_cong_tac(chap2Object.luc_vong_bang_tai, chap2Object.van_toc_bang_tai);
 
-const hieu_suat_chung = 
-  chap2Function.hieu_suat_chung(chap2Object.hieu_suat_noi_truc, chap2Object.hieu_suat_o_lan, chap2Object.hieu_suat_banh_rang, chap2Object.hieu_suat_xich);
+  chap2Object.hieu_suat_chung = 
+    machineCalculator.hieu_suat_chung(chap2Object.hieu_suat_noi_truc, chap2Object.hieu_suat_o_lan, chap2Object.hieu_suat_banh_rang, chap2Object.hieu_suat_xich);
 
-const cong_suat_tuong_duong_truc_cong_tac =
-  chap2Function.cong_suat_tuong_duong_truc_cong_tac(cong_suat_truc_cong_tac, chap2Object.T1_T, chap2Object.T2_T, chap2Object.t1, chap2Object.t2);
+  chap2Object.cong_suat_tuong_duong_truc_cong_tac =
+    machineCalculator.cong_suat_tuong_duong_truc_cong_tac(chap2Object.cong_suat_truc_cong_tac, chap2Object.T1_T, chap2Object.T2_T, chap2Object.t1, chap2Object.t2);
 
-const cong_suat_can_thiet_tren_truc_dong_co =
-  chap2Function.cong_suat_can_thiet_tren_truc_dong_co(cong_suat_tuong_duong_truc_cong_tac, hieu_suat_chung);
+  chap2Object.cong_suat_can_thiet_tren_truc_dong_co =
+    machineCalculator.cong_suat_can_thiet_tren_truc_dong_co(chap2Object.cong_suat_tuong_duong_truc_cong_tac, chap2Object.hieu_suat_chung);
 
-const so_vong_quay_truc_cong_tac = 
-  chap2Function.so_vong_quay_truc_cong_tac(chap2Object.van_toc_bang_tai, chap2Object.duong_kinh_tang_dan);
+  chap2Object.so_vong_quay_truc_cong_tac = 
+    machineCalculator.so_vong_quay_truc_cong_tac(chap2Object.van_toc_bang_tai, chap2Object.duong_kinh_tang_dan);
 
-const so_vong_quay_so_bo =
-  chap2Function.so_vong_quay_so_bo(so_vong_quay_truc_cong_tac, chap2Object.ty_so_truyen_so_bo);
+  chap2Object.so_vong_quay_so_bo =
+    machineCalculator.so_vong_quay_so_bo(chap2Object.so_vong_quay_truc_cong_tac, chap2Object.ty_so_truyen_so_bo);
+  
+  try {
+    let db = database.getDatabase();
+    await db.collection('EngineList').createIndex({ cong_suat: 1, van_toc_vong_quay: 1 });
 
-const ty_so_truyen_chung = chap2Function.ty_so_truyen_chung(730, so_vong_quay_truc_cong_tac);
+    let calculationHistoryId;
+    if(request.params.id) {
+      let chap2data = await db.collection('CalculationHistory').findOne({ _id: new ObjectId(request.params.id) });
+      if (chap2data) {
+        await db.collection('Chap2Calculation').updateOne(
+          { _id: new ObjectId(chap2data.Chap2ID) },
+          { $set: chap2Object }
+        );
+        calculationHistoryId = chap2data._id;
+      } else {
+        return response.status(404).json({ error: "Calculation history not found" });
+      }
+    } else {
+      let chap2data = await db.collection('Chap2Calculation').insertOne(chap2Object);
+      let calculationData = {
+        Chap2ID: chap2data.insertedId,
+        CreateDate: new Date()
+      };
+      let calculationHistory = await db.collection('CalculationHistory').insertOne(calculationData);
+      calculationHistoryId = calculationHistory.insertedId;
+    }
 
-const he_so_truyen_dong_xich = chap2Function.he_so_truyen_dong_xich(ty_so_truyen_chung, 3.08, 2.6);
+    const userId = new ObjectId(request.params.userId);
+    await db.collection('Users').updateOne(
+      { _id: userId }, 
+      { $push: { history: calculationHistoryId } }
+    );
 
-const Pbt = chap2Function.Pbt(cong_suat_truc_cong_tac, chap2Object.hieu_suat_o_lan);
+    let engines = await db.collection('EngineList')
+    .aggregate([
+      {
+        $match: {
+          cong_suat: { $gte: chap2Object.cong_suat_can_thiet_tren_truc_dong_co },
+          van_toc_vong_quay: { $gte: chap2Object.so_vong_quay_so_bo }
+        }
+      },
+      {
+        $addFields: {
+          diff: { $subtract: ["$cong_suat", chap2Object.cong_suat_can_thiet_tren_truc_dong_co] },
+          van_toc_diff: { $subtract: ["$van_toc_vong_quay", chap2Object.so_vong_quay_so_bo] }
+        }
+      },
+      { $sort: { diff: 1, van_toc_diff: 1 } },
+      { $limit: 3 }
+    ]).toArray();
+  
+    response.json({ message: 'Inserted successfully Chap2', _id: calculationHistoryId, engines: engines });
+  } catch(error) {
+    response.status(500).json({ error: error.message });
+  }
+})
 
-const P3 = chap2Function.P3(Pbt, chap2Object.hieu_suat_xich, chap2Object.hieu_suat_o_lan);
+// Retrieve calculation data by ID
+chap2Routes.route('/Chap2/:id').get(async (request, response) => {
+  try {
+    let db = database.getDatabase();
+    let CalculationData = await db.collection('CalculationHistory').findOne({_id: new ObjectId(request.params.id)});
+    if (!CalculationData) return response.status(404).json({ error: 'Item not found' });
 
-const P2 = chap2Function.P2(P3, chap2Object.hieu_suat_banh_rang, chap2Object.hieu_suat_o_lan);
+    let data = await db.collection('Chap2Calculation').findOne({_id: new ObjectId(CalculationData.Chap2ID)});
+    if (!data) return response.status(404).json({ error: 'Item not found' });
 
-const P1 = chap2Function.P1(P2, chap2Object.hieu_suat_banh_rang, chap2Object.hieu_suat_o_lan);
+    response.json(data);
+  } catch(error) {
+    response.status(500).json({ error: error.message });
+  }
+})
 
-const Pm = chap2Function.Pm(P1, chap2Object.hieu_suat_noi_truc);
+// Update more calculation result
+chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
+  try {
+    let db = database.getDatabase();
+    let calculationHistory = await db.collection('CalculationHistory').findOne({_id: new ObjectId(request.params.idCal)});
+    if (!calculationHistory) return response.status(404).json({ error: 'Item not found' });
 
-const n2 =chap2Function.n2(730, 3.08);
+    let calculationData = await db.collection('Chap2Calculation').findOne({_id: new ObjectId(calculationHistory.Chap2ID)});
+    if (!calculationData) return response.status(404).json({ error: 'Item not found' });
 
-const n3 = chap2Function.n3(n2, 2.6);
+    let engineData = await db.collection('EngineList').findOne({_id: new ObjectId(request.params.idEngine)});
+    if (!engineData) return response.status(400).json({error: 'Item not found' });
 
-const nbt = chap2Function.nbt(n3, he_so_truyen_dong_xich);
+    const ty_so_truyen_chung = machineCalculator.ty_so_truyen_chung(engineData.van_toc_vong_quay, calculationData.so_vong_quay_truc_cong_tac);
 
-const T1_ti_so_truyen = chap2Function.T1_ti_so_truyen(P1, 730);
+    const he_so_truyen_cap_nhanh = machineCalculator.he_so_truyen_cap_nhanh(calculationData.ty_so_truyen_hop_giam_toc);
 
-const T2_ti_so_truyen = chap2Function.T2_ti_so_truyen(P2, n2);
+    const he_so_truyen_cap_cham = machineCalculator.he_so_truyen_cap_cham(calculationData.ty_so_truyen_hop_giam_toc);
 
-const T3_ti_so_truyen = chap2Function.T3_ti_so_truyen(P3,n3);
+    const he_so_truyen_dong_xich = machineCalculator.he_so_truyen_dong_xich(ty_so_truyen_chung, he_so_truyen_cap_nhanh, he_so_truyen_cap_cham);
 
-const Tbt_ti_so_truyen = chap2Function.Tbt_ti_so_truyen(Pbt,nbt);
+    const Pbt = machineCalculator.Pbt(calculationData.cong_suat_truc_cong_tac, calculationData.hieu_suat_o_lan);
 
-console.log(
-  cong_suat_truc_cong_tac,
-  hieu_suat_chung,
-  cong_suat_tuong_duong_truc_cong_tac,
-  cong_suat_can_thiet_tren_truc_dong_co,
-  so_vong_quay_truc_cong_tac,
-  so_vong_quay_so_bo,
-  ty_so_truyen_chung,
-  he_so_truyen_dong_xich,
-  Pbt, P3, P2, P1, Pm,
-  n2, n3, nbt,
-  T1_ti_so_truyen, T2_ti_so_truyen, T3_ti_so_truyen, Tbt_ti_so_truyen, 
-);
+    const P3 = machineCalculator.P3(Pbt, calculationData.hieu_suat_xich, calculationData.hieu_suat_o_lan);
+
+    const P2 = machineCalculator.P2(P3, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
+
+    const P1 = machineCalculator.P1(P2, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
+
+    const Pm = machineCalculator.Pm(P1, calculationData.hieu_suat_noi_truc);
+
+    const ndc = machineCalculator.ndc(engineData.van_toc_vong_quay);
+
+    const n1 = machineCalculator.n1(engineData.van_toc_vong_quay);
+
+    const n2 = machineCalculator.n2(n1, he_so_truyen_cap_nhanh);
+
+    const n3 = machineCalculator.n3(n2, he_so_truyen_cap_cham);
+
+    const nbt = machineCalculator.nbt(n3, he_so_truyen_dong_xich);
+
+    const T1_ti_so_truyen = machineCalculator.T1_ti_so_truyen(P1, engineData.van_toc_vong_quay);
+
+    const Tm = machineCalculator.Tm(T1_ti_so_truyen);
+
+    const T2_ti_so_truyen = machineCalculator.T2_ti_so_truyen(P2, n2);
+
+    const T3_ti_so_truyen = machineCalculator.T3_ti_so_truyen(P3, n3);
+
+    const Tbt_ti_so_truyen = machineCalculator.Tbt_ti_so_truyen(Pbt,nbt);
+
+    const updateData = {
+      ty_so_truyen_chung: ty_so_truyen_chung,
+      he_so_truyen_cap_nhanh: he_so_truyen_cap_nhanh,
+      he_so_truyen_cap_cham: he_so_truyen_cap_cham,
+      he_so_truyen_dong_xich: he_so_truyen_dong_xich,
+      Pbt: Pbt,
+      P3: P3,
+      P2: P2,
+      P1: P1,
+      Pm: Pm,
+      ndc: ndc,
+      n1: n1,
+      n2: n2,
+      n3: n3,
+      nbt: nbt,
+      T1_ti_so_truyen: T1_ti_so_truyen,
+      Tm: Tm,
+      T2_ti_so_truyen: T2_ti_so_truyen,
+      T3_ti_so_truyen: T3_ti_so_truyen,
+      Tbt_ti_so_truyen: Tbt_ti_so_truyen
+    }
+
+    const updateCalculationHistory = await db.collection('CalculationHistory').updateOne(
+      {_id: new ObjectId(request.params.idCal)},
+      { $set: {engineID: new ObjectId(request.params.idEngine)}}
+    )
+
+    const result = await db.collection('Chap2Calculation').updateOne(
+      {_id: new ObjectId(calculationData._id)},
+      { $set: updateData}
+    );
+    if(result.matchedCount === 0)
+      return response.status(404).json({error: "Item not found"});
+    response.json({message: 'Item updated successfully'});
+  } catch(error) {
+    response.status(500).json({error: error.message});
+  }
 })
 
 module.exports = chap2Routes;

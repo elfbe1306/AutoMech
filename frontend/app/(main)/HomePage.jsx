@@ -21,7 +21,13 @@ const HomePage = () => {
       }
     };
 
+    const clearStorage = async () => {
+      await AsyncStorage.removeItem('EngineSelect');
+      await AsyncStorage.removeItem('CalculateID');
+    }
+
     fetchUserId();
+    clearStorage();
   }, []);
 
   function handleCalculatePage() {
@@ -69,5 +75,7 @@ const styles = StyleSheet.create({
   },
   TextButton: {
     fontFamily: 'quicksand-bold',
+    color:'rgb(33,53,85)',
+    fontSize: 14
   }
 })

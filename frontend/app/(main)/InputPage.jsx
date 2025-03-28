@@ -1,23 +1,51 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native'
-import axios from 'axios'
-import { useState } from 'react'
-import { chap2Calculation } from '../../api'
+import { useEffect, useState } from 'react'
+import apiService from '../../api'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { router } from 'expo-router'
 
 const InputPage = () => {
-  const [f, setF] = useState(0);
-  const [v, setV] = useState(0);
-  const [D, setD] = useState(0);
-  const [L, setL] = useState(0);
-  const [t1, setT1] = useState(0);
-  const [t2, setT2] = useState(0);
-  const [T1, setT1M] = useState(0);
-  const [T2, setT2M] = useState(0);
-  const [nk, setNk] = useState(0);
-  const [nol, setNol] = useState(0);
-  const [nbr, setNbr] = useState(0);
-  const [nx, setNx] = useState(0);
-  const [uh, setUh] = useState(0);
-  const [ux, setUx] = useState(0);
+  const [f, setF] = useState(6000);
+  const [v, setV] = useState(1.5);
+  const [D, setD] = useState(650);
+  const [L, setL] = useState(10);
+  const [t1, setT1] = useState(45);
+  const [t2, setT2] = useState(30);
+  const [T1, setT1M] = useState('T');
+  const [T2, setT2M] = useState('0.8T');
+  const [nk, setNk] = useState(1);
+  const [nol, setNol] = useState(0.993);
+  const [nbr, setNbr] = useState(0.97);
+  const [nx, setNx] = useState(0.91);
+  const [uh, setUh] = useState(8);
+  const [ux, setUx] = useState(2);
+  const [userID, setUserID] = useState("")
+
+  const inputName = ["F(N)", "v(m/s)", "D(mm)", "L(năm)", "t1(giây)", "t2(giây)", "T1\n(momem xoắn)", 
+    "T2\n(momem xoắn)", "Hiệu suất nối trục", "Hiệu suất ổ lăn\n(0.99 - 0.995)", 
+    "Hiệu suất bánh răng\n(0.96 - 0.98)", "Hiệu suất xích\n(0.90 - 0.93)", 
+    "Tỷ số truyền\nhộp giảm tốc (8 - 40)", "Tỷ số truyền\nxích (2 - 5)"]
+
+  const inputFunc = [setF, setV, setD, setL, setT1, setT2, setT1M, setT2M, setNk, setNol, setNbr, setNx, setUh, setUx]
+
+  const inputValues = [f, v, D, L, t1, t2, T1, T2, nk, nol, nbr, nx, uh, ux];
+
+  useEffect(() => {
+    const fetchUserID = async () => {
+      try {
+        const storedUserID = await AsyncStorage.getItem("userID");
+        if(storedUserID) {
+          setUserID(storedUserID);
+        } else {
+          console.log("UserId no found in AsyncStorage");
+        }
+      } catch(error) {
+        console.error("Error fetching userID:", error);
+      }
+    }
+
+    fetchUserID();
+  }, [])
 
   const handleSubmit = async () => {
     if(f < 0) {
@@ -89,8 +117,16 @@ const InputPage = () => {
     }
 
     try {
-      let response = await chap2Calculation(inputObject);
-      console.log("Data sent successfully:", response.data);
+      const CalculateId = await AsyncStorage.getItem("CalculateID");
+      const response = await apiService.chap2Calculation(userID, JSON.parse(CalculateId), inputObject);
+
+      await AsyncStorage.multiSet([
+        ["EngineSelect", JSON.stringify(response.engines)],
+        ["CalculateID", JSON.stringify(response._id)]
+      ]);
+
+      console.log("Inserted:", response);
+      router.push('/EngineSelectPage');
     } catch(error) {
       alert(error.response.data.message);
     }
@@ -99,87 +135,25 @@ const InputPage = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tính toán chọn chi tiết máy</Text>
+      <Text style={styles.title}>TÍNH TOÁN{'\n'}CHỌN CHI TIẾT MÁY</Text>
       <ScrollView style={styles.inputContainer}>
         <Text style={styles.inputContainerTitle}>Hãy nhập các thông số đầu vào</Text>
-        <View style={styles.inputFieldContainer}>
-          <Text>F(N)</Text>
-          <TextInput style={styles.input} value={f} onChangeText={setF} />
+        <View style={styles.displayinputComponent}>
+          {inputName.map((name, index) => (
+            <View style={styles.inputComponent} key={index}>
+              <Text style={styles.inputField}>{name}</Text>
+              <TextInput 
+                style={styles.input} 
+                value={inputValues[index].toString()} 
+                onChangeText={(text) => inputFunc[index](text)}
+              />
+            </View>
+          ))}
         </View>
-        <View style={styles.inputFieldContainer}>
-          <Text>v(m/s)</Text>
-          <TextInput style={styles.input} value={v} onChangeText={setV} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <Text>D(mm)</Text>
-          <TextInput style={styles.input} value={D} onChangeText={setD} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <Text>L(năm)</Text>
-          <TextInput style={styles.input} value={L} onChangeText={setL} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <Text>t1(giây)</Text>
-          <TextInput style={styles.input} value={t1} onChangeText={setT1} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <Text>t2(giây)</Text>
-          <TextInput style={styles.input} value={t2} onChangeText={setT2} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <Text>T1(momem xoắn)</Text>
-          <TextInput style={styles.input} value={T1} onChangeText={setT1M} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <Text>T2(momem xoắn)</Text>
-          <TextInput style={styles.input} value={T2} onChangeText={setT2M} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <View>
-            <Text>Hiệu suất</Text>
-            <Text>nối trục (1)</Text>
-          </View>
-          <TextInput style={styles.input} value={nk} onChangeText={setNk} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <View>
-            <Text>Hiệu suất</Text>
-            <Text>ổ lăn (0.99 - 0.995)</Text>
-          </View>
-          <TextInput style={styles.input} value={nol} onChangeText={setNol} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <View>
-            <Text>Hiệu suất</Text>
-            <Text>bánh răng (0.96 - 0.98)</Text>
-          </View>
-          <TextInput style={styles.input} value={nbr} onChangeText={setNbr} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <View>
-            <Text>Hiệu suất</Text>
-            <Text>xích (0.90 - 0.93)</Text>
-          </View>
-          <TextInput style={styles.input} value={nx} onChangeText={setNx} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <View>
-            <Text>Tỷ số truyền</Text>
-            <Text>hộp giảm tốc (8 - 40)</Text>
-          </View>
-          <TextInput style={styles.input} value={uh} onChangeText={setUh} />
-        </View>
-        <View style={styles.inputFieldContainer}>
-          <View>
-            <Text>Tỷ số truyền</Text>
-            <Text>xích (2 - 5)</Text>
-          </View>
-          <TextInput style={styles.input} value={ux} onChangeText={setUx} />
-        </View>
-        <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit}>
-          <Text style={styles.doMathButtonText}>Tính</Text>
-        </TouchableOpacity>
       </ScrollView>
+      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit}>
+          <Text style={styles.doMathButtonText}>Tính toán</Text>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -190,50 +164,68 @@ const styles = StyleSheet.create({
   container: {
     marginLeft: 'auto',
     marginRight: 'auto',
-    marginTop: '30%',
+    marginTop: '14%',
   },
+
   title: {
     fontFamily: 'quicksand-bold',
     fontSize: 20,
     textAlign: 'center',
-    marginBottom: 20
+    padding: 10,
+    color:'rgb(33,53,85)',
   },
+
   inputContainer: {
     width: 350,
     backgroundColor: '#DBE2EC',
-    padding: 20,
+    paddingVertical: 10,
+    paddingHorizontal:20,
     borderRadius: 15,
-    marginBottom: 100
-  },
-  inputFieldContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 25
+    height: '80%',
   },
   inputContainerTitle: {
     fontFamily: 'quicksand-semibold',
     fontSize: 16,
-    marginBottom: 20,
-    textAlign: 'center',
-    color: 'rgb(58, 65, 99)'
+    marginBottom: 15,
+    color: 'rgb(58, 65, 99)',
+    fontFamily: 'quicksand-bold',
+  },
+  displayinputComponent: {
+    display: 'flex',
+    flexDirection:'column',
+  },
+  inputComponent: {
+    display:'flex',
+    flexDirection:'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 10
+  },
+  inputField: {
+    color: 'rgb(58, 65, 99)',
+    fontFamily: 'quicksand-bold',
+    fontSize: 14,
   },
   input: {
-    borderColor: 'black',
+    borderColor: '#213555',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     padding: 5,
-    flexGrow: 1,
-    marginLeft: 20
+    shadowOffset: {width:0, height:4,},
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    width:140,
+    backgroundColor: '#F8FAFC',
   },
   doMathButton: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginTop: 15,
     padding: 10,
     backgroundColor: 'rgb(33,53,85)',
+    borderRadius: 10,
+    marginBottom:5
   },
   doMathButtonText: {
     color: 'white',

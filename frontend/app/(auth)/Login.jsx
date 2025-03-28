@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { useRouter } from 'expo-router'
-import { userLogin } from '../../api'
+import apiService from '../../api'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
@@ -27,7 +27,7 @@ const Login = () => {
     }
 
     try {
-      let response = await userLogin(user);
+      let response = await apiService.userLogin(user);
       console.log("User Login:", response);
       await AsyncStorage.setItem("userID", response.userId);
       router.replace('/(main)/HomePage');
