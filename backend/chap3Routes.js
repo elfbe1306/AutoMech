@@ -18,6 +18,8 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
 
     const Z2 = machineCalculator.Z2(Chap2Data.he_so_truyen_dong_xich, Z1);
 
+    const d1 = machineCalculator.d1(50.8, 25)
+
     //Buoc 3 - Tao bien de luu gia tri tinh toan
 
 
@@ -30,7 +32,8 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
       kd: request.body.kd,
       kbt: request.body.kbt,
       Z1: Z1,
-      Z2: Z2
+      Z2: Z2,
+      d1: d1,
     }
 
     // Buoc 4 - In ra man hinh kiem tra tinh toan
@@ -39,6 +42,7 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
       request.body, // Lấy biến (hệ số chương 3) ở trong đối tượng này
       Z1, 
       Z2,
+      d1,
 
     );
 

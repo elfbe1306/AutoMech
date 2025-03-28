@@ -17,6 +17,11 @@ const Chap3Calculator = () => {
     return roundToOdd(result);
   };
 
+  const d1 =(p,d2) => {
+    let result = (Number(p)/(Math.sin(PI/d2)));
+    return Number(result.toFixed(12));
+  }
+
   //Buoc 1 - Them ham tinh toan
 
 
@@ -24,6 +29,7 @@ const Chap3Calculator = () => {
   return {
     Z1,
     Z2,
+    d1,
   }
 }
 
