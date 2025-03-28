@@ -6,7 +6,7 @@ const { ObjectId } = require('mongodb');
 let chap2Routes = express.Router();
 
 // Create new calculation data
-chap2Routes.route('/Chap2').post(async (request, response) => {
+chap2Routes.route('/Chap2/:userId/:id?').post(async (request, response) => {
   let chap2Object = {
     luc_vong_bang_tai: Number(request.body.f),
     van_toc_bang_tai: Number(request.body.v),
@@ -49,13 +49,32 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
     let db = database.getDatabase();
     await db.collection('EngineList').createIndex({ cong_suat: 1, van_toc_vong_quay: 1 });
 
-    let data = await db.collection('UserInput').insertOne(chap2Object);
-    let insertedId = data.insertedId;
+    let calculationHistoryId;
+    if(request.params.id) {
+      let chap2data = await db.collection('CalculationHistory').findOne({ _id: new ObjectId(request.params.id) });
+      if (chap2data) {
+        await db.collection('Chap2Calculation').updateOne(
+          { _id: new ObjectId(chap2data.Chap2ID) },
+          { $set: chap2Object }
+        );
+        calculationHistoryId = chap2data._id;
+      } else {
+        return response.status(404).json({ error: "Calculation history not found" });
+      }
+    } else {
+      let chap2data = await db.collection('Chap2Calculation').insertOne(chap2Object);
+      let calculationData = {
+        Chap2ID: chap2data.insertedId,
+        CreateDate: new Date()
+      };
+      let calculationHistory = await db.collection('CalculationHistory').insertOne(calculationData);
+      calculationHistoryId = calculationHistory.insertedId;
+    }
 
-    const userId = new ObjectId(request.body.userID);
+    const userId = new ObjectId(request.params.userId);
     await db.collection('Users').updateOne(
       { _id: userId }, 
-      { $push: { history: insertedId } }
+      { $push: { history: calculationHistoryId } }
     );
 
     let engines = await db.collection('EngineList')
@@ -63,44 +82,20 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
       {
         $match: {
           cong_suat: { $gte: chap2Object.cong_suat_can_thiet_tren_truc_dong_co },
-          van_toc_vong_quay: {
-            $gte: chap2Object.so_vong_quay_so_bo * 0.7,
-            $lte: chap2Object.so_vong_quay_so_bo * 1.3
-          }
+          van_toc_vong_quay: { $gte: chap2Object.so_vong_quay_so_bo }
         }
       },
       {
         $addFields: {
-          cong_suat_diff: { $subtract: ["$cong_suat", chap2Object.cong_suat_can_thiet_tren_truc_dong_co] },
-          van_toc_diff: { $abs: { $subtract: ["$van_toc_vong_quay", chap2Object.so_vong_quay_so_bo] } }
+          diff: { $subtract: ["$cong_suat", chap2Object.cong_suat_can_thiet_tren_truc_dong_co] },
+          van_toc_diff: { $subtract: ["$van_toc_vong_quay", chap2Object.so_vong_quay_so_bo] }
         }
       },
-      { 
-        $sort: { 
-          cong_suat_diff: 1, 
-          van_toc_diff: 1 
-        } 
-      },
+      { $sort: { diff: 1, van_toc_diff: 1 } },
       { $limit: 3 }
     ]).toArray();
-
-    // let engines = await db.collection('EngineList')
-    // .aggregate([
-    //   {
-    //     $match: {
-    //       cong_suat: { $gte: chap2Object.cong_suat_can_thiet_tren_truc_dong_co }
-    //     }
-    //   },
-    //   {
-    //     $addFields: {
-    //       diff: { $subtract: ["$cong_suat", chap2Object.cong_suat_can_thiet_tren_truc_dong_co] }
-    //     }
-    //   },
-    //   { $sort: { diff: 1, van_toc_vong_quay: 1 } },
-    //   { $limit: 3 }
-    // ]).toArray();
   
-    response.json({ message: 'Inserted successfully Chap2', _id: data.insertedId, engines: engines });
+    response.json({ message: 'Inserted successfully Chap2', _id: calculationHistoryId, engines: engines });
   } catch(error) {
     response.status(500).json({ error: error.message });
   }
@@ -110,7 +105,10 @@ chap2Routes.route('/Chap2').post(async (request, response) => {
 chap2Routes.route('/Chap2/:id').get(async (request, response) => {
   try {
     let db = database.getDatabase();
-    let data = await db.collection('UserInput').findOne({_id: new ObjectId(request.params.id)});
+    let CalculationData = await db.collection('CalculationHistory').findOne({_id: new ObjectId(request.params.id)});
+    if (!CalculationData) return response.status(404).json({ error: 'Item not found' });
+
+    let data = await db.collection('Chap2Calculation').findOne({_id: new ObjectId(CalculationData.Chap2ID)});
     if (!data) return response.status(404).json({ error: 'Item not found' });
 
     response.json(data);
@@ -123,7 +121,10 @@ chap2Routes.route('/Chap2/:id').get(async (request, response) => {
 chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
   try {
     let db = database.getDatabase();
-    let calculationData = await db.collection('UserInput').findOne({_id: new ObjectId(request.params.idCal)});
+    let calculationHistory = await db.collection('CalculationHistory').findOne({_id: new ObjectId(request.params.idCal)});
+    if (!calculationHistory) return response.status(404).json({ error: 'Item not found' });
+
+    let calculationData = await db.collection('Chap2Calculation').findOne({_id: new ObjectId(calculationHistory.Chap2ID)});
     if (!calculationData) return response.status(404).json({ error: 'Item not found' });
 
     let engineData = await db.collection('EngineList').findOne({_id: new ObjectId(request.params.idEngine)});
@@ -137,36 +138,70 @@ chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
 
     const he_so_truyen_dong_xich = machineCalculator.he_so_truyen_dong_xich(ty_so_truyen_chung, he_so_truyen_cap_nhanh, he_so_truyen_cap_cham);
 
-    // code thêm ở đây nha quin - khuê
+    const Pbt = machineCalculator.Pbt(calculationData.cong_suat_truc_cong_tac, calculationData.hieu_suat_o_lan);
+
+    const P3 = machineCalculator.P3(Pbt, calculationData.hieu_suat_xich, calculationData.hieu_suat_o_lan);
+
+    const P2 = machineCalculator.P2(P3, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
+
+    const P1 = machineCalculator.P1(P2, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
+
+    const Pm = machineCalculator.Pm(P1, calculationData.hieu_suat_noi_truc);
+
+    const ndc = machineCalculator.ndc(engineData.van_toc_vong_quay);
+
+    const n1 = machineCalculator.n1(engineData.van_toc_vong_quay);
+
+    const n2 = machineCalculator.n2(n1, he_so_truyen_cap_nhanh);
+
+    const n3 = machineCalculator.n3(n2, he_so_truyen_cap_cham);
+
+    const nbt = machineCalculator.nbt(n3, he_so_truyen_dong_xich);
+
+    const T1_ti_so_truyen = machineCalculator.T1_ti_so_truyen(P1, engineData.van_toc_vong_quay);
+
+    const Tm = machineCalculator.Tm(T1_ti_so_truyen);
+
+    const T2_ti_so_truyen = machineCalculator.T2_ti_so_truyen(P2, n2);
+
+    const T3_ti_so_truyen = machineCalculator.T3_ti_so_truyen(P3, n3);
+
+    const Tbt_ti_so_truyen = machineCalculator.Tbt_ti_so_truyen(Pbt,nbt);
 
     const updateData = {
       ty_so_truyen_chung: ty_so_truyen_chung,
       he_so_truyen_cap_nhanh: he_so_truyen_cap_nhanh,
       he_so_truyen_cap_cham: he_so_truyen_cap_cham,
-      he_so_truyen_dong_xich: he_so_truyen_dong_xich
-      // tính xong nhớ truyền biến vô đây để lưu database
+      he_so_truyen_dong_xich: he_so_truyen_dong_xich,
+      Pbt: Pbt,
+      P3: P3,
+      P2: P2,
+      P1: P1,
+      Pm: Pm,
+      ndc: ndc,
+      n1: n1,
+      n2: n2,
+      n3: n3,
+      nbt: nbt,
+      T1_ti_so_truyen: T1_ti_so_truyen,
+      Tm: Tm,
+      T2_ti_so_truyen: T2_ti_so_truyen,
+      T3_ti_so_truyen: T3_ti_so_truyen,
+      Tbt_ti_so_truyen: Tbt_ti_so_truyen
     }
 
-    // console dùng để debug - 
-    // console.log calculationData và engineData để thấy các biến trong object và lấy ra sử dụng
-    console.log(calculationData, 
-      engineData, 
-      ty_so_truyen_chung,
-      he_so_truyen_cap_nhanh,
-      he_so_truyen_cap_cham,
-      he_so_truyen_dong_xich,
+    const updateCalculationHistory = await db.collection('CalculationHistory').updateOne(
+      {_id: new ObjectId(request.params.idCal)},
+      { $set: {engineID: new ObjectId(request.params.idEngine)}}
+    )
+
+    const result = await db.collection('Chap2Calculation').updateOne(
+      {_id: new ObjectId(calculationData._id)},
+      { $set: updateData}
     );
-
-    // Khuê code xong phần tính toán thì uncomment đạo code ở dưới, khởi động lại backend
-    // Đồng thời qua trang EngineSelectPage uncomment rồi chạy lại 
-
-    // const result = await db.collection('UserInput').updateOne(
-    //   {_id: new ObjectId(request.params.idCal)},
-    //   { $set: updateData}
-    // );
-    // if(result.matchedCount === 0)
-    //   return response.status(404).json({error: "Item not found"});
-    // response.json({message: 'Item updated successfully'});
+    if(result.matchedCount === 0)
+      return response.status(404).json({error: "Item not found"});
+    response.json({message: 'Item updated successfully'});
   } catch(error) {
     response.status(500).json({error: error.message});
   }

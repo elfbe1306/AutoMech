@@ -29,9 +29,10 @@ class ApiService {
     }
   }
 
-  async chap2Calculation(userInput) {
+  async chap2Calculation(userId, id = null, userInput) {
     try {
-      const response = await this.api.post(`/Chap2`, userInput);
+      const url = id ? `/Chap2/${userId}/${id}` : `/Chap2/${userId}`;
+      const response = await this.api.post(url, userInput);
       return response.data;
     } catch (error) {
       throw error;
@@ -53,6 +54,15 @@ class ApiService {
       return response.data;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async chap3PreDataForChoosingGear(id, preData) {
+    try {
+      const response = await this.api.post(`/Chap3/${id}`, preData);
+      return response.data
+    } catch(error) {
+      throw error
     }
   }
 }

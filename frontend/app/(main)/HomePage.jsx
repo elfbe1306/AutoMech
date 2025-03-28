@@ -21,7 +21,13 @@ const HomePage = () => {
       }
     };
 
+    const clearStorage = async () => {
+      await AsyncStorage.removeItem('EngineSelect');
+      await AsyncStorage.removeItem('CalculateID');
+    }
+
     fetchUserId();
+    clearStorage();
   }, []);
 
   function handleCalculatePage() {

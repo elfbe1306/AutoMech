@@ -73,9 +73,7 @@ const EngineSelectPage = () => {
     try {
       let response = await apiService.chap2UpdateDataAfterChoosingEngine(calculateID, selectedEngineId)
       console.log("Inserted Engine Data:", response.message);
-
-      // Uncomment này nè khuê
-      // router.push('/DisplayChap2Page');
+      router.push('/Chapter3Page');
     } catch(error) {
       alert(error.response.message);
     }
