@@ -185,4 +185,3 @@ const Chap2Calculator = () => {
 const machineCalculator = Chap2Calculator();
 
 module.exports = machineCalculator;
-
