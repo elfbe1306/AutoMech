@@ -22,6 +22,11 @@ const Chap3Calculator = () => {
     return Math.round(result);
   };
 
+  const d1 =(p,d2) => {
+    let result = (Number(p)/(Math.sin(PI/d2)));
+    return Number(result.toFixed(12));
+  }
+
   //Buoc 1 - Them ham tinh toan
   const kz = (Z1) => {
     let result = Number(Z01) / Number(Z1);
@@ -214,7 +219,8 @@ const he_so_an_toan = (Q, kd, Ft, F0, Fv) =>{
     tai_trong_pha_hong,
     khoi_luong_1m_xich,
     v, Ft, Fv, F0, 
-    he_so_an_toan
+    he_so_an_toan,
+    d1
   }
 }
 
