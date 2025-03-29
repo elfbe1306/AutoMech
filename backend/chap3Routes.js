@@ -60,10 +60,31 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
 
     const s = machineCalculator.he_so_an_toan(Q, request.body.kd, Ft, F0, Fv);
 
+    const d1 = machineCalculator.d1(p,Z01);
 
+    const d2 = machineCalculator.d2(p,Z2);
 
+    const da1 = machineCalculator.da1 (p,Z01);
 
+    const da2 = machineCalculator.da1 (p,Z2);
 
+    const d1_chon_bang = machineCalculator.d1_chon_bang (p);
+
+    const r = machineCalculator.r(d1_chon_bang);
+
+    const df1 = machineCalculator.df1(d1, r);
+
+    const df2 = machineCalculator.df2(d2,r);
+
+    const Fvd = machineCalculator.Fvd (Chap2Data.n3, p);
+
+    const A_dt = machineCalculator.A_dt(p);
+
+    const Fr =machineCalculator.Fr (Ft);
+
+    const oH1 = machineCalculator.oH1 (request.body.kd,Ft, Fvd, A_dt)
+
+    const oH2 = machineCalculator.oH2(request.body.kd,Ft, Fvd, A_dt)
     // Buoc 5 - Luu du lieu database
     const Chap3Object = {
       k0: request.body.k0,
@@ -93,7 +114,20 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
       Ft: Ft,
       Fv: Fv,
       F0: F0,
-      s: s
+      s: s,
+      d1: d1,
+      d2: d2,
+      da1: da1,
+      da2: da2,
+      d1_chon_bang: d1_chon_bang,
+      r: r,
+      df1: df1,
+      df2: df2,
+      Fvd:Fvd,
+      A_dt:A_dt,
+      Fr:Fr,
+      oH1: oH1,
+      oH2: oH2
     }
 
     // Buoc 4 - In ra man hinh kiem tra tinh toan
@@ -105,8 +139,12 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
       // kz, kn, k, Pt, p,
       // khoang_cach_truc,
       // x, a_star, delta_a, a, i,
-      Q, q, v, Ft, Fv, F0, s
-
+      Q, q, v, Ft, Fv, F0, s,
+      d1, d2, da1, da2,
+      d1_chon_bang,
+      r, df1, df2,
+      Fvd, A_dt, Fr,
+      oH1, oH2
     );
 
   } catch(error) {
