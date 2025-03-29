@@ -25,11 +25,6 @@ const Chap3Calculator = () => {
     return Math.round(result);
   };
 
-  const d1 =(p,d2) => {
-    let result = (Number(p)/(Math.sin(PI/d2)));
-    return Number(result.toFixed(12));
-  }
-
   //Buoc 1 - Them ham tinh toan
   const kz = (Z1) => {
     let result = Number(Z01) / Number(Z1);

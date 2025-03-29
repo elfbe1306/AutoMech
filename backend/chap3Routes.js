@@ -21,8 +21,6 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
 
     const Z2 = machineCalculator.Z2(Chap2Data.he_so_truyen_dong_xich, Z1);
 
-    const d1 = machineCalculator.d1(50.8, 25)
-
     //Buoc 3 - Tao bien de luu gia tri tinh toan
     const kz = machineCalculator.kz(Z01);
 
