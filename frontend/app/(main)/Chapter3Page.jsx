@@ -11,9 +11,12 @@ const Chapter3Page = () => {
 
   const [calculateID, setCalculateID] = useState("");
   const [n01, setN01] = useState(200);
+  const [Da, setDa] = useState(0.003);
+  const [kr1, setKr1] = useState(0.42);
+  const [kr2, setKr2] = useState(0.24);
 
   const Chap3PreData = {
-    k0: 1, ka: 1, kdc: 1.1, kc: 1.25, kd: 1.2, kbt: 1.3, z01: 25, n01: n01
+    k0: 1, ka: 1, kdc: 1.1, kc: 1.25, kd: 1.2, kbt: 1.3, z01: 25, n01: n01, Da: Da, kr1: kr1, kr2: kr2
   }
 
   useEffect(() => {

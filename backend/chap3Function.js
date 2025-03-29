@@ -1,8 +1,11 @@
-const { P3 } = require("./chap2Function");
+const { P3, n3 } = require("./chap2Function");
 
 const PI = 3.141592653589;
 const Z01 = 25;
 const kf = 1;
+
+const kr1 = 0.42;
+const kr2 = 0.24;
 
 
 // Factory Pattern
@@ -21,11 +24,6 @@ const Chap3Calculator = () => {
     let result = Number(ux) * Number(z1);
     return Math.round(result);
   };
-
-  const d1 =(p,d2) => {
-    let result = (Number(p)/(Math.sin(PI/d2)));
-    return Number(result.toFixed(12));
-  }
 
   //Buoc 1 - Them ham tinh toan
   const kz = (Z1) => {
@@ -202,8 +200,103 @@ const he_so_an_toan = (Q, kd, Ft, F0, Fv) =>{
   return result;
 }
 
+const d1 = (p, Z01) => {
+  let result = (Number(p)/Math.sin(PI/Z01));
+  return Number(result.toFixed(12));
+}
 
-  // Buoc 2 - Tra ham tinh toan để có thể gọi ở route
+const d2 = (p, Z2) => {
+  let result = (Number(p)/Math.sin(PI/Z2));
+  return Number(result.toFixed(12));
+}
+
+const da1 = (p, Z01) => {
+  let result = Number(p)* (0.5 + (1/Math.tan(PI/Z01)));
+  return Number(result.toFixed(12));
+}
+
+const da2 = (p, Z2) => {
+  let result = Number(p)* (0.5 + (1/Math.tan(PI/Z2)));
+  return Number(result.toFixed(12));
+}
+
+const d1_chon_bang = (p) => {
+  const table = [
+    { p: 8,     d1_chon_bang: 5.0 },
+    { p: 9.525, d1_chon_bang: 6.35 },
+    { p: 12.7,  d1_chon_bang: 7.75 },
+    { p: 12.7,  d1_chon_bang: 7.75 },
+    { p: 12.7,  d1_chon_bang: 8.51 },
+    { p: 12.7,  d1_chon_bang: 8.51 },
+    { p: 15.875, d1_chon_bang: 10.16 },
+    { p: 15.875, d1_chon_bang: 10.16 },
+    { p: 19.05,  d1_chon_bang: 11.91},
+    { p: 25.4,   d1_chon_bang: 15.88 },
+    { p: 31.75,  d1_chon_bang: 19.05 },
+    { p: 38.1,   d1_chon_bang: 22.23 },
+    { p: 44.45,  d1_chon_bang: 25.70 },
+    { p: 50.8,   d1_chon_bang: 28.58 },
+    { p: 63.5,   d1_chon_bang: 39.68 }
+  ];
+  const row = table.find(entry => entry.p === p);
+  return row.d1_chon_bang;
+}
+
+const r = (d1_chon_bang) => {
+  let result = 0.5025*Number(d1_chon_bang) + 0.05;
+  return Number(result.toFixed(12));
+}
+
+const df1 = (d1, r) => {
+  let result = Number(d1) - 2*Number(r);
+  return Number(result.toFixed(12));
+}
+
+const df2 = (d2, r) => {
+  let result = Number(d2) - 2*Number(r);
+  return Number(result.toFixed(12));
+}
+
+const Fvd = (n3, p) => {
+  let result = 13*Math.pow(10,-7)*Number(n3)*Math.pow(Number(p),3) *1;
+  return Number(result.toFixed(12));
+}
+
+const A_dt = (p) => {
+  const table = [
+    { p: 8,     A_dt: 11 },
+    { p: 9.525, A_dt: 28 },
+    { p: 12.7,  A_dt: 39.6 },
+    { p: 15.875, A_dt: 51.5 },
+    { p: 19.05,  A_dt: 106},
+    { p: 25.4,   A_dt: 180 },
+    { p: 31.75,  A_dt: 262 },
+    { p: 38.1,   A_dt: 395 },
+    { p: 44.45,  A_dt: 473 },
+    { p: 50.8,   A_dt: 645 }
+  ];
+  const row = table.find(entry => entry.p === p);
+  return row.A_dt;
+}
+
+const Fr = (Ft) => {
+  let result = 1.05 * Number(Ft);
+  return Number(result.toFixed(12));
+}
+
+const oH1 = (kd, Ft, Fvd, A_dt) => {
+  let tu = kr1 *(Number(Ft)*Number(kd) + Number(Fvd)) * 2.1*Math.pow(10,5)
+  let result = 0.47 * Math.sqrt(tu/Number(A_dt)*1)
+  return Number(result.toFixed(12));
+}
+
+const oH2 = (kd, Ft, Fvd, A_dt) => {
+  let tu = kr2 *(Number(Ft)*Number(kd) + Number(Fvd)) * 2.1*Math.pow(10,5)
+  let result = 0.47 * Math.sqrt(tu/Number(A_dt)*1)
+  return Number(result.toFixed(12));
+}
+
+// Buoc 2 - Tra ham tinh toan để có thể gọi ở route
   return {
     Z1,
     Z2,
@@ -220,7 +313,11 @@ const he_so_an_toan = (Q, kd, Ft, F0, Fv) =>{
     khoi_luong_1m_xich,
     v, Ft, Fv, F0, 
     he_so_an_toan,
-    d1
+    d1, d2, da1, da2,
+    d1_chon_bang,
+    r, df1, df2,
+    Fvd, A_dt, Fr,
+    oH1, oH2
   }
 }
 
