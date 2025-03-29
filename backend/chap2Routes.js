@@ -1,9 +1,10 @@
 const express = require('express')
 const database = require('./connect')
-const machineCalculator = require('./chap2Function')
+const MachineCalculator = require('./MachineCalculator')
 const { ObjectId } = require('mongodb');
 
 let chap2Routes = express.Router();
+const Chap2Function = MachineCalculator("Chapter2");
 
 // Create new calculation data
 chap2Routes.route('/Chap2/:userId/:id?').post(async (request, response) => {
@@ -28,22 +29,22 @@ chap2Routes.route('/Chap2/:userId/:id?').post(async (request, response) => {
   }
 
   chap2Object.cong_suat_truc_cong_tac = 
-    machineCalculator.cong_suat_truc_cong_tac(chap2Object.luc_vong_bang_tai, chap2Object.van_toc_bang_tai);
+    Chap2Function.cong_suat_truc_cong_tac(chap2Object.luc_vong_bang_tai, chap2Object.van_toc_bang_tai);
 
   chap2Object.hieu_suat_chung = 
-    machineCalculator.hieu_suat_chung(chap2Object.hieu_suat_noi_truc, chap2Object.hieu_suat_o_lan, chap2Object.hieu_suat_banh_rang, chap2Object.hieu_suat_xich);
+    Chap2Function.hieu_suat_chung(chap2Object.hieu_suat_noi_truc, chap2Object.hieu_suat_o_lan, chap2Object.hieu_suat_banh_rang, chap2Object.hieu_suat_xich);
 
   chap2Object.cong_suat_tuong_duong_truc_cong_tac =
-    machineCalculator.cong_suat_tuong_duong_truc_cong_tac(chap2Object.cong_suat_truc_cong_tac, chap2Object.T1_T, chap2Object.T2_T, chap2Object.t1, chap2Object.t2);
+    Chap2Function.cong_suat_tuong_duong_truc_cong_tac(chap2Object.cong_suat_truc_cong_tac, chap2Object.T1_T, chap2Object.T2_T, chap2Object.t1, chap2Object.t2);
 
   chap2Object.cong_suat_can_thiet_tren_truc_dong_co =
-    machineCalculator.cong_suat_can_thiet_tren_truc_dong_co(chap2Object.cong_suat_tuong_duong_truc_cong_tac, chap2Object.hieu_suat_chung);
+    Chap2Function.cong_suat_can_thiet_tren_truc_dong_co(chap2Object.cong_suat_tuong_duong_truc_cong_tac, chap2Object.hieu_suat_chung);
 
   chap2Object.so_vong_quay_truc_cong_tac = 
-    machineCalculator.so_vong_quay_truc_cong_tac(chap2Object.van_toc_bang_tai, chap2Object.duong_kinh_tang_dan);
+    Chap2Function.so_vong_quay_truc_cong_tac(chap2Object.van_toc_bang_tai, chap2Object.duong_kinh_tang_dan);
 
   chap2Object.so_vong_quay_so_bo =
-    machineCalculator.so_vong_quay_so_bo(chap2Object.so_vong_quay_truc_cong_tac, chap2Object.ty_so_truyen_so_bo);
+    Chap2Function.so_vong_quay_so_bo(chap2Object.so_vong_quay_truc_cong_tac, chap2Object.ty_so_truyen_so_bo);
   
   try {
     let db = database.getDatabase();
@@ -130,43 +131,43 @@ chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
     let engineData = await db.collection('EngineList').findOne({_id: new ObjectId(request.params.idEngine)});
     if (!engineData) return response.status(400).json({error: 'Item not found' });
 
-    const ty_so_truyen_chung = machineCalculator.ty_so_truyen_chung(engineData.van_toc_vong_quay, calculationData.so_vong_quay_truc_cong_tac);
+    const ty_so_truyen_chung = Chap2Function.ty_so_truyen_chung(engineData.van_toc_vong_quay, calculationData.so_vong_quay_truc_cong_tac);
 
-    const he_so_truyen_cap_nhanh = machineCalculator.he_so_truyen_cap_nhanh(calculationData.ty_so_truyen_hop_giam_toc);
+    const he_so_truyen_cap_nhanh = Chap2Function.he_so_truyen_cap_nhanh(calculationData.ty_so_truyen_hop_giam_toc);
 
-    const he_so_truyen_cap_cham = machineCalculator.he_so_truyen_cap_cham(calculationData.ty_so_truyen_hop_giam_toc);
+    const he_so_truyen_cap_cham = Chap2Function.he_so_truyen_cap_cham(calculationData.ty_so_truyen_hop_giam_toc);
 
-    const he_so_truyen_dong_xich = machineCalculator.he_so_truyen_dong_xich(ty_so_truyen_chung, he_so_truyen_cap_nhanh, he_so_truyen_cap_cham);
+    const he_so_truyen_dong_xich = Chap2Function.he_so_truyen_dong_xich(ty_so_truyen_chung, he_so_truyen_cap_nhanh, he_so_truyen_cap_cham);
 
-    const Pbt = machineCalculator.Pbt(calculationData.cong_suat_truc_cong_tac, calculationData.hieu_suat_o_lan);
+    const Pbt = Chap2Function.Pbt(calculationData.cong_suat_truc_cong_tac, calculationData.hieu_suat_o_lan);
 
-    const P3 = machineCalculator.P3(Pbt, calculationData.hieu_suat_xich, calculationData.hieu_suat_o_lan);
+    const P3 = Chap2Function.P3(Pbt, calculationData.hieu_suat_xich, calculationData.hieu_suat_o_lan);
 
-    const P2 = machineCalculator.P2(P3, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
+    const P2 = Chap2Function.P2(P3, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
 
-    const P1 = machineCalculator.P1(P2, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
+    const P1 = Chap2Function.P1(P2, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
 
-    const Pm = machineCalculator.Pm(P1, calculationData.hieu_suat_noi_truc);
+    const Pm = Chap2Function.Pm(P1, calculationData.hieu_suat_noi_truc);
 
-    const ndc = machineCalculator.ndc(engineData.van_toc_vong_quay);
+    const ndc = Chap2Function.ndc(engineData.van_toc_vong_quay);
 
-    const n1 = machineCalculator.n1(engineData.van_toc_vong_quay);
+    const n1 = Chap2Function.n1(engineData.van_toc_vong_quay);
 
-    const n2 = machineCalculator.n2(n1, he_so_truyen_cap_nhanh);
+    const n2 = Chap2Function.n2(n1, he_so_truyen_cap_nhanh);
 
-    const n3 = machineCalculator.n3(n2, he_so_truyen_cap_cham);
+    const n3 = Chap2Function.n3(n2, he_so_truyen_cap_cham);
 
-    const nbt = machineCalculator.nbt(n3, he_so_truyen_dong_xich);
+    const nbt = Chap2Function.nbt(n3, he_so_truyen_dong_xich);
 
-    const T1_ti_so_truyen = machineCalculator.T1_ti_so_truyen(P1, engineData.van_toc_vong_quay);
+    const T1_ti_so_truyen = Chap2Function.T1_ti_so_truyen(P1, engineData.van_toc_vong_quay);
 
-    const Tm = machineCalculator.Tm(T1_ti_so_truyen);
+    const Tm = Chap2Function.Tm(T1_ti_so_truyen);
 
-    const T2_ti_so_truyen = machineCalculator.T2_ti_so_truyen(P2, n2);
+    const T2_ti_so_truyen = Chap2Function.T2_ti_so_truyen(P2, n2);
 
-    const T3_ti_so_truyen = machineCalculator.T3_ti_so_truyen(P3, n3);
+    const T3_ti_so_truyen = Chap2Function.T3_ti_so_truyen(P3, n3);
 
-    const Tbt_ti_so_truyen = machineCalculator.Tbt_ti_so_truyen(Pbt,nbt);
+    const Tbt_ti_so_truyen = Chap2Function.Tbt_ti_so_truyen(Pbt,nbt);
 
     const updateData = {
       ty_so_truyen_chung: ty_so_truyen_chung,
