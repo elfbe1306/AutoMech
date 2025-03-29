@@ -1,9 +1,4 @@
 const PI = 3.141592653589;
-const Z01 = 25;
-const kf = 1;
-
-const kr1 = 0.42;
-const kr2 = 0.24;
 
 const Z1 = (ux) => {
   let result = 29 - 2 * Number(ux);
@@ -16,7 +11,7 @@ const Z2 = (ux, z1) => {
 };
 
 //Buoc 1 - Them ham tinh toan
-const kz = (Z1) => {
+const kz = (Z01, Z1) => {
   let result = Number(Z01) / Number(Z1);
   return result;
 }
@@ -179,10 +174,10 @@ let result = Number(q) * Number(v) ** 2;
 return result;
 }
 
-const F0 = (q, a) =>{
-let result = (9.81 * kf * Number(q) * Number(a)) / 1000;
-return result;
-}
+const F0 = (kf, q, a) => {
+  let result = (9.81 * Number(kf) * Number(q) * Number(a)) / 1000;
+  return result;
+};
 
 const he_so_an_toan = (Q, kd, Ft, F0, Fv) =>{
 let term1 = (Number(kd) * Number(Ft)) + Number(F0) + Number(Fv);
@@ -274,14 +269,14 @@ let result = 1.05 * Number(Ft);
 return Number(result.toFixed(12));
 }
 
-const oH1 = (kd, Ft, Fvd, A_dt) => {
-let tu = kr1 *(Number(Ft)*Number(kd) + Number(Fvd)) * 2.1*Math.pow(10,5)
+const oH1 = (kr1, kd, Ft, Fvd, A_dt) => {
+let tu = Number(kr1)*(Number(Ft)*Number(kd) + Number(Fvd)) * 2.1*Math.pow(10,5)
 let result = 0.47 * Math.sqrt(tu/Number(A_dt)*1)
 return Number(result.toFixed(12));
 }
 
-const oH2 = (kd, Ft, Fvd, A_dt) => {
-let tu = kr2 *(Number(Ft)*Number(kd) + Number(Fvd)) * 2.1*Math.pow(10,5)
+const oH2 = (kr2, kd, Ft, Fvd, A_dt) => {
+let tu = Number(kr2) *(Number(Ft)*Number(kd) + Number(Fvd)) * 2.1*Math.pow(10,5)
 let result = 0.47 * Math.sqrt(tu/Number(A_dt)*1)
 return Number(result.toFixed(12));
 }
