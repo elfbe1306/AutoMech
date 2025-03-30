@@ -10,15 +10,10 @@ const Z2 = (ux, z1) => {
   return Math.round(result);
 };
 
-//Buoc 1 - Them ham tinh toan
 const kz = (Z01, Z1) => {
   let result = Number(Z01) / Number(Z1);
   return result;
 }
-
-// const n01 = (n01) => {
-//   return Number(n01.toFixed(12));
-// }
 
 const kn = (n01, n3) => {
   let result = Number(n01) / Number(n3);
@@ -51,7 +46,6 @@ const cong_suat_cho_phep = (n01, Pt) => {
   let result = powerValues.find(P => P !== "-" && P >= Pt);
   return result;
 }
-
 
 const buoc_xich = (n01, P) => {
   const table = [
@@ -95,10 +89,6 @@ const tinh_lai_khoang_cach_truc = (p, xc, Z1, Z2) => {
   return result;
 }
 
-// const Da = (Da) => {
-//   return Number(Da.toFixed(12));
-// }
-
 const delta_a = (Da, a_star) =>{
   let result = Number(Da) * Number(a_star);
   return result;
@@ -114,7 +104,6 @@ const so_lan_va_dap_cua_xich = (Z1, n3, xc) =>{
   return result;
 }
 
-// kiem nghiem do ben xich
 const tai_trong_pha_hong = (p) =>{
 const table = [
     { p: 8,     Q: 4.6},
@@ -281,7 +270,6 @@ let result = 0.47 * Math.sqrt(tu/Number(A_dt)*1)
 return Number(result.toFixed(12));
 }
 
-// Buoc 2 - Tra ham tinh toan để có thể gọi ở route
 module.exports = {
   Z1,
   Z2,

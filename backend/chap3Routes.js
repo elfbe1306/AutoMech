@@ -83,7 +83,6 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
 
     const oH2 = Chapter3Function.oH2(request.body.kr2, request.body.kd, Ft, Fvd, A_dt)
 
-    // Buoc 5 - Luu du lieu database
     const Chap3Object = {
       k0: request.body.k0,
       ka: request.body.ka,
@@ -93,7 +92,7 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
       kbt: request.body.kbt,
       Z1: Z1,
       Z2: Z2,
-      n01: Number(request.body.n01),
+      n01: request.body.n01,
       kz: kz,
       kn: kn,
       k: k,
@@ -127,8 +126,7 @@ chap3Routes.route('/Chap3/:id').post(async (request, response) => {
       oH1: oH1,
       oH2: oH2
     }
-
-    // Buoc 4 - In ra man hinh kiem tra tinh toan
+    
     console.log(
       // Chap2Data, // Lấy biến (kết quả chương 2) ở trong đối tượng này
       // request.body, // Lấy biến (hệ số chương 3) ở trong đối tượng này
