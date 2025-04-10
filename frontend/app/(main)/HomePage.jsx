@@ -1,38 +1,19 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect } from 'react'
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomePage = () => {
-  const [userId, setUserId] = useState(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const fetchUserId = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem('userID');
-        if (storedUserId) {
-          setUserId(storedUserId);
-        } else {
-          console.log("UserId not found in AsyncStorage");
-        }
-      } catch (error) {
-        console.error("Error fetching userId:", error);
-      }
-    };
-
-    const clearStorage = async () => {
-      await AsyncStorage.removeItem('EngineSelect');
-      await AsyncStorage.removeItem('CalculateID');
-    }
-
-    fetchUserId();
-    clearStorage();
-  }, []);
 
   function handleCalculatePage() {
     router.push('/InputPage');
   }
+
+  useEffect(() => {
+    AsyncStorage.removeItem("RECORDID");
+    AsyncStorage.removeItem("ENGINELIST");
+  }, [])
 
   return(
     <View>

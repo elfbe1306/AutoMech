@@ -19,7 +19,8 @@ const InputPage = () => {
   const [nx, setNx] = useState(0.91);
   const [uh, setUh] = useState(8);
   const [ux, setUx] = useState(2);
-  const [userID, setUserID] = useState("")
+  const [UserID, setUserID] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const inputName = ["F(N)", "v(m/s)", "D(mm)", "L(năm)", "t1(giây)", "t2(giây)", "T1\n(momem xoắn)", 
     "T2\n(momem xoắn)", "Hiệu suất nối trục", "Hiệu suất ổ lăn\n(0.99 - 0.995)", 
@@ -33,7 +34,7 @@ const InputPage = () => {
   useEffect(() => {
     const fetchUserID = async () => {
       try {
-        const storedUserID = await AsyncStorage.getItem("userID");
+        const storedUserID = await AsyncStorage.getItem("USERID");
         if(storedUserID) {
           setUserID(storedUserID);
         } else {
@@ -48,6 +49,10 @@ const InputPage = () => {
   }, [])
 
   const handleSubmit = async () => {
+    if (loading) return;
+
+    setLoading(true); 
+
     if(f < 0) {
       alert("Lực vòng băng tải phải lớn hơn 0");
       return;
@@ -117,18 +122,15 @@ const InputPage = () => {
     }
 
     try {
-      const CalculateId = await AsyncStorage.getItem("CalculateID");
-      const response = await apiService.chap2Calculation(userID, JSON.parse(CalculateId), inputObject);
-
-      await AsyncStorage.multiSet([
-        ["EngineSelect", JSON.stringify(response.engines)],
-        ["CalculateID", JSON.stringify(response._id)]
-      ]);
-
-      console.log("Inserted:", response);
-      router.push('/EngineSelectPage');
+      let recordID = await AsyncStorage.getItem("RECORDID")
+      let response = await apiService.Chapter2InputData(inputObject, UserID, recordID);
+      AsyncStorage.setItem("RECORDID", response.record_id);
+      AsyncStorage.setItem("ENGINELIST", JSON.stringify(response.engine_list));
+      router.push('/(main)/EngineSelectPage')
     } catch(error) {
-      alert(error.response.data.message);
+      alert(error?.response?.data?.message || "Tính toán thất bại");
+    } finally {
+      setLoading(false); 
     }
 
   };
@@ -151,7 +153,7 @@ const InputPage = () => {
           ))}
         </View>
       </ScrollView>
-      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit}>
+      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit} disabled={loading}>
           <Text style={styles.doMathButtonText}>Tính toán</Text>
       </TouchableOpacity>
     </View>

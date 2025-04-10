@@ -12,12 +12,10 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 const EngineSelectPage = () => {
   const router = useRouter();
 
-  const [engines, setEngines] = useState(null);
-  const [calculateID, setCalculateID] = useState("");
   const [isCollapsedResult, setIsCollapsedResult] = useState(true);
   const [isCollapsedEngine, setIsCollapsedEngine] = useState(true);
+  const [engines, setEngines] = useState(null);
   const [selectedEngineId, setSelectedEngineId] = useState(null);
-  
 
   const [calculatedData, setCalculateData] = useState({
     luc_vong_bang_tai: "",
@@ -36,43 +34,24 @@ const EngineSelectPage = () => {
     so_vong_quay_so_bo: ""
   });
   
-  useEffect(() => {
+  useEffect(()=>{
     const fetchData = async () => {
-      try {
-        const dataEngine = await AsyncStorage.getItem("EngineSelect");
-        const dataCalculate = await AsyncStorage.getItem("CalculateID");
-        if (dataEngine && dataCalculate) {
-          setEngines(JSON.parse(dataEngine));
-          setCalculateID(JSON.parse(dataCalculate));
-        } else {
-          console.log("No data found in AsyncStorage");
-        }
-      } catch (error) {
-        console.error("Error fetching data from AsyncStorage:", error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (calculateID) {
-      const fetchCalculation = async () => {
-        try {
-          const response = await apiService.chap2GetCalculation(calculateID);
-          setCalculateData(response);
-          console.log('Calculation Data:', response);
-        } catch (error) {
-          console.error('Error fetching calculation data:', error);
-        }
-      };
-      fetchCalculation();
+      let recordID = await AsyncStorage.getItem("RECORDID");
+      let engine = await AsyncStorage.getItem("ENGINELIST");
+      setEngines(JSON.parse(engine));
+      let response = await apiService.Chapter2FetchData(recordID);
+      setCalculateData(response.chapter2data[0])
     }
-  }, [calculateID]);
+
+    fetchData()
+  }, [])
+
 
   async function handleSubmit() {
     try {
-      let response = await apiService.chap2UpdateDataAfterChoosingEngine(calculateID, selectedEngineId)
-      console.log("Inserted Engine Data:", response.message);
+      let recordID = await AsyncStorage.getItem("RECORDID");
+      let response = await apiService.Chapter2AfterChoosingEngine(recordID, selectedEngineId)
+      console.log(response.message);
       router.push('/Chapter3Page');
     } catch(error) {
       alert(error.response.message);
@@ -99,8 +78,8 @@ const EngineSelectPage = () => {
           <View style={styles.displayColumn}>
             <DisplayResult variable={"t1"} value={calculatedData.t1} unit={"giây"} />
             <DisplayResult variable={"t2"} value={calculatedData.t2} unit={"giây"} />
-            <DisplayResult variable={"T1"} value={calculatedData.T1} unit={"momem xoắn"} />
-            <DisplayResult variable={"T2"} value={calculatedData.T2} unit={"momem xoắn"} />
+            <DisplayResult variable={"T1"} value={calculatedData.t1_t} unit={"momem xoắn"} />
+            <DisplayResult variable={"T2"} value={calculatedData.t2_t} unit={"momem xoắn"} />
           </View>
         </View>
         <Text style={styles.resultTitle}>Kết quả tính toán và chọn động cơ</Text>
@@ -133,12 +112,12 @@ const EngineSelectPage = () => {
           <View style={styles.engineContainer} contentContainerStyle={{ paddingBottom: 20 }}>
             {engines?.map((engine) => (
               <EngineCard
-                key={engine._id}
+                key={engine.id}
                 kieu_dong_co={engine.kieu_dong_co}
                 cong_suat={engine.cong_suat}
                 van_toc_vong_quay={engine.van_toc_vong_quay}
-                isSelected={selectedEngineId === engine._id}
-                onSelect={() => {setSelectedEngineId(engine._id)}}
+                isSelected={selectedEngineId === engine.id}
+                onSelect={() => {setSelectedEngineId(engine.id)}}
               />
             ))}
           </View>

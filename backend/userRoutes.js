@@ -1,49 +1,32 @@
-const express = require('express')
-const database = require('./connect')
-const bcrypt = require('bcrypt')
+const express = require('express');
+let router = express.Router();
+const jwt = require('jsonwebtoken')
+require('dotenv').config({ path: './config.env' });
 
-let userRoutes = express.Router();
+router.post('/Users', async (request, response) => {
+  const supabase = request.supabase;
+  const { email, password } = request.body;
+  const { data, error } = await supabase.auth.signUp({ email, password });
 
-//#1 Create account
-userRoutes.route('/Users').post(async (request, response) => {
-  try {
-    let db = database.getDatabase();
-
-    const takenEmail = await db.collection('Users').findOne({ email: request.body.email });
-    if (takenEmail) {
-      return response.status(400).json({ message: 'The email is taken' });
-    }
-
-    const hashPassword = await bcrypt.hash(request.body.password, 6)
-
-    let userCreateAccount = {
-      email: request.body.email,
-      password: hashPassword,
-      history: []
-    };
-
-    let data = await db.collection('Users').insertOne(userCreateAccount);
-    response.status(201).json(data);
-  } catch (error) {
-    response.status(500).json({ message: 'Internal Server Error', error: error.message });
-  }
-})
-
-//#2 Login
-userRoutes.route('/Users/Login').post(async (request, response) => {
-  let db = database.getDatabase();
-  const user = await db.collection('Users').findOne({ email : request.body.email });
-
-  if (!user) {
-    return response.status(404).json({ success: false, message: "User not found" });
-  }
-
-  let confirmation = await bcrypt.compare(request.body.password, user.password);
-  if (!confirmation) {
-    return response.status(401).json({ success: false, message: "Incorrect password" });
-  }
-
-  response.status(200).json({ success: true, message: "Login successful", userId: user._id });
+  if (error) return response.status(400).json({ message: error.message });
+  response.status(201).json({ 
+    message: 'Đã thành công tạo tài khoản', 
+    user: data.user,
+  });
 });
 
-module.exports = userRoutes
+router.post('/Users/Login', async (request, response) => {
+  const supabase = request.supabase;
+  const { email, password } = request.body;
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  const token = jwt.sign(data.user, process.env.SECRET_KEY, {expiresIn: "1h"})
+
+  if (error) return response.status(400).json({ message: error.message });
+  response.status(200).json({
+    message: 'Đăng nhập thành công',
+    token: token,
+  });
+});
+
+module.exports = router;

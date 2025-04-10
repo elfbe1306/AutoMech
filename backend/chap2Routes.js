@@ -1,211 +1,323 @@
 const express = require('express')
-const database = require('./connect')
-const MachineCalculator = require('./MachineCalculator')
-const { ObjectId } = require('mongodb');
+const MachineCalculatorFactory = require('./MachineCalculator');
+const {v4: uuidv4} = require('uuid')
+const jwt = require('jsonwebtoken')
+require('dotenv').config({ path: './config.env' });
 
-let chap2Routes = express.Router();
-const Chap2Function = MachineCalculator("Chapter2");
+let Chapter2Routes = express.Router();
+const Chapter2Function = MachineCalculatorFactory.getChapter("Chapter2");
 
-// Create new calculation data
-chap2Routes.route('/Chap2/:userId/:id?').post(async (request, response) => {
-  let chap2Object = {
-    luc_vong_bang_tai: Number(request.body.f),
-    van_toc_bang_tai: Number(request.body.v),
-    duong_kinh_tang_dan: Number(request.body.D),
-    thoi_gian_phuc_vu: Number(request.body.L),
-    t1: Number(request.body.t1),
-    t2: Number(request.body.t2),
-    T1: request.body.T1,
-    T2: request.body.T2,
-    T1_T: Number(request.body.T1_numeric),
-    T2_T: Number(request.body.T2_numeric),
-    hieu_suat_noi_truc: Number(request.body.nk),
-    hieu_suat_o_lan: Number(request.body.nol),
-    hieu_suat_banh_rang: Number(request.body.nbr),
-    hieu_suat_xich: Number(request.body.nx),
-    ty_so_truyen_hop_giam_toc: Number(request.body.uh),
-    ty_so_truyen_xich: Number(request.body.ux),
-    ty_so_truyen_so_bo: Number(request.body.usb)
-  }
+Chapter2Routes.post('/chapter2/:userid/:recordid?', async (request, response) => {
+  const supabase = request.supabase;
+  const userid = jwt.decode(request.params.userid, process.env.SECRET_KEY);
+  const { recordid } = request.params;
 
-  chap2Object.cong_suat_truc_cong_tac = 
-    Chap2Function.cong_suat_truc_cong_tac(chap2Object.luc_vong_bang_tai, chap2Object.van_toc_bang_tai);
-
-  chap2Object.hieu_suat_chung = 
-    Chap2Function.hieu_suat_chung(chap2Object.hieu_suat_noi_truc, chap2Object.hieu_suat_o_lan, chap2Object.hieu_suat_banh_rang, chap2Object.hieu_suat_xich);
-
-  chap2Object.cong_suat_tuong_duong_truc_cong_tac =
-    Chap2Function.cong_suat_tuong_duong_truc_cong_tac(chap2Object.cong_suat_truc_cong_tac, chap2Object.T1_T, chap2Object.T2_T, chap2Object.t1, chap2Object.t2);
-
-  chap2Object.cong_suat_can_thiet_tren_truc_dong_co =
-    Chap2Function.cong_suat_can_thiet_tren_truc_dong_co(chap2Object.cong_suat_tuong_duong_truc_cong_tac, chap2Object.hieu_suat_chung);
-
-  chap2Object.so_vong_quay_truc_cong_tac = 
-    Chap2Function.so_vong_quay_truc_cong_tac(chap2Object.van_toc_bang_tai, chap2Object.duong_kinh_tang_dan);
-
-  chap2Object.so_vong_quay_so_bo =
-    Chap2Function.so_vong_quay_so_bo(chap2Object.so_vong_quay_truc_cong_tac, chap2Object.ty_so_truyen_so_bo);
-  
   try {
-    let db = database.getDatabase();
-    await db.collection('EngineList').createIndex({ cong_suat: 1, van_toc_vong_quay: 1 });
+    const InputChapter2Data = Chapter2FirstCalculation(request.body);
 
-    let calculationHistoryId;
-    if(request.params.id) {
-      let chap2data = await db.collection('CalculationHistory').findOne({ _id: new ObjectId(request.params.id) });
-      if (chap2data) {
-        await db.collection('Chap2Calculation').updateOne(
-          { _id: new ObjectId(chap2data.Chap2ID) },
-          { $set: chap2Object }
-        );
-        calculationHistoryId = chap2data._id;
-      } else {
-        return response.status(404).json({ error: "Calculation history not found" });
+    const { data: engineData, error } = await supabase
+      .from('Engine')
+      .select('*')
+      .gte('cong_suat', InputChapter2Data.cong_suat_can_thiet_tren_truc_dong_co)
+      .gte('van_toc_vong_quay', InputChapter2Data.so_vong_quay_so_bo);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const SelectEngineList = EngineSelect(engineData, InputChapter2Data.cong_suat_can_thiet_tren_truc_dong_co, InputChapter2Data);
+
+    if (recordid) {
+      const decodedRecord = jwt.decode(recordid, process.env.SECRET_KEY);
+      const existingRecordId = decodedRecord.id;
+
+      const { data: existingRecord, error: fetchError } = await supabase
+        .from('HistoryRecord')
+        .select('chapter2_id')
+        .eq('id', existingRecordId)
+        .single();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        throw fetchError;
       }
-    } else {
-      let chap2data = await db.collection('Chap2Calculation').insertOne(chap2Object);
-      let calculationData = {
-        Chap2ID: chap2data.insertedId,
-        CreateDate: new Date()
-      };
-      let calculationHistory = await db.collection('CalculationHistory').insertOne(calculationData);
-      calculationHistoryId = calculationHistory.insertedId;
+
+      if (existingRecord) {
+        const { data: updatedChapter2, error: updateError } = await supabase
+          .from('Chapter2')
+          .update(InputChapter2Data)
+          .eq('id', existingRecord.chapter2_id);
+
+        if (updateError) {
+          return response.status(400).json({ message: updateError.message });
+        }
+
+        return response.status(200).json({
+          message: 'Đã cập nhật dữ liệu thành công',
+          record_id: recordid,
+          engine_list: SelectEngineList
+        });
+      }
     }
 
-    const userId = new ObjectId(request.params.userId);
-    await db.collection('Users').updateOne(
-      { _id: userId }, 
-      { $push: { history: calculationHistoryId } }
-    );
+    const Chapter2Id = uuidv4();
+    const NewChapter2 = {
+      id: Chapter2Id,
+      ...InputChapter2Data
+    };
 
-    let engines = await db.collection('EngineList')
-    .aggregate([
-      {
-        $match: {
-          cong_suat: { $gte: chap2Object.cong_suat_can_thiet_tren_truc_dong_co },
-          van_toc_vong_quay: { $gte: chap2Object.so_vong_quay_so_bo }
-        }
-      },
-      {
-        $addFields: {
-          diff: { $subtract: ["$cong_suat", chap2Object.cong_suat_can_thiet_tren_truc_dong_co] },
-          van_toc_diff: { $subtract: ["$van_toc_vong_quay", chap2Object.so_vong_quay_so_bo] }
-        }
-      },
-      { $sort: { diff: 1, van_toc_diff: 1 } },
-      { $limit: 3 }
-    ]).toArray();
-  
-    response.json({ message: 'Inserted successfully Chap2', _id: calculationHistoryId, engines: engines });
-  } catch(error) {
-    response.status(500).json({ error: error.message });
-  }
-})
+    const { data: insertedChapter, error: insertChapterError } = await supabase
+      .from('Chapter2')
+      .insert([NewChapter2]);
 
-// Retrieve calculation data by ID
-chap2Routes.route('/Chap2/:id').get(async (request, response) => {
-  try {
-    let db = database.getDatabase();
-    let CalculationData = await db.collection('CalculationHistory').findOne({_id: new ObjectId(request.params.id)});
-    if (!CalculationData) return response.status(404).json({ error: 'Item not found' });
-
-    let data = await db.collection('Chap2Calculation').findOne({_id: new ObjectId(CalculationData.Chap2ID)});
-    if (!data) return response.status(404).json({ error: 'Item not found' });
-
-    response.json(data);
-  } catch(error) {
-    response.status(500).json({ error: error.message });
-  }
-})
-
-// Update more calculation result
-chap2Routes.route('/Chap2/:idCal/:idEngine').put(async (request, response) => {
-  try {
-    let db = database.getDatabase();
-    let calculationHistory = await db.collection('CalculationHistory').findOne({_id: new ObjectId(request.params.idCal)});
-    if (!calculationHistory) return response.status(404).json({ error: 'Item not found' });
-
-    let calculationData = await db.collection('Chap2Calculation').findOne({_id: new ObjectId(calculationHistory.Chap2ID)});
-    if (!calculationData) return response.status(404).json({ error: 'Item not found' });
-
-    let engineData = await db.collection('EngineList').findOne({_id: new ObjectId(request.params.idEngine)});
-    if (!engineData) return response.status(400).json({error: 'Item not found' });
-
-    const ty_so_truyen_chung = Chap2Function.ty_so_truyen_chung(engineData.van_toc_vong_quay, calculationData.so_vong_quay_truc_cong_tac);
-
-    const he_so_truyen_cap_nhanh = Chap2Function.he_so_truyen_cap_nhanh(calculationData.ty_so_truyen_hop_giam_toc);
-
-    const he_so_truyen_cap_cham = Chap2Function.he_so_truyen_cap_cham(calculationData.ty_so_truyen_hop_giam_toc);
-
-    const he_so_truyen_dong_xich = Chap2Function.he_so_truyen_dong_xich(ty_so_truyen_chung, he_so_truyen_cap_nhanh, he_so_truyen_cap_cham);
-
-    const Pbt = Chap2Function.Pbt(calculationData.cong_suat_truc_cong_tac, calculationData.hieu_suat_o_lan);
-
-    const P3 = Chap2Function.P3(Pbt, calculationData.hieu_suat_xich, calculationData.hieu_suat_o_lan);
-
-    const P2 = Chap2Function.P2(P3, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
-
-    const P1 = Chap2Function.P1(P2, calculationData.hieu_suat_banh_rang, calculationData.hieu_suat_o_lan);
-
-    const Pm = Chap2Function.Pm(P1, calculationData.hieu_suat_noi_truc);
-
-    const ndc = Chap2Function.ndc(engineData.van_toc_vong_quay);
-
-    const n1 = Chap2Function.n1(engineData.van_toc_vong_quay);
-
-    const n2 = Chap2Function.n2(n1, he_so_truyen_cap_nhanh);
-
-    const n3 = Chap2Function.n3(n2, he_so_truyen_cap_cham);
-
-    const nbt = Chap2Function.nbt(n3, he_so_truyen_dong_xich);
-
-    const T1_ti_so_truyen = Chap2Function.T1_ti_so_truyen(P1, engineData.van_toc_vong_quay);
-
-    const Tm = Chap2Function.Tm(T1_ti_so_truyen);
-
-    const T2_ti_so_truyen = Chap2Function.T2_ti_so_truyen(P2, n2);
-
-    const T3_ti_so_truyen = Chap2Function.T3_ti_so_truyen(P3, n3);
-
-    const Tbt_ti_so_truyen = Chap2Function.Tbt_ti_so_truyen(Pbt,nbt);
-
-    const updateData = {
-      ty_so_truyen_chung: ty_so_truyen_chung,
-      he_so_truyen_cap_nhanh: he_so_truyen_cap_nhanh,
-      he_so_truyen_cap_cham: he_so_truyen_cap_cham,
-      he_so_truyen_dong_xich: he_so_truyen_dong_xich,
-      Pbt: Pbt,
-      P3: P3,
-      P2: P2,
-      P1: P1,
-      Pm: Pm,
-      ndc: ndc,
-      n1: n1,
-      n2: n2,
-      n3: n3,
-      nbt: nbt,
-      T1_ti_so_truyen: T1_ti_so_truyen,
-      Tm: Tm,
-      T2_ti_so_truyen: T2_ti_so_truyen,
-      T3_ti_so_truyen: T3_ti_so_truyen,
-      Tbt_ti_so_truyen: Tbt_ti_so_truyen
+    if (insertChapterError) {
+      console.error("Insert Chapter2 Error:", insertChapterError);
+      return response.status(400).json({ message: insertChapterError.message });
     }
 
-    const updateCalculationHistory = await db.collection('CalculationHistory').updateOne(
-      {_id: new ObjectId(request.params.idCal)},
-      { $set: {engineID: new ObjectId(request.params.idEngine)}}
-    )
-
-    const result = await db.collection('Chap2Calculation').updateOne(
-      {_id: new ObjectId(calculationData._id)},
-      { $set: updateData}
+    const HistoryRecordId = uuidv4();
+    const EncryptedRecordId = jwt.sign(
+      { id: HistoryRecordId },
+      process.env.SECRET_KEY,
+      { expiresIn: '1h' }
     );
-    if(result.matchedCount === 0)
-      return response.status(404).json({error: "Item not found"});
-    response.json({message: 'Item updated successfully'});
+
+    const NewHistoryRecord = {
+      id: HistoryRecordId,
+      chapter2_id: Chapter2Id,
+      user_id: userid.id
+    };
+
+    const { data: insertedHistory, error: insertHistoryError } = await supabase
+      .from('HistoryRecord')
+      .insert([NewHistoryRecord]);
+
+    if (insertHistoryError) {
+      return response.status(400).json({ message: insertHistoryError.message });
+    }
+
+    return response.status(201).json({
+      message: 'Đã tính toán thành công',
+      record_id: EncryptedRecordId,
+      engine_list: SelectEngineList
+    });
+
+  } catch (err) {
+    return response.status(500).json({ message: 'Lỗi máy chủ', error: err.message });
+  }
+});
+
+
+Chapter2Routes.get('/chapter2/:recordid', async (request, response) => {
+  const supabase = request.supabase
+  const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
+
+  try {
+    const {data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('id', record_id.id)
+
+    const { data: chapter2data, error: chapter2DataError } = await supabase.from('Chapter2').select('*').eq('id', recordData[0].chapter2_id);
+    
+    if (recordDataError) {
+      return response.status(400).json({ message: recordDataError.message });
+    }
+    
+    if (chapter2DataError) {
+      return response.status(400).json({ message: chapter2DataError.message });
+    }
+
+    return response.status(201).json({
+      message: 'Đã lấy dữ liệu chương 2 thành công',
+      chapter2data: chapter2data
+    });
+    
   } catch(error) {
-    response.status(500).json({error: error.message});
+    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+  }
+
+})
+
+Chapter2Routes.post('/chapter2/update/engine/:record_id', async (request, response) => {
+  const supabase = request.supabase
+  const record_id = jwt.decode(request.params.record_id, process.env.SECRET_KEY);
+
+  try {
+    // Lấy data từ history record
+    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('id', record_id.id);
+
+    if (recordDataError) {
+      console.error("recordDataError", recordDataError)
+      return response.status(400).json({ message: recordDataError.message });
+    }
+
+    // Lấy data từ bảng động cơ
+    const { data: engineData, error: engineDataError } = await supabase.from('Engine').select('*').eq('id', request.body.selectEngineID);
+    
+    if (engineDataError) {
+      console.error("engineDataError", engineDataError)
+      return response.status(400).json({ message: engineDataError.message });
+    }
+
+    // Lấy data từ bảng Chapter2
+    const { data: chapter2data, error: chapter2DataError } = await supabase.from('Chapter2').select('*').eq('id', recordData[0].chapter2_id);
+
+    if(chapter2DataError) {
+      console.error("chapter2DataError", chapter2DataError)
+      return response.status(400).json({ message: chapter2DataError.message });
+    }
+
+    // Gọi hàm tính toán phân phối tỉ số truyền
+    const updateChapter2Data = Chapter2SecondCalculation(chapter2data[0], engineData[0]);
+
+    // Tính toán và cập nhật dữ liệu
+    const { data: updateData, error: updataDataError } = await supabase.from('Chapter2').update(updateChapter2Data).eq('id', recordData[0].chapter2_id);
+
+    if(updataDataError) {
+      console.error("updataDataError", updataDataError)
+      return response.status(400).json({ message: updataDataError.message });
+    }
+
+    // Cập nhật key của engine vô historyRecord
+    const { data: updateEngineId, error: updateEngineIdError } = await supabase.from('HistoryRecord').update({engine_id: request.body.selectEngineID}).eq('id', record_id.id);
+
+    if(updateEngineIdError) {
+      console.error("updateEngineIdError", updateEngineIdError)
+      return response.status(400).json({ message: updateEngineIdError.message });
+    }
+    return response.status(200).json({ message: 'Đã tính toán và cập nhật thành công chương 2' });
+  } catch(error) {
+    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
   }
 })
 
-module.exports = chap2Routes;
+function Chapter2FirstCalculation(input) {
+  const luc_vong_bang_tai = Number(input.f);
+  const van_toc_bang_tai = Number(input.v);
+  const duong_kinh_tang_dan = Number(input.D);
+  const thoi_gian_phuc_vu = Number(input.L);
+  const t1 = Number(input.t1);
+  const t2 = Number(input.t2);
+  const t1_momen = input.T1;
+  const t2_momen = input.T2;
+  const t1_t = Number(input.T1_numeric);
+  const t2_t = Number(input.T2_numeric);
+  const hieu_suat_noi_truc = Number(input.nk);
+  const hieu_suat_o_lan = Number(input.nol);
+  const hieu_suat_banh_rang = Number(input.nbr);
+  const hieu_suat_xich = Number(input.nx);
+  const ty_so_truyen_hop_giam_toc = Number(input.uh);
+  const ty_so_truyen_xich = Number(input.ux);
+  const ty_so_truyen_so_bo = Number(input.usb);
+  const cong_suat_truc_cong_tac = Chapter2Function.cong_suat_truc_cong_tac(luc_vong_bang_tai, van_toc_bang_tai);
+  const hieu_suat_chung = Chapter2Function.hieu_suat_chung(hieu_suat_noi_truc, hieu_suat_o_lan, hieu_suat_banh_rang, hieu_suat_xich);
+  const cong_suat_tuong_duong_truc_cong_tac = Chapter2Function.cong_suat_tuong_duong_truc_cong_tac(cong_suat_truc_cong_tac, t1_t, t2_t, t1, t2);
+  const cong_suat_can_thiet_tren_truc_dong_co = Chapter2Function.cong_suat_can_thiet_tren_truc_dong_co(cong_suat_tuong_duong_truc_cong_tac, hieu_suat_chung);
+  const so_vong_quay_truc_cong_tac = Chapter2Function.so_vong_quay_truc_cong_tac(van_toc_bang_tai, duong_kinh_tang_dan)
+  const so_vong_quay_so_bo = Chapter2Function.so_vong_quay_so_bo(so_vong_quay_truc_cong_tac, ty_so_truyen_so_bo)
+
+  return {
+    luc_vong_bang_tai: luc_vong_bang_tai,
+    van_toc_bang_tai: van_toc_bang_tai,
+    duong_kinh_tang_dan: duong_kinh_tang_dan,
+    thoi_gian_phuc_vu: thoi_gian_phuc_vu,
+    t1: t1,
+    t2: t2,
+    t1_momen: t1_momen,
+    t2_momen: t2_momen,
+    t1_t: t1_t,
+    t2_t: t2_t,
+    hieu_suat_noi_truc: hieu_suat_noi_truc,
+    hieu_suat_o_lan: hieu_suat_o_lan,
+    hieu_suat_banh_rang: hieu_suat_banh_rang,
+    hieu_suat_xich: hieu_suat_xich,
+    ty_so_truyen_hop_giam_toc: ty_so_truyen_hop_giam_toc,
+    ty_so_truyen_xich: ty_so_truyen_xich,
+    ty_so_truyen_so_bo: ty_so_truyen_so_bo,
+    cong_suat_truc_cong_tac: cong_suat_truc_cong_tac,
+    hieu_suat_chung: hieu_suat_chung,
+    cong_suat_tuong_duong_truc_cong_tac: cong_suat_tuong_duong_truc_cong_tac,
+    cong_suat_can_thiet_tren_truc_dong_co: cong_suat_can_thiet_tren_truc_dong_co,
+    so_vong_quay_truc_cong_tac: so_vong_quay_truc_cong_tac,
+    so_vong_quay_so_bo: so_vong_quay_so_bo
+  }
+}
+
+function EngineSelect(engineData) {
+  const engines = engineData.sort((a, b) => {
+    if (a.cong_suat === b.cong_suat) {
+      return a.van_toc_vong_quay - b.van_toc_vong_quay;
+    }
+    return a.cong_suat - b.cong_suat;
+  });
+  return engines.slice(0,3);
+}
+
+function Chapter2SecondCalculation(Chapter2Input, EngineInput) {
+  const ty_so_truyen_chung = 
+    Chapter2Function.ty_so_truyen_chung(EngineInput.van_toc_vong_quay, Chapter2Input.so_vong_quay_truc_cong_tac);
+
+  const he_so_truyen_cap_nhanh =
+    Chapter2Function.he_so_truyen_cap_nhanh(Chapter2Input.ty_so_truyen_hop_giam_toc);
+
+  const he_so_truyen_cap_cham = 
+    Chapter2Function.he_so_truyen_cap_cham(Chapter2Input.ty_so_truyen_hop_giam_toc);
+
+  const he_so_truyen_dong_xich =
+    Chapter2Function.he_so_truyen_dong_xich(ty_so_truyen_chung, he_so_truyen_cap_nhanh, he_so_truyen_cap_cham);
+
+  const he_so_truyen_dong_hop = Chapter2Function.he_so_truyen_dong_hop(Chapter2Input.ty_so_truyen_hop_giam_toc);
+
+  const Pbt = Chapter2Function.Pbt(Chapter2Input.cong_suat_truc_cong_tac, Chapter2Input.hieu_suat_o_lan);
+
+  const P3 = Chapter2Function.P3(Pbt, Chapter2Input.hieu_suat_xich, Chapter2Input.hieu_suat_o_lan);
+
+  const P2 = Chapter2Function.P2(P3, Chapter2Input.hieu_suat_banh_rang, Chapter2Input.hieu_suat_o_lan);
+
+  const P1 = Chapter2Function.P1(P2, Chapter2Input.hieu_suat_banh_rang, Chapter2Input.hieu_suat_o_lan);
+
+  const Pm = Chapter2Function.Pm(P1, Chapter2Input.hieu_suat_noi_truc);
+
+  const ndc = Chapter2Function.ndc(EngineInput.van_toc_vong_quay);
+
+  const n1 = Chapter2Function.n1(EngineInput.van_toc_vong_quay);
+
+  const n2 = Chapter2Function.n2(n1, he_so_truyen_cap_nhanh);
+
+  const n3 = Chapter2Function.n3(n2, he_so_truyen_cap_cham);
+
+  const nbt = Chapter2Function.nbt(n3, he_so_truyen_dong_xich);
+
+  const T1_ti_so_truyen = Chapter2Function.T1_ti_so_truyen(P1, EngineInput.van_toc_vong_quay);
+
+  const Tm = Chapter2Function.Tm(T1_ti_so_truyen);
+
+  const T2_ti_so_truyen = Chapter2Function.T2_ti_so_truyen(P2, n2);
+
+  const T3_ti_so_truyen = Chapter2Function.T3_ti_so_truyen(P3, n3);
+
+  const Tbt_ti_so_truyen = Chapter2Function.Tbt_ti_so_truyen(Pbt,nbt);
+
+  return {
+    ty_so_truyen_chung: ty_so_truyen_chung,
+    he_so_truyen_dong_hop: he_so_truyen_dong_hop,
+    he_so_truyen_cap_nhanh: he_so_truyen_cap_nhanh,
+    he_so_truyen_cap_cham: he_so_truyen_cap_cham,
+    he_so_truyen_dong_xich: he_so_truyen_dong_xich,
+    pbt: Pbt,
+    p3: P3,
+    p2: P2,
+    p1: P1,
+    pm: Pm,
+    ndc: ndc,
+    n1: n1,
+    n2: n2,
+    n3: n3,
+    nbt: nbt,
+    t1_ti_so_truyen: T1_ti_so_truyen,
+    tm: Tm,
+    t2_ti_so_truyen: T2_ti_so_truyen,
+    t3_ti_so_truyen: T3_ti_so_truyen,
+    tbt_ti_so_truyen: Tbt_ti_so_truyen
+  }
+}
+
+module.exports = Chapter2Routes;
