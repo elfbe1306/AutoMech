@@ -9,6 +9,7 @@ const AuthLayout = () => {
       <Stack.Screen name="EngineSelectPage"/>
       <Stack.Screen name="Chapter3Page"/>
       <Stack.Screen name="Chapter2Display"/>
+      <Stack.Screen name="Chapter3Report"/>
     </Stack>
   )
 }

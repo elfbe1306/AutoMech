@@ -83,6 +83,15 @@ class ApiService {
       throw error;
     }
   }
+
+  async Chapter3ReportGenerate(recordID) {
+    try {
+      const response = await this.api.get(`/chapter3/report/${recordID}`);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
 }
 
 // Singleton instance

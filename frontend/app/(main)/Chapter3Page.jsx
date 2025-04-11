@@ -40,7 +40,7 @@ const Chapter3Page = () => {
   }, [])
 
   async function handleSubmit() {
-    console.log(safetyCheck)
+    router.push('/Chapter3Report')
   }
 
   async function handleCalculationI() {
