@@ -127,10 +127,10 @@ const Chapter3Page = () => {
 
             <Collapsible collapsed={isCollapsedResult}>
               <View style={styles.resultContainer}>
-                <DisplayResult variable={"d1"} value={Number(chapter3DataResult.d1).toFixed(4)} unit={""} />
-                <DisplayResult variable={"d2"} value={Number(chapter3DataResult.d2).toFixed(4)} unit={""} />
-                <DisplayResult variable={"da1"} value={Number(chapter3DataResult.da1).toFixed(4)} unit={""} />
-                <DisplayResult variable={"da2"} value={Number(chapter3DataResult.da2).toFixed(4)} unit={""} />
+                <DisplayResult variable={"d1"} value={Number(chapter3DataResult.d1).toFixed(4)} unit={"mm"} />
+                <DisplayResult variable={"d2"} value={Number(chapter3DataResult.d2).toFixed(4)} unit={"mm"} />
+                <DisplayResult variable={"da1"} value={Number(chapter3DataResult.da1).toFixed(4)} unit={"mm"} />
+                <DisplayResult variable={"da2"} value={Number(chapter3DataResult.da2).toFixed(4)} unit={"mm"} />
                 <DisplayResult variable={"Z1"} value={Number(chapter3DataResult.z1)} unit={""} />
                 <DisplayResult variable={"Z2"} value={Number(chapter3DataResult.z2)} unit={""} />
               </View>
@@ -238,5 +238,22 @@ const styles = StyleSheet.create({
     backgroundColor:'rgb(33,53,85)',
     borderBottomRightRadius:0,
     borderBottomLeftRadius:0
+  },
+
+  resultContainer: {
+    paddingVertical: '4%',
+    paddingHorizontal:'8%',
+    backgroundColor:'#F5EFE7',
+    
+  },
+  buttonText: {
+    fontFamily: 'quicksand-medium',
+    fontSize: 14,
+    color: 'rgb(33, 53, 85)'
+  },
+  buttonTextActive: {
+    fontFamily: 'quicksand-medium',
+    fontSize: 14,
+    color: '#DBE2EC'
   },
 })
