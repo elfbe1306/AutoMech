@@ -53,7 +53,7 @@ const Chapter3Page = () => {
 
       <ScrollView style={styles.inputContainer}>
         <Text style={styles.inputTitle}>Các thông số đầu vào</Text>
-        <View>
+        <View style={styles.displayInput}>
           <DisplayResult variable={"P3"} value={Number(chapter2Data.p3).toFixed(4)} unit={"kW"} />
           <DisplayResult variable={"n3"} value={Number(chapter2Data.n3).toFixed(4)} unit={"vòng/phút"} />
           <DisplayResult variable={"ux"} value={Number(chapter2Data.he_so_truyen_dong_xich).toFixed(4)} unit={""} />
@@ -139,6 +139,12 @@ const styles = StyleSheet.create({
     fontFamily: 'quicksand-semibold',
     fontSize: 16,
     color: 'rgb(33, 53, 85)'
+  },
+
+  displayInput: {
+    marginTop: 10,
+    fontWeight: 200,
+    gap: 10
   },
   resultTitle: {
     marginTop: '10%',
