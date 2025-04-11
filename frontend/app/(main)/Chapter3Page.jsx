@@ -20,6 +20,8 @@ const Chapter3Page = () => {
   const [kr2, setKr2] = useState(0.24);
   const [chapter2Data, setChapter2Data] = useState({})
   const [safetyCheck, setSafetyCheck] = useState(false)
+  const [hasChecked, setHasChecked] = useState(false);
+  
 
   const Chapter3PreData = {
     k0: 1, ka: 1, kdc: 1.1, kc: 1.25, kd: 1.2, kbt: 1.3, z01: 25, kf: 1, n01: n01, Da: Da
@@ -47,6 +49,7 @@ const Chapter3Page = () => {
     const recordID = await AsyncStorage.getItem("RECORDID");
     let response = await apiService.Chapter3FirstCalculation(recordID, Chapter3PreData);
     setSafetyCheck(response.safetyResult);
+    setHasChecked(true);
   }
 
   async function handleCalculationII() {
@@ -76,22 +79,28 @@ const Chapter3Page = () => {
             <Text style={styles.optionButtonText}>Da:</Text>
             <PickerModalButton onSelect={(value) => setDa(value)} options={[0.002, 0.003, 0.004]}/>
           </View>
-          <TouchableOpacity onPress={handleCalculationI}>
-            <Text>Tính toán</Text>
+          <TouchableOpacity style={styles.calculateButton} onPress={handleCalculationI}>
+            <Text style={styles.saveButtonText}>Kiểm tra</Text>
           </TouchableOpacity>
+          {hasChecked && (
+            <Text style={{marginTop: -60,marginBottom: 50, fontWeight: 600, color: safetyCheck ? 'rgb(33, 53, 85)' : 'red' }}>
+              {safetyCheck ? 'Kiểm nghiệm đạt' : 'Kiểm nghiệm không đạt'}
+            </Text>
+          )}
+          
           <View style={styles.optionButtonContainer}>
             <Text style={styles.optionButtonText}>kr1:</Text>
-            <PickerModalButton onSelect={(value) => setKr1(value)} options={[0.59, 0.48, 0.36, 0.29, 0.24, 0.22]}/>
+            <PickerModalButton onSelect={(value) => setKr1(value)} options={[0.59, 0.42, 0.36, 0.29, 0.24, 0.22]}/>
           </View>
           <View style={styles.optionButtonContainer}>
             <Text style={styles.optionButtonText}>kr2:</Text>
             <PickerModalButton onSelect={(value) => setKr2(value)} options={[0.59, 0.48, 0.36, 0.29, 0.24, 0.22]}/>
           </View>
-          <TouchableOpacity onPress={handleCalculationII}>
-            <Text>Tính toán</Text>
+          <TouchableOpacity style={styles.calculateButton} onPress={handleCalculationII}>
+            <Text style={styles.saveButtonText}>Tính toán</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.resultTitle}>Kết quả tính toán và chọn động cơ</Text>
+        <Text style={styles.resultTitle}>Kết quả tính toán</Text>
 
         {/* <View style={[styles.collapseButton, !isCollapsedResult ? styles.collapseButtonActive : null]}>
           <Text style={[styles.buttonText, !isCollapsedResult ? styles.buttonTextActive : null]}>Kết quả tính toán tổng quan</Text>
@@ -145,7 +154,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginTop: '20%'
+    marginTop: '20%',
   },
   title: {
     fontFamily: 'quicksand-bold',
@@ -169,21 +178,36 @@ const styles = StyleSheet.create({
     gap: 10
   },
   resultTitle: {
-    marginTop: '10%',
+    marginTop: 10,
     fontFamily: 'quicksand-semibold',
     fontSize: 16,
     color: 'rgb(33, 53, 85)'
+  },
+  calculateButton: {
+    display: 'flex',
+    width: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 5,
+    padding: 10,
+    backgroundColor: 'rgb(33,53,85)',
+    borderRadius: 10,
+    marginBottom: 5, 
+    alignSelf: 'flex-end'
   },
   optionButtonContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5
+    gap: 5,
   },
   optionButtonText: {
     fontFamily: 'quicksand-bold',
     color: 'rgb(33, 53, 85)',
     fontSize:14,
+  },
+  optionButtonChoosing: {
+    backgroundColor: 'rgb(219,226,236)'
   },
   saveButton: {
     display: 'flex',

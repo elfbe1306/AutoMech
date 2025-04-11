@@ -55,45 +55,58 @@ const InputPage = () => {
 
     if(f < 0) {
       alert("Lực vòng băng tải phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(v < 0) {
       alert("Vận tốc băng tải phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(D < 0) {
-      alert("Đường kính tang dẫn phải lớn hơn 0")
+      alert("Đường kính tang dẫn phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(L < 0) {
-      alert("Thời gian phục vụ phải lớn hơn 0")
+      alert("Thời gian phục vụ phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(t1 < 0) {
-      alert("t1 phải lớn hơn 0")
+      alert("t1 phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(t2 < 0) {
-      alert("t2 phải lớn hơn 0")
+      alert("t2 phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(T1 < 0) {
-      alert("T1 phải lớn hơn 0")
+      alert("T1 phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(T2 < 0) {
-      alert("T2 phải lớn hơn 0")
+      alert("T2 phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(nk != 1) {
       alert('Hiệu suất nối trục phải bằng 1');
       return;
     } else if((nol < 0.99) || (nol > 0.995)) {
       alert("Hiệu suất ổ lăn phải nằm trong (0.99 - 0.995)");
+      setLoading(false); 
       return;
     } else if((nbr < 0.96) || (nbr > 0.98)) {
       alert("Hiệu suất bánh răng phải nằm trong (0.96 - 0.98)");
+      setLoading(false); 
       return;
     } else if((nx < 0.90) || (nx > 0.93)) {
       alert("Hiệu suất xích phải nằm trong (0.95 - 0.97)");
+      setLoading(false); 
       return;
     } else if((uh < 8) || (uh > 40)) {
       alert("Tỷ số truyền hộp giảm tốc (8 - 40)");
+      setLoading(false); 
       return;
     } else if((ux < 2) || (ux > 5)) {
       alert("Tỷ số truyền xích (2 - 5)");
+      setLoading(false); 
       return;
     }
 
