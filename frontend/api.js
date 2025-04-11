@@ -68,7 +68,16 @@ class ApiService {
 
   async Chapter3FirstCalculation(recordID, userData) {
     try {
-      const response = await this.api.post(`/chapter3/${recordID}`, userData);
+      const response = await this.api.post(`/chapter3/first/${recordID}`, userData);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  async Chapter3SecondCalculation(recordID, userData) {
+    try {
+      const response = await this.api.post(`/chapter3/second/${recordID}`, userData);
       return response.data;
     } catch(error) {
       throw error;

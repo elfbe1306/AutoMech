@@ -34,7 +34,7 @@ Chapter3Routes.route('/chapter3/:recordid').get(async (request, response) => {
   }
 }) 
 
-Chapter3Routes.route('/chapter3/:recordid').post(async (request, response) => {
+Chapter3Routes.route('/chapter3/first/:recordid').post(async (request, response) => {
   const supabase = request.supabase
   const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
 
@@ -97,6 +97,10 @@ Chapter3Routes.route('/chapter3/:recordid').post(async (request, response) => {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
   }
 }) 
+
+Chapter3Routes.route('/chapter3/second/:recordid').post(async (request, response) => {
+  
+})
 
 const safetyFactorTable = {
   "12.7-15.875": [7, 7.8, 8.5, 9.3, 10.2, 11, 11.7, 13.2, 14.8, 16.3, 18],

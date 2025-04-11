@@ -19,9 +19,14 @@ const Chapter3Page = () => {
   const [kr1, setKr1] = useState(0.42);
   const [kr2, setKr2] = useState(0.24);
   const [chapter2Data, setChapter2Data] = useState({})
+  const [safetyCheck, setSafetyCheck] = useState(false)
 
   const Chapter3PreData = {
     k0: 1, ka: 1, kdc: 1.1, kc: 1.25, kd: 1.2, kbt: 1.3, z01: 25, kf: 1, n01: n01, Da: Da
+  }
+
+  const Chapter3AfterData = {
+    kr1: kr1, kr2: kr2
   }
 
   useEffect(() => {
@@ -35,12 +40,18 @@ const Chapter3Page = () => {
   }, [])
 
   async function handleSubmit() {
-
+    console.log(safetyCheck)
   }
 
   async function handleCalculationI() {
     const recordID = await AsyncStorage.getItem("RECORDID");
     let response = await apiService.Chapter3FirstCalculation(recordID, Chapter3PreData);
+    setSafetyCheck(response.safetyResult);
+  }
+
+  async function handleCalculationII() {
+    const recordID = await AsyncStorage.getItem("RECORDID");
+    let response = await apiService.Chapter3SecondCalculation(recordID, Chapter3AfterData);
   }
 
   return (
@@ -66,6 +77,17 @@ const Chapter3Page = () => {
             <PickerModalButton onSelect={(value) => setDa(value)} options={[0.002, 0.003, 0.004]}/>
           </View>
           <TouchableOpacity onPress={handleCalculationI}>
+            <Text>Tính toán</Text>
+          </TouchableOpacity>
+          <View style={styles.optionButtonContainer}>
+            <Text style={styles.optionButtonText}>kr1:</Text>
+            <PickerModalButton onSelect={(value) => setKr1(value)} options={[0.59, 0.48, 0.36, 0.29, 0.24, 0.22]}/>
+          </View>
+          <View style={styles.optionButtonContainer}>
+            <Text style={styles.optionButtonText}>kr2:</Text>
+            <PickerModalButton onSelect={(value) => setKr2(value)} options={[0.59, 0.48, 0.36, 0.29, 0.24, 0.22]}/>
+          </View>
+          <TouchableOpacity onPress={handleCalculationII}>
             <Text>Tính toán</Text>
           </TouchableOpacity>
         </View>
