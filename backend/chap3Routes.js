@@ -137,6 +137,8 @@ Chapter3Routes.route('/chapter3/second/:recordid').post(async (request, response
       return response.status(400).json({ message: chapter3DataUpdateError.message });
     }
 
+    return response.status(200).json({ message: 'Complete'});
+
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
   }
@@ -176,7 +178,33 @@ Chapter3Routes.route('/chapter3/report/:recordid').get(async (request, response)
     }
 
     generatePdfFromHtml(engineData[0], chapter3Data[0], outputFilePath = `UserReport/${record_id.id}-report.pdf`);
+  } catch(error) {
+    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+  }
+}) 
 
+Chapter3Routes.route('/chapter3/getSecond/:recordid').get(async (request, response) => {
+  const supabase = request.supabase
+  const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
+
+  try {
+    // Lấy data từ history record
+    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('id', record_id.id);
+
+    if (recordDataError) {
+      console.error("recordDataError", recordDataError)
+      return response.status(400).json({ message: recordDataError.message });
+    }
+
+    // Lấy data từ bảng Chapter3
+    const { data: chapter3Data, error: chapter3DataError } = await supabase.from('Chapter3').select('*').eq('id', recordData[0].chapter3_id);
+
+    if(chapter3DataError) {
+      console.error("chapter3DataError", chapter3DataError)
+      return response.status(400).json({ message: chapter3DataError.message });
+    }
+
+    return response.status(200).json({ message: 'Result chapter 3', chapter3Data: chapter3Data[0] });
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
   }
