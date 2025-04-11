@@ -99,8 +99,39 @@ Chapter3Routes.route('/chapter3/first/:recordid').post(async (request, response)
 }) 
 
 Chapter3Routes.route('/chapter3/second/:recordid').post(async (request, response) => {
-  
-})
+  const supabase = request.supabase
+  const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
+
+  try {
+    // Lấy data từ history record
+    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('id', record_id.id);
+    if (recordDataError) {
+      console.error("recordDataError", recordDataError)
+      return response.status(400).json({ message: recordDataError.message });
+    }
+
+    // Lấy data từ bảng Chapter2
+    const { data: chapter2Data, error: chapter2DataError } = await supabase.from('Chapter2').select('*').eq('id', recordData[0].chapter2_id);
+    if(chapter2DataError) {
+      console.error("chapter2DataError", chapter2DataError)
+      return response.status(400).json({ message: chapter2DataError.message });
+    }
+
+    // Lấy data từ bảng Chapter3
+    const { data: chapter3Data, error: chapter3DataError } = await supabase.from('Chapter3').select('*').eq('id', recordData[0].chapter3_id);
+    if(chapter3DataError) {
+      console.error("chapter3DataError", chapter3DataError)
+      return response.status(400).json({ message: chapter3DataError.message });
+    }
+
+    // Tính toán dữ liệu chương 3 phần sau
+    const Chapter3InputData = Chapter3SecondCalculation(chapter2Data[0], chapter3Data[0]);
+    console.log(chapter2Data[0], chapter3Data[0], Chapter3InputData)
+
+  } catch(error) {
+    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+  }
+}) 
 
 const safetyFactorTable = {
   "12.7-15.875": [7, 7.8, 8.5, 9.3, 10.2, 11, 11.7, 13.2, 14.8, 16.3, 18],
@@ -179,6 +210,28 @@ function Chapter3FirstCalculation(Chapter2Data, Chapter3Input) {
     fv: fv,
     f0: F0,
     he_so_an_toan: s
+  }
+}
+
+function Chapter3SecondCalculation(Chapter2Data, Chapter3Data) {
+  const d1 = Chapter3Function.d1(Chapter3Data.buoc_xich, Chapter3Data.z01);
+  const d2 = Chapter3Function.d2(Chapter3Data.buoc_xich, Chapter3Data.z2);
+  const da1 = Chapter3Function.da1(Chapter3Data.buoc_xich, Chapter3Data.z01);
+  const da2 = Chapter3Function.da2(Chapter3Data.buoc_xich, Chapter3Data.z2);
+  const d1_chon_bang = Chapter3Function.d1_chon_bang(Chapter3Data.buoc_xich);
+  const r = Chapter3Function.r(d1_chon_bang);
+  const df1 = Chapter3Function.df1(d1, r);
+  const df2 = Chapter3Function.df2(d2, r);
+
+  return {
+    d1: d1,
+    d2: d2,
+    da1: da1,
+    da2: da2,
+    d1_chon_bang: d1_chon_bang,
+    r: r,
+    df1: df1,
+    df2: df2
   }
 }
 
