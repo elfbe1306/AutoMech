@@ -37,7 +37,7 @@ Chapter3Routes.route('/chapter3/:recordid').get(async (request, response) => {
   }
 }) 
 
-Chapter3Routes.route('/chapter3/first/:recordid').post(async (request, response) => {
+Chapter3Routes.route('/chapter3/calculation/:recordid').post(async (request, response) => {
   const supabase = request.supabase
   const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
 
@@ -52,18 +52,36 @@ Chapter3Routes.route('/chapter3/first/:recordid').post(async (request, response)
 
     // Lấy data từ bảng Chapter2
     const { data: chapter2Data, error: chapter2DataError } = await supabase.from('Chapter2').select('*').eq('id', recordData[0].chapter2_id);
-
     if(chapter2DataError) {
       console.error("chapter2DataError", chapter2DataError)
       return response.status(400).json({ message: chapter2DataError.message });
     }
 
     // Tính toán hệ số an toàn
-    const Chapter3InputData = Chapter3FirstCalculation(chapter2Data[0], request.body);
-    const safetyCheck = getSafetyFactor(Chapter3InputData.buoc_xich, Chapter3InputData.n01);
+    const Chapter3InputData1 = Chapter3FirstCalculation(chapter2Data[0], request.body);
+    if (Chapter3InputData1.error) {
+      return response.status(200).json({
+        message: 'Tính toán dừng lại vì dữ liệu không hợp lệ',
+        reason: Chapter3InputData1.reason,
+        safetyResult: false
+      });
+    }
+    const safetyCheck = getSafetyFactor(Chapter3InputData1.buoc_xich, Chapter3InputData1.n01);
     let safetyResult = false;
-    if(safetyCheck < Chapter3InputData.he_so_an_toan) {
+    if(safetyCheck < Chapter3InputData1.he_so_an_toan) {
       safetyResult = true;
+    }
+
+    // Trả về nếu safetyCheck là false
+    if(!safetyResult) {
+      return response.status(200).json({ message: 'Đã kiểm tra an toàn xong', safetyResult: safetyResult });
+    }
+
+    // Tính toán phần còn lại nếu safetyCheck là true
+    const Chapter3InputData2 = Chapter3SecondCalculation(chapter2Data[0], Chapter3InputData1)
+    const Chapter3InputData = {
+      ...Chapter3InputData1,
+      ...Chapter3InputData2
     }
 
     if(recordData[0].chapter3_id) {
@@ -95,116 +113,7 @@ Chapter3Routes.route('/chapter3/first/:recordid').post(async (request, response)
       }
     }
 
-    return response.status(200).json({ message: 'Đã kiểm tra an toàn xong', safetyResult: safetyResult });
-  } catch(error) {
-    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
-  }
-}) 
-
-Chapter3Routes.route('/chapter3/second/:recordid').post(async (request, response) => {
-  const supabase = request.supabase
-  const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
-
-  try {
-    // Lấy data từ history record
-    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('id', record_id.id);
-    if (recordDataError) {
-      console.error("recordDataError", recordDataError)
-      return response.status(400).json({ message: recordDataError.message });
-    }
-
-    // Lấy data từ bảng Chapter2
-    const { data: chapter2Data, error: chapter2DataError } = await supabase.from('Chapter2').select('*').eq('id', recordData[0].chapter2_id);
-    if(chapter2DataError) {
-      console.error("chapter2DataError", chapter2DataError)
-      return response.status(400).json({ message: chapter2DataError.message });
-    }
-
-    // Lấy data từ bảng Chapter3
-    const { data: chapter3Data, error: chapter3DataError } = await supabase.from('Chapter3').select('*').eq('id', recordData[0].chapter3_id);
-    if(chapter3DataError) {
-      console.error("chapter3DataError", chapter3DataError)
-      return response.status(400).json({ message: chapter3DataError.message });
-    }
-
-    // Tính toán dữ liệu chương 3 phần sau
-    const Chapter3InputData = Chapter3SecondCalculation(chapter2Data[0], chapter3Data[0]);
-    
-    // Lấy data từ bảng Chapter3
-    const { data: chapter3UpdateData, error: chapter3DataUpdateError } = await supabase.from('Chapter3').update(Chapter3InputData).eq('id', recordData[0].chapter3_id);
-    if(chapter3DataUpdateError) {
-      console.error("chapter3DataUpdateError", chapter3DataUpdateError)
-      return response.status(400).json({ message: chapter3DataUpdateError.message });
-    }
-
-    return response.status(200).json({ message: 'Complete'});
-
-  } catch(error) {
-    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
-  }
-}) 
-
-Chapter3Routes.route('/chapter3/report/:recordid').get(async (request, response) => {
-  const supabase = request.supabase
-  const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
-
-  try {
-    // Lấy data từ history record
-    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('id', record_id.id);
-    if (recordDataError) {
-      console.error("recordDataError", recordDataError)
-      return response.status(400).json({ message: recordDataError.message });
-    }
-
-    // Lấy data từ bảng Chapter2
-    const { data: chapter2Data, error: chapter2DataError } = await supabase.from('Chapter2').select('*').eq('id', recordData[0].chapter2_id);
-    if(chapter2DataError) {
-      console.error("chapter2DataError", chapter2DataError)
-      return response.status(400).json({ message: chapter2DataError.message });
-    }
-
-    // Lấy data từ bảng Chapter3
-    const { data: chapter3Data, error: chapter3DataError } = await supabase.from('Chapter3').select('*').eq('id', recordData[0].chapter3_id);
-    if(chapter3DataError) {
-      console.error("chapter3DataError", chapter3DataError)
-      return response.status(400).json({ message: chapter3DataError.message });
-    }
-
-    // Lấy data từ bảng động cơ
-    const { data: engineData, error: engineDataError } = await supabase.from('Engine').select('*').eq('id', recordData[0].engine_id);
-    if(engineDataError) {
-      console.error("engineDataError", engineDataError)
-      return response.status(400).json({ message: engineDataError.message });
-    }
-
-    generatePdfFromHtml(engineData[0], chapter3Data[0], outputFilePath = `UserReport/${record_id.id}-report.pdf`);
-  } catch(error) {
-    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
-  }
-}) 
-
-Chapter3Routes.route('/chapter3/getSecond/:recordid').get(async (request, response) => {
-  const supabase = request.supabase
-  const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
-
-  try {
-    // Lấy data từ history record
-    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('id', record_id.id);
-
-    if (recordDataError) {
-      console.error("recordDataError", recordDataError)
-      return response.status(400).json({ message: recordDataError.message });
-    }
-
-    // Lấy data từ bảng Chapter3
-    const { data: chapter3Data, error: chapter3DataError } = await supabase.from('Chapter3').select('*').eq('id', recordData[0].chapter3_id);
-
-    if(chapter3DataError) {
-      console.error("chapter3DataError", chapter3DataError)
-      return response.status(400).json({ message: chapter3DataError.message });
-    }
-
-    return response.status(200).json({ message: 'Result chapter 3', chapter3Data: chapter3Data[0] });
+    return response.status(200).json({ message: 'Đã tính toán xong chương 3', safetyResult: safetyResult, chapter3Data: Chapter3InputData });
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
   }
@@ -239,7 +148,13 @@ function Chapter3FirstCalculation(Chapter2Data, Chapter3Input) {
   const kn = Chapter3Function.kn(Chapter3Input.n01, Chapter2Data.n3);
   const k = Chapter3Function.k(Chapter3Input.k0, Chapter3Input.ka, Chapter3Input.kdc, Chapter3Input.kbt, Chapter3Input.kd, Chapter3Input.kc);
   const cong_suat_tinh_toan = Chapter3Function.cong_suat_tinh_toan(Chapter2Data.p3, k, kz, kn);
+
+  // cong suat cho phep ko the tinh dc neu n01 va cong suat tinh toan vuot qua bang tra
   const cong_suat_cho_phep = Chapter3Function.cong_suat_cho_phep(Chapter3Input.n01, cong_suat_tinh_toan);
+  if(cong_suat_cho_phep === undefined) {
+    return { error: true, reason: 'cong_suat_cho_phep undefined' };
+  }
+
   const buoc_xich = Chapter3Function.buoc_xich(Chapter3Input.n01, cong_suat_cho_phep);
   const khoang_cach_truc = Chapter3Function.khoang_cach_truc(buoc_xich);
   const so_mat_xich = Chapter3Function.so_mat_xich(khoang_cach_truc, buoc_xich, Chapter3Input.z01, z2);
@@ -299,6 +214,14 @@ function Chapter3SecondCalculation(Chapter2Data, Chapter3Data) {
   const r = Chapter3Function.r(d1_chon_bang);
   const df1 = Chapter3Function.df1(d1, r);
   const df2 = Chapter3Function.df2(d2, r);
+  const kr1 = Chapter3Function.kr(Chapter3Data.z1);
+  const kr2 = Chapter3Function.kr(Chapter3Data.z2);
+  const fvd = Chapter3Function.Fvd(Chapter2Data.n3, Chapter3Data.buoc_xich);
+  const module_dan_hoi = 210000;
+  const a_dt = Chapter3Function.A_dt(Chapter3Data.buoc_xich);
+  const Fr = Chapter3Function.Fr(Chapter3Data.ft);
+  const oH1 = Chapter3Function.oH1(kr1, Chapter3Data.kd, Chapter3Data.ft, fvd, a_dt);
+  const oH2 = Chapter3Function.oH2(kr2, Chapter3Data.kd, Chapter3Data.ft, fvd, a_dt);
 
   return {
     d1: d1,
@@ -308,259 +231,16 @@ function Chapter3SecondCalculation(Chapter2Data, Chapter3Data) {
     d1_chon_bang: d1_chon_bang,
     r: r,
     df1: df1,
-    df2: df2
+    df2: df2,
+    kr1: kr1,
+    kr2: kr2,
+    fvd: fvd,
+    module_dan_hoi: module_dan_hoi,
+    a_dt: a_dt,
+    fr: Fr,
+    oh1: oH1,
+    oh2: oH2
   }
 }
-
-
-async function generatePdfFromHtml(engineData, chapter3Data, outputFilePath) {
-  try {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-
-    const htmlContent = `<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        .a4-container {
-            width: 210mm;
-            height: 297mm;
-            padding: 10mm;
-            align-items: center;
-            justify-content: center;
-            margin: auto;
-            background: white;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-            box-sizing: border-box;
-            margin-bottom: 10px;
-        }
-        .chapter_container {
-            margin-bottom: 20px;
-        }
-        table {
-            margin-top: 20px;
-            margin-bottom: 20px;
-            margin-left: auto;
-            margin-right: auto;
-            border-collapse: collapse;
-            width: auto;
-            text-align: center;
-        }
-
-        th, td {
-        border: 1px solid black;
-        padding: 8px 12px;
-        }
-
-        th {
-        font-weight: bold;
-        }
-
-        .fraction {
-        display: inline-block;
-        vertical-align: middle;
-        text-align: center;
-        font-style: italic;
-        }
-
-        .fraction .top {
-        border-bottom: 1px solid #000;
-        padding-bottom: 2px;
-        }
-
-        .fraction .bottom {
-        padding-top: 2px;
-        }
-       
-        h3 {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0;
-            padding: 0;
-        }
-        h4 {
-            margin: 4px;
-            padding: 0;
-        }
-        span {
-            font-family: bold;
-        }
-      </style>
-</head>
-<body>
-    <div class="a4-container">
-        <h3>THÔNG TIN HỘP GIẢM TỐC</h3>
-        <div class="chapter_container">
-            <h4>I - ĐỘNG CƠ</h4>
-            <table>
-                <tr>
-                    <th>Kiểu động cơ</th>
-                    <th>Công suất</th>
-                    <th>Vận tốc quay</th>
-                    <!-- phan nay demo sau -->
-                    <!-- <th>cosφ</th>
-                    <th>η%</th>
-                    <th>
-                      <span class="fraction">
-                        <div class="top">T<sub>max</sub></div>
-                        <div class="bottom">T<sub>dn</sub></div>
-                      </span>
-                    </th>
-                    <th>
-                      <span class="fraction">
-                        <div class="top">T<sub>k</sub></div>
-                        <div class="bottom">T<sub>dn</sub></div>
-                      </span>
-                    </th> -->
-                  </tr>
-                <tr>
-                  <td><span id="dong_co_dien">${engineData.kieu_dong_co}</span></td>
-                  <td><span id="cong_suat">${engineData.cong_suat}</span> kW</td>
-                  <td><span id="van_toc_quay">${engineData.van_toc_vong_quay}</span> vg/ph</td>
-                  <!-- Phan nay demo sau -->
-                  <!-- <td><span id="cos_phi"></span></td>
-                  <td><span id="n_phan_tram"></span></td>
-                  <td><span id="ti_so_T_max"></span></td>
-                  <td><span id="ti_so_T_k"></span></td> -->
-                </tr>
-              </table>
-        </div>
-
-        <div class="chapter_container">
-            <h4>II - BỘ TRUYỀN HỞ - XÍCH</h4>
-            <table>
-                <tr>
-                  <th>Loại xích</th>
-                  <th>Số mắt xích</th>
-                  <th>Đường kính ngoài bánh răng 1 (da₁)</th>
-                  <th>Đường kính ngoài bánh răng 2 (da₂)</th>
-                  <th>Số răng bánh răng 1 (Z₁)</th>
-                  <th>Số răng bánh răng 2 (Z₂)</th>
-                  <th>Khoảng cách trục (a)</th>
-                </tr>
-                <tr>
-                  <td><span id="loai_xich"></span></td>
-                  <td><span id="so_mat_xich">${chapter3Data.so_mat_xich}</span></td>
-                  <td><span id="da1">${Number(chapter3Data.da1).toFixed(4)}</span> mm</td>
-                  <td><span id="da2">${Number(chapter3Data.da2).toFixed(4)}</span> mm</td>
-                  <td><span id="z1">${chapter3Data.z1}</span></td>
-                  <td><span id="z2">${chapter3Data.z2}</span></td>
-                  <td><span id="a">${chapter3Data.khoang_cach_truc}</span></td>
-                </tr>
-              </table>
-        </div>
-
-        <div class="chapter_container">
-            <h4>III - TRỤC</h4>
-            <table>
-                <tr>
-                    <th>Đường kính trục 1</th>
-                    <th>Đường kính trục 2</th>
-                    <th>Đường kính trục 3</th>
-                </tr>
-                <tr>
-                    <td><span id="duong_kinh_truc_1"></span> mm</td>
-                    <td><span id="duong_kinh_truc_2"></span> mm</td>
-                    <td><span id="duong_kinh_truc_3"></span> mm</td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="chapter_container">
-            <h4>IV - Ổ LĂN</h4>
-            <h4>1. Ổ lăn trục 1:</h4>
-            <table>
-                <tr>
-                  <th>Kí hiệu ổ</th>
-                  <th>d</th>
-                  <th>D</th>
-                  <th>B</th>
-                  <th>r</th>
-                  <th>Đường kính bi</th>
-                  <th>C</th>
-                  <th>C₀</th>
-                </tr>
-                <tr>
-                  <td><span id="ki_hieu_o_lan_1"></span></td>
-                  <td><span id="d_o_lan_1"></span> mm</td>
-                  <td><span id="D_o_lan_1"></span> mm</td>
-                  <td><span id="B_o_lan_1"></span> mm</td>
-                  <td><span id="r_o_lan_1"></span> mm</td>
-                  <td><span id="duong_kinh_bi_o_lan_1"></span></td>
-                  <td><span id="C_o_lan_1"></span> N</td>
-                  <td><span id="C_0_o_lan_1"></span> N</td>
-                </tr>
-            </table>
-
-            <h4>2. Ổ lăn trục 2:</h4>
-            <table>
-                <tr>
-                  <th>Kí hiệu ổ</th>
-                  <th>d</th>
-                  <th>D</th>
-                  <th>B</th>
-                  <th>r</th>
-                  <th>Đường kính bi</th>
-                  <th>C</th>
-                  <th>C₀</th>
-                </tr>
-                <tr>
-                  <td><span id="ki_hieu_o_lan_2"></span></td>
-                  <td><span id="d_o_lan_2"></span> mm</td>
-                  <td><span id="D_o_lan_2"></span> mm</td>
-                  <td><span id="B_o_lan_2"></span> mm</td>
-                  <td><span id="r_o_lan_2"></span> mm</td>
-                  <td><span id="duong_kinh_bi_o_lan_2"></span></td>
-                  <td><span id="C_o_lan_2"></span> N</td>
-                  <td><span id="C_0_o_lan_2"></span> N</td>
-                </tr>
-            </table>
-
-            <h4>3. Ổ lăn trục 3:</h4>
-            <table>
-                <tr>
-                  <th>Kí hiệu ổ</th>
-                  <th>d</th>
-                  <th>D</th>
-                  <th>B</th>
-                  <th>r</th>
-                  <th>Đường kính bi</th>
-                  <th>C</th>
-                  <th>C₀</th>
-                </tr>
-                <tr>
-                  <td><span id="ki_hieu_o_lan_3"></span></td>
-                  <td><span id="d_o_lan_3"></span> mm</td>
-                  <td><span id="D_o_lan_3"></span> mm</td>
-                  <td><span id="B_o_lan_3"></span> mm</td>
-                  <td><span id="r_o_lan_3"></span> mm</td>
-                  <td><span id="duong_kinh_bi_o_lan_3"></span></td>
-                  <td><span id="C_o_lan_3"></span> N</td>
-                  <td><span id="C_0_o_lan_3"></span> N</td>
-                </tr>
-            </table>
-        </div>
-</body>
-</html>`
-
-    await page.setContent(htmlContent, {
-      waitUntil: 'networkidle0', // ensures everything is fully loaded
-    });
-
-    await page.pdf({
-      path: outputFilePath,
-      format: 'A4',
-      printBackground: true,
-    });
-
-    await browser.close();
-    console.log(`✅ PDF generated: ${outputFilePath}`);
-  } catch (err) {
-    console.error('❌ Error generating PDF:', err);
-  }
-}
-
 
 module.exports = Chapter3Routes;

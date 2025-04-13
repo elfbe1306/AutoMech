@@ -231,6 +231,29 @@ class Chapter3 {
     let result = Number(d2) - 2*Number(r);
     return Number(result.toFixed(12));
   }
+
+  kr = (z) => {
+    const data = [
+      { Z: 15, kr: 0.59 },
+      { Z: 20, kr: 0.48 },
+      { Z: 30, kr: 0.36 },
+      { Z: 40, kr: 0.29 },
+      { Z: 50, kr: 0.24 },
+      { Z: 60, kr: 0.22 }
+    ];
+
+    for(let i = 0; i < data.length - 1; i++)  {
+      const Z1 = data[i].Z;
+      const Z2 = data[i + 1].Z;
+      const k1 = data[i].kr;
+      const k2 = data[i + 1].kr;
+
+      if (z >= Z1 && z <= Z2) {
+        const kr = k1 + ((z - Z1) / (Z2 - Z1)) * (k2 - k1);
+        return parseFloat(kr.toFixed(2));
+      }
+    }
+  }
   
   Fvd = (n3, p) => {
     let result = 13*Math.pow(10,-7)*Number(n3)*Math.pow(Number(p),3) *1;
@@ -271,28 +294,5 @@ class Chapter3 {
     return Number(result.toFixed(12));
   }
 }
-
-// module.exports = {
-//   Z1,
-//   Z2,
-//   kz, kn, k,
-//   cong_suat_tinh_toan,
-//   cong_suat_cho_phep,
-//   buoc_xich,
-//   khoang_cach_truc,
-//   so_mat_xich,
-//   tinh_lai_khoang_cach_truc,
-//   delta_a, a,
-//   so_lan_va_dap_cua_xich,
-//   tai_trong_pha_hong,
-//   khoi_luong_1m_xich,
-//   v, Ft, Fv, F0, 
-//   he_so_an_toan,
-//   d1, d2, da1, da2,
-//   d1_chon_bang,
-//   r, df1, df2,
-//   Fvd, A_dt, Fr,
-//   oH1, oH2
-// }
 
 module.exports = Chapter3

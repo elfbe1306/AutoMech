@@ -8,8 +8,8 @@ const Login = () => {
   const router = useRouter()
 
   const [user, setUser] = useState({
-    email: "",
-    password: ""
+    email: "test123@gmail.com",
+    password: "123456"
   })
 
   function handleSignUpRoute() {

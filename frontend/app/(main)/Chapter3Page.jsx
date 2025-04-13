@@ -16,8 +16,6 @@ const Chapter3Page = () => {
 
   const [n01, setN01] = useState(0);
   const [Da, setDa] = useState(0);
-  const [kr1, setKr1] = useState(0.42);
-  const [kr2, setKr2] = useState(0.24);
   const [chapter2Data, setChapter2Data] = useState({})
   const [safetyCheck, setSafetyCheck] = useState(false)
   const [hasChecked, setHasChecked] = useState(false);
@@ -25,13 +23,10 @@ const Chapter3Page = () => {
   const [chapter3DataResult, setChapter3DataResult] = useState({});
   const [isCollapsedResult, setIsCollapsedResult] = useState(true);
   const [calculationDone, setCalculationDone] = useState(false);
+  const [loadingButton1, setLoadingButton1] = useState(false);
 
   const Chapter3PreData = {
     k0: 1, ka: 1, kdc: 1.1, kc: 1.25, kd: 1.2, kbt: 1.3, z01: 25, kf: 1, n01: n01, Da: Da
-  }
-
-  const Chapter3AfterData = {
-    kr1: kr1, kr2: kr2
   }
 
   useEffect(() => {
@@ -49,20 +44,42 @@ const Chapter3Page = () => {
   }
 
   async function handleCalculationI() {
-    const recordID = await AsyncStorage.getItem("RECORDID");
-    let response = await apiService.Chapter3FirstCalculation(recordID, Chapter3PreData);
-    setSafetyCheck(response.safetyResult);
-    setHasChecked(true);
-  }
+    if(![50, 200, 400, 600, 800, 1000, 1200, 1600].includes(n01)) {
+      alert("Vui lòng chọn giá trị cho n01");
+      return;
+    }
+  
+    if(![0.002, 0.003, 0.004].includes(Da)) {
+      alert("Vui lòng chọn giá trị cho Da");
+      return;
+    }
+  
+    setLoadingButton1(true); 
+  
+    try {
+      const recordID = await AsyncStorage.getItem("RECORDID");
+      const response = await apiService.Chapter3Calculation(recordID, Chapter3PreData);
+  
+      const isSafe = response.safetyResult;
+      setSafetyCheck(isSafe);
+      setHasChecked(true);
 
-  async function handleCalculationII() {
-    const recordID = await AsyncStorage.getItem("RECORDID");
-    let response1 = await apiService.Chapter3SecondCalculation(recordID, Chapter3AfterData);
+      const chapter3Result = response?.chapter3Data;
+      setChapter3DataResult(chapter3Result)
 
-    let response2 = await apiService.Chapter3Result(recordID);
-    setChapter3DataResult(response2.chapter3Data);
-
-    setCalculationDone(true); 
+      if (isSafe) {
+        setCalculationDone(true);
+        setIsCollapsedResult(false);
+      } else {
+        setCalculationDone(false);
+        setIsCollapsedResult(true);
+      }
+    } catch (error) {
+      console.error("Error in handleCalculationI:", error);
+      alert("Đã xảy ra lỗi khi tính toán. Vui lòng thử lại.");
+    } finally {
+      setLoadingButton1(false);
+    }
   }
 
   return (
@@ -87,7 +104,7 @@ const Chapter3Page = () => {
             <Text style={styles.optionButtonText}>Da:</Text>
             <PickerModalButton onSelect={(value) => setDa(value)} options={[0.002, 0.003, 0.004]}/>
           </View>
-          <TouchableOpacity style={styles.calculateButton} onPress={handleCalculationI}>
+          <TouchableOpacity style={styles.calculateButton} onPress={handleCalculationI} disabled={loadingButton1}>
             <Text style={styles.saveButtonText}>Kiểm tra</Text>
           </TouchableOpacity>
           {hasChecked && (
@@ -95,18 +112,6 @@ const Chapter3Page = () => {
               {safetyCheck ? 'Kiểm nghiệm đạt' : 'Kiểm nghiệm không đạt'}
             </Text>
           )}
-          
-          <View style={styles.optionButtonContainer}>
-            <Text style={styles.optionButtonText}>kr1:</Text>
-            <PickerModalButton onSelect={(value) => setKr1(value)} options={[0.59, 0.42, 0.36, 0.29, 0.24, 0.22]}/>
-          </View>
-          <View style={styles.optionButtonContainer}>
-            <Text style={styles.optionButtonText}>kr2:</Text>
-            <PickerModalButton onSelect={(value) => setKr2(value)} options={[0.59, 0.48, 0.36, 0.29, 0.24, 0.22]}/>
-          </View>
-          <TouchableOpacity style={styles.calculateButton} onPress={handleCalculationII}>
-            <Text style={styles.saveButtonText}>Tính toán</Text>
-          </TouchableOpacity>
         </View>
         {calculationDone && (
           <>
@@ -127,12 +132,19 @@ const Chapter3Page = () => {
 
             <Collapsible collapsed={isCollapsedResult}>
               <View style={styles.resultContainer}>
+                <DisplayResult variable={"Z1"} value={Number(chapter3DataResult.z1)} unit={""} />
+                <DisplayResult variable={"Z2"} value={Number(chapter3DataResult.z2)} unit={""} />
                 <DisplayResult variable={"d1"} value={Number(chapter3DataResult.d1).toFixed(4)} unit={"mm"} />
                 <DisplayResult variable={"d2"} value={Number(chapter3DataResult.d2).toFixed(4)} unit={"mm"} />
                 <DisplayResult variable={"da1"} value={Number(chapter3DataResult.da1).toFixed(4)} unit={"mm"} />
                 <DisplayResult variable={"da2"} value={Number(chapter3DataResult.da2).toFixed(4)} unit={"mm"} />
-                <DisplayResult variable={"Z1"} value={Number(chapter3DataResult.z1)} unit={""} />
-                <DisplayResult variable={"Z2"} value={Number(chapter3DataResult.z2)} unit={""} />
+                <DisplayResult variable={"dl"} value={Number(chapter3DataResult.d1_chon_bang).toFixed(4)} unit={""} />
+                <DisplayResult variable={"r"} value={Number(chapter3DataResult.r).toFixed(4)} unit={"mm"} />
+                <DisplayResult variable={"df1"} value={Number(chapter3DataResult.df1).toFixed(4)} unit={"mm"} />
+                <DisplayResult variable={"df2"} value={Number(chapter3DataResult.df2).toFixed(4)} unit={"mm"} />
+                <DisplayResult variable={"Lực tác dụng lên trục (Fr)"} value={Number(chapter3DataResult.fr).toFixed(4)} unit={"N"} />
+                <DisplayResult variable={"Ứng suất tiếp xúc (sH1)"} value={Number(chapter3DataResult.oh1).toFixed(4)} unit={"Mpa"} />
+                <DisplayResult variable={"Ứng suất tiếp xúc (sH2)"} value={Number(chapter3DataResult.oh2).toFixed(4)} unit={"Mpa"} />
               </View>
             </Collapsible>
           </>

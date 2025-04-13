@@ -66,39 +66,12 @@ class ApiService {
     }
   }
 
-  async Chapter3FirstCalculation(recordID, userData) {
+  async Chapter3Calculation(recordID, userData) {
     try {
-      const response = await this.api.post(`/chapter3/first/${recordID}`, userData);
+      const response = await this.api.post(`/chapter3/calculation/${recordID}`, userData);
       return response.data;
     } catch(error) {
       throw error;
-    }
-  }
-
-  async Chapter3SecondCalculation(recordID, userData) {
-    try {
-      const response = await this.api.post(`/chapter3/second/${recordID}`, userData);
-      return response.data;
-    } catch(error) {
-      throw error;
-    }
-  }
-
-  async Chapter3ReportGenerate(recordID) {
-    try {
-      const response = await this.api.get(`/chapter3/report/${recordID}`);
-      return response.data;
-    } catch(error) {
-      throw error;
-    }
-  }
-
-  async Chapter3Result(recordID) {
-    try {
-      const response = await this.api.get(`/chapter3/getSecond/${recordID}`);
-      return response.data;
-    } catch(error) {
-      throw error
     }
   }
 }
