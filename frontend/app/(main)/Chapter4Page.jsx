@@ -6,23 +6,8 @@ import ReturnButton from '@/components/ReturnButton';
 import apiService from '@/api';
 import { useRouter } from 'expo-router';
 
-const Chapter3Report = () => {
+const Chapter4Page = () => {
   const router = useRouter();
-  const [chapter2, setChapter2] = useState()
-  const [chapter3, setChapter3] = useState()
-  const [engine, setEngine] = useState()
-
-  useEffect(() => {
-    const fetchBeginData = async () => {
-        const recordID = await AsyncStorage.getItem("RECORDID");
-        let response = await apiService.Chapter3ReportGenerate(recordID);
-        setChapter2(response.chapter2Data);
-        setChapter3(response.chapter3Data);
-        setEngine(response.engineData);
-    }
-
-    fetchBeginData()
-  }, [])
 
   return (
     <View>
@@ -36,7 +21,7 @@ const Chapter3Report = () => {
   )
 }
 
-export default Chapter3Report
+export default Chapter4Page
 
 const styles = StyleSheet.create({
   titleContainer: {

@@ -30,7 +30,11 @@ app.use(Chapter2Routes); // Chapter2Routes will access request.supabase
 
 // Chapter3 Routes
 const Chapter3Routes = require('./chap3Routes')
-app.use(Chapter3Routes); // Chapter2Routes will access request.supabase
+app.use(Chapter3Routes); // Chapter3Routes will access request.supabase
+
+// Chapter4 Routes
+const Chapter4Routes = require('./chap4Routes')
+app.use(Chapter4Routes); // Chapter4Routes will access request.supabase
 
 // Start Server
 app.listen(PORT, () => {

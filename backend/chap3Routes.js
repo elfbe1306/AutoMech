@@ -4,9 +4,6 @@ const {v4: uuidv4} = require('uuid')
 const jwt = require('jsonwebtoken')
 require('dotenv').config({ path: './config.env' });
 
-const puppeteer = require('puppeteer');
-const fs = require('fs');
-
 let Chapter3Routes = express.Router();
 const Chapter3Function = MachineCalculatorFactory.getChapter("Chapter3");
 
