@@ -87,6 +87,8 @@ const SelectMaterial = (v, z1, z2, oh1, oh2) => {
 }
 
 function UngSuatChoPhep(Chapter4Input, Chapter2Data, Chapter3Data) {
+  const Lg = Chapter4Function.ThoiGianPhucVu(Chapter2Data.thoi_gian_phuc_vu);
+  
   const SHlim1 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB1);
   const SHlim2 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB2);
   const Flim1 = Chapter4Function.UngSuatUonChoPhep(Chapter4Input.HB1);
@@ -106,8 +108,25 @@ function UngSuatChoPhep(Chapter4Input, Chapter2Data, Chapter3Data) {
   const o_H_max = Chapter4Function.UngSuatTiepXucQuaTaiChoPhep(Chapter4Input.Sch2);
   const o_F1_max = Chapter4Function.UngSuatUonQuaTaiChoPhep(Chapter4Input.Sch1);
   const o_F2_max = Chapter4Function.UngSuatUonQuaTaiChoPhep(Chapter4Input.Sch2);
+  const Flim2 = Chapter4Function.UngSuatUonChoPhep(Chapter4Input.HB2);
+  const SH1 = 1.1;
+  const SF1 = 1.75;
+  const SH2 = 1.1;
+  const SF2 = 1.75;
+  const NHO1 = Chapter4Function.SoCKThayDoiUsKhiThuTiepXuc(Chapter4Input.HB1);
+  const NHO2 = Chapter4Function.SoCKThayDoiUsKhiThuTiepXuc(Chapter4Input.HB2);
+  const NFO1 = 4000000;
+  const NFO2 = 4000000;
+  const NHE1 = Chapter4Function.NHE1(Chapter4Input.c, Lg, Chapter2Data.n1, Chapter2Data.t1_t, Chapter2Data.t2_t, Chapter2Data.t1, Chapter2Data.t2);
+  const NHE2 = Chapter4Function.NHE2(NHE1, Chapter2Data.he_so_truyen_cap_nhanh);
+  const mF = 6;
+  const NFE1 = Chapter4Function.NFE1(Chapter4Input.c, Lg, Chapter2Data.n1, Chapter2Data.t1_t, Chapter2Data.t2_t, Chapter2Data.t1, Chapter2Data.t2, mF);
+  const NFE2 = Chapter4Function.NFE2(NFE1, Chapter2Data.he_so_truyen_cap_nhanh);
+ 
 
   return {
+    thoi_gian_phuc_vu_Lg: Lg,
+
     SHlim1: SHlim1,
     SHlim2: SHlim2,
     Flim1: Flim1,
@@ -120,7 +139,22 @@ function UngSuatChoPhep(Chapter4Input, Chapter2Data, Chapter3Data) {
     o_H_phay: o_H_phay,
     o_H_max: o_H_max,
     o_F1_max: o_F1_max,
-    o_F2_max: o_F2_max
+    o_F2_max: o_F2_max,
+
+    SH1: SH1,
+    SH2: SH2,
+    Flim1: Flim1,
+    Flim2: Flim2,
+    SF1: SF1,
+    SF2: SF2,
+    NHO1: NHO1,
+    NHO2: NHO2,
+    NFO1: NFO1,
+    NFO2: NFO2,
+    NHE1: NHE1,
+    NHE2: NHE2,
+    NFE1: NFE1,
+    NFE2: NFE2
   }
 }
 
