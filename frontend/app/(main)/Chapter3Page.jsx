@@ -7,7 +7,6 @@ import apiService from '@/api';
 import { useRouter } from 'expo-router';
 import Collapsible from 'react-native-collapsible';
 import DisplayResult from '@/components/DisplayResult'
-import EngineCard from '@/components/EngineCard'
 import AntDesign from '@expo/vector-icons/AntDesign';
 import PickerModalButton from '../../components/PickerModalButton'
 
@@ -22,7 +21,6 @@ const Chapter3Page = () => {
 
   const [chapter3DataResult, setChapter3DataResult] = useState({});
   const [isCollapsedResult, setIsCollapsedResult] = useState(true);
-  const [calculationDone, setCalculationDone] = useState(false);
   const [loadingButton1, setLoadingButton1] = useState(false);
 
   const Chapter3PreData = {
@@ -40,7 +38,7 @@ const Chapter3Page = () => {
   }, [])
 
   async function handleSubmit() {
-    router.push('/Chapter3Report')
+    router.push('/Chapter4Page')
   }
 
   async function handleCalculationI() {
@@ -64,16 +62,13 @@ const Chapter3Page = () => {
       setSafetyCheck(isSafe);
       setHasChecked(true);
 
-      const chapter3Result = response?.chapter3Data;
+      if(!isSafe) {
+        return;
+      }
+
+      const chapter3Result = response.chapter3Data;
       setChapter3DataResult(chapter3Result)
 
-      if (isSafe) {
-        setCalculationDone(true);
-        setIsCollapsedResult(false);
-      } else {
-        setCalculationDone(false);
-        setIsCollapsedResult(true);
-      }
     } catch (error) {
       console.error("Error in handleCalculationI:", error);
       alert("Đã xảy ra lỗi khi tính toán. Vui lòng thử lại.");
@@ -113,7 +108,7 @@ const Chapter3Page = () => {
             </Text>
           )}
         </View>
-        {calculationDone && (
+        {safetyCheck && (
           <>
             <Text style={styles.resultTitle}>Kết quả tính toán</Text>
 

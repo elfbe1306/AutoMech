@@ -12,7 +12,6 @@ const HomePage = () => {
 
   useEffect(() => {
     AsyncStorage.removeItem("RECORDID");
-    AsyncStorage.removeItem("ENGINELIST");
   }, [])
 
   return(

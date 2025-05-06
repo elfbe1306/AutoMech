@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import apiService from '../../api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
+import { useEngine } from '../../Context/EngineContext'
 
 const InputPage = () => {
   const [f, setF] = useState(6000);
@@ -21,6 +22,8 @@ const InputPage = () => {
   const [ux, setUx] = useState(2);
   const [UserID, setUserID] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const { setListEngine } = useEngine();
 
   const inputName = ["F(N)", "v(m/s)", "D(mm)", "L(năm)", "t1(giây)", "t2(giây)", "T1\n(momem xoắn)", 
     "T2\n(momem xoắn)", "Hiệu suất nối trục", "Hiệu suất ổ lăn\n(0.99 - 0.995)", 
@@ -138,7 +141,7 @@ const InputPage = () => {
       let recordID = await AsyncStorage.getItem("RECORDID")
       let response = await apiService.Chapter2InputData(inputObject, UserID, recordID);
       AsyncStorage.setItem("RECORDID", response.record_id);
-      AsyncStorage.setItem("ENGINELIST", JSON.stringify(response.engine_list));
+      setListEngine(response.engine_list);
       router.push('/(main)/EngineSelectPage')
     } catch(error) {
       alert(error?.response?.data?.message || "Tính toán thất bại");

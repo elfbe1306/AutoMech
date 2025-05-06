@@ -32,7 +32,7 @@ app.use(Chapter2Routes); // Chapter2Routes will access request.supabase
 const Chapter3Routes = require('./chap3Routes')
 app.use(Chapter3Routes); // Chapter3Routes will access request.supabase
 
-// Chapter4 Routes
+// // Chapter4 Routes
 const Chapter4Routes = require('./chap4Routes')
 app.use(Chapter4Routes); // Chapter4Routes will access request.supabase
 

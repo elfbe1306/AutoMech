@@ -6,3 +6,5 @@ require('dotenv').config({ path: './config.env' });
 
 let Chapter4Routes = express.Router();
 const Chapter4Function = MachineCalculatorFactory.getChapter("Chapter4");
+
+module.exports = Chapter4Routes;

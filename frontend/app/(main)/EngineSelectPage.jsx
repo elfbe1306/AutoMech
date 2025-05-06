@@ -9,12 +9,15 @@ import DisplayResult from '@/components/DisplayResult'
 import EngineCard from '@/components/EngineCard'
 import AntDesign from '@expo/vector-icons/AntDesign';
 
+import { useEngine } from '../../Context/EngineContext'
+
 const EngineSelectPage = () => {
   const router = useRouter();
 
+  const { listEngine } = useEngine();
+
   const [isCollapsedResult, setIsCollapsedResult] = useState(true);
   const [isCollapsedEngine, setIsCollapsedEngine] = useState(true);
-  const [engines, setEngines] = useState(null);
   const [selectedEngineId, setSelectedEngineId] = useState(null);
 
   const [calculatedData, setCalculateData] = useState({
@@ -37,8 +40,6 @@ const EngineSelectPage = () => {
   useEffect(()=>{
     const fetchData = async () => {
       let recordID = await AsyncStorage.getItem("RECORDID");
-      let engine = await AsyncStorage.getItem("ENGINELIST");
-      setEngines(JSON.parse(engine));
       let response = await apiService.Chapter2FetchData(recordID);
       setCalculateData(response.chapter2data[0])
     }
@@ -110,7 +111,7 @@ const EngineSelectPage = () => {
 
         <Collapsible collapsed={isCollapsedEngine}>
           <View style={styles.engineContainer} contentContainerStyle={{ paddingBottom: 20 }}>
-            {engines?.map((engine) => (
+            {listEngine?.map((engine) => (
               <EngineCard
                 key={engine.id}
                 kieu_dong_co={engine.kieu_dong_co}
