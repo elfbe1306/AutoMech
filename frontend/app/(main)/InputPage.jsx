@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import apiService from '../../api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { router } from 'expo-router'
+import { useEngine } from '../../Context/EngineContext'
 
 const InputPage = () => {
   const [f, setF] = useState(6000);
@@ -19,7 +20,10 @@ const InputPage = () => {
   const [nx, setNx] = useState(0.91);
   const [uh, setUh] = useState(8);
   const [ux, setUx] = useState(2);
-  const [userID, setUserID] = useState("")
+  const [UserID, setUserID] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const { setListEngine } = useEngine();
 
   const inputName = ["F(N)", "v(m/s)", "D(mm)", "L(năm)", "t1(giây)", "t2(giây)", "T1\n(momem xoắn)", 
     "T2\n(momem xoắn)", "Hiệu suất nối trục", "Hiệu suất ổ lăn\n(0.99 - 0.995)", 
@@ -33,7 +37,7 @@ const InputPage = () => {
   useEffect(() => {
     const fetchUserID = async () => {
       try {
-        const storedUserID = await AsyncStorage.getItem("userID");
+        const storedUserID = await AsyncStorage.getItem("USERID");
         if(storedUserID) {
           setUserID(storedUserID);
         } else {
@@ -48,47 +52,64 @@ const InputPage = () => {
   }, [])
 
   const handleSubmit = async () => {
+    if (loading) return;
+
+    setLoading(true); 
+
     if(f < 0) {
       alert("Lực vòng băng tải phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(v < 0) {
       alert("Vận tốc băng tải phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(D < 0) {
-      alert("Đường kính tang dẫn phải lớn hơn 0")
+      alert("Đường kính tang dẫn phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(L < 0) {
-      alert("Thời gian phục vụ phải lớn hơn 0")
+      alert("Thời gian phục vụ phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(t1 < 0) {
-      alert("t1 phải lớn hơn 0")
+      alert("t1 phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(t2 < 0) {
-      alert("t2 phải lớn hơn 0")
+      alert("t2 phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(T1 < 0) {
-      alert("T1 phải lớn hơn 0")
+      alert("T1 phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(T2 < 0) {
-      alert("T2 phải lớn hơn 0")
+      alert("T2 phải lớn hơn 0");
+      setLoading(false); 
       return;
     } else if(nk != 1) {
       alert('Hiệu suất nối trục phải bằng 1');
       return;
     } else if((nol < 0.99) || (nol > 0.995)) {
       alert("Hiệu suất ổ lăn phải nằm trong (0.99 - 0.995)");
+      setLoading(false); 
       return;
     } else if((nbr < 0.96) || (nbr > 0.98)) {
       alert("Hiệu suất bánh răng phải nằm trong (0.96 - 0.98)");
+      setLoading(false); 
       return;
     } else if((nx < 0.90) || (nx > 0.93)) {
       alert("Hiệu suất xích phải nằm trong (0.95 - 0.97)");
+      setLoading(false); 
       return;
     } else if((uh < 8) || (uh > 40)) {
       alert("Tỷ số truyền hộp giảm tốc (8 - 40)");
+      setLoading(false); 
       return;
     } else if((ux < 2) || (ux > 5)) {
       alert("Tỷ số truyền xích (2 - 5)");
+      setLoading(false); 
       return;
     }
 
@@ -117,18 +138,15 @@ const InputPage = () => {
     }
 
     try {
-      const CalculateId = await AsyncStorage.getItem("CalculateID");
-      const response = await apiService.chap2Calculation(userID, JSON.parse(CalculateId), inputObject);
-
-      await AsyncStorage.multiSet([
-        ["EngineSelect", JSON.stringify(response.engines)],
-        ["CalculateID", JSON.stringify(response._id)]
-      ]);
-
-      console.log("Inserted:", response);
-      router.push('/EngineSelectPage');
+      let recordID = await AsyncStorage.getItem("RECORDID")
+      let response = await apiService.Chapter2InputData(inputObject, UserID, recordID);
+      AsyncStorage.setItem("RECORDID", response.record_id);
+      setListEngine(response.engine_list);
+      router.push('/(main)/EngineSelectPage')
     } catch(error) {
-      alert(error.response.data.message);
+      alert(error?.response?.data?.message || "Tính toán thất bại");
+    } finally {
+      setLoading(false); 
     }
 
   };
@@ -151,7 +169,7 @@ const InputPage = () => {
           ))}
         </View>
       </ScrollView>
-      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit}>
+      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit} disabled={loading}>
           <Text style={styles.doMathButtonText}>Tính toán</Text>
       </TouchableOpacity>
     </View>
