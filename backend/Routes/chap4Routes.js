@@ -48,6 +48,13 @@ Chapter4Routes.route('/chapter4/calculation/:recordid').post(async (request, res
       return response.status(400).json({ message: recordDataError.message });
     }
 
+    // Lấy data từ bảng Chapter2
+    const { data: Chapter2Data, error: Chapter2DataError } = await supabase.from('Chapter2').select('*').eq('id', recordData[0].chapter2_id);
+    if(Chapter2DataError) {
+      console.error("Chapter2DataError", Chapter2DataError)
+      return response.status(400).json({ message: Chapter2DataError.message });
+    }
+
     // Lấy data từ bảng Chapter3
     const { data: Chapter3Data, error: Chapter3DataError } = await supabase.from('Chapter3').select('*').eq('id', recordData[0].chapter3_id);
     if(Chapter3DataError) {
@@ -55,7 +62,7 @@ Chapter4Routes.route('/chapter4/calculation/:recordid').post(async (request, res
       return response.status(400).json({ message: Chapter3DataError.message });
     }
 
-    const Chapter4InputData = UngSuatChoPhep(request.body, Chapter3Data);
+    const Chapter4InputData = UngSuatChoPhep(request.body, Chapter2Data[0], Chapter3Data[0]);
 
     console.log(Chapter4InputData);
 
@@ -79,11 +86,15 @@ const SelectMaterial = (v, z1, z2, oh1, oh2) => {
   return 1; // Gang xam
 }
 
-function UngSuatChoPhep(Chapter4Input, Chapter3Data) {
+function UngSuatChoPhep(Chapter4Input, Chapter2Data, Chapter3Data) {
   const SHlim1 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB1);
+  const SHlim2 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB1);
+  const Flim1 = Chapter4Function.UngSuatUonChoPhep(Chapter4Input.HB1);
 
   return {
-    SHlim1: SHlim1
+    SHlim1: SHlim1,
+    SHlim2: SHlim2,
+    Flim1: Flim1
   }
 }
 
