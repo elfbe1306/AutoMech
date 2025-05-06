@@ -52,7 +52,6 @@ const EngineSelectPage = () => {
     try {
       let recordID = await AsyncStorage.getItem("RECORDID");
       let response = await apiService.Chapter2AfterChoosingEngine(recordID, selectedEngineId)
-      console.log(response.message);
       router.push('/Chapter3Page');
     } catch(error) {
       alert(error.response.message);
