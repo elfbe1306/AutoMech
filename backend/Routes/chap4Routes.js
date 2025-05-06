@@ -96,7 +96,6 @@ function UngSuatChoPhep(Chapter4Input, Chapter2Data, Chapter3Data) {
   const KHL2 = 1;
   const KFL1 = 1;
   const KFL2 = 1;
-  const mf = 6;
 
   const o_H1 = Chapter4Function.UngSuatTiepXuc_O_H(570,KHL1, 1.1);
   const o_H2 = Chapter4Function.UngSuatTiepXuc_O_H(540,KHL2, 1.1);
