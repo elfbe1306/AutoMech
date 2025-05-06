@@ -1,7 +1,7 @@
 const express = require('express');
 let router = express.Router();
 const jwt = require('jsonwebtoken')
-require('dotenv').config({ path: './config.env' });
+require('dotenv').config({ path: '../config.env' });
 
 router.post('/Users', async (request, response) => {
   const supabase = request.supabase;
