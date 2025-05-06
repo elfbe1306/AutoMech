@@ -88,13 +88,40 @@ const SelectMaterial = (v, z1, z2, oh1, oh2) => {
 
 function UngSuatChoPhep(Chapter4Input, Chapter2Data, Chapter3Data) {
   const SHlim1 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB1);
-  const SHlim2 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB1);
+  const SHlim2 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB2);
   const Flim1 = Chapter4Function.UngSuatUonChoPhep(Chapter4Input.HB1);
+
+  const KFC = 1;
+  const KHL1 = 1
+  const KHL2 = 1;
+  const KFL1 = 1;
+  const KFL2 = 1;
+  const mf = 6;
+
+  const o_H1 = Chapter4Function.UngSuatTiepXuc_O_H(570,KHL1, 1.1);
+  const o_H2 = Chapter4Function.UngSuatTiepXuc_O_H(540,KHL2, 1.1);
+  const o_F1 = Chapter4Function.UngSuatUon_O_F(450,KFC,KFL1, 1.75);
+  const o_F2 = Chapter4Function.UngSuatUon_O_F(423,KFC,KFL2, 1.75);
+  const o_H = Chapter4Function.UngSuatTiepXucChoPhepCapNhanh(o_H1,o_H2);
+  const o_H_phay = o_H2;
+  const o_H_max = Chapter4Function.UngSuatTiepXucQuaTaiChoPhep(Chapter4Input.Sch2);
+  const o_F1_max = Chapter4Function.UngSuatUonQuaTaiChoPhep(Chapter4Input.Sch1);
+  const o_F2_max = Chapter4Function.UngSuatUonQuaTaiChoPhep(Chapter4Input.Sch2);
 
   return {
     SHlim1: SHlim1,
     SHlim2: SHlim2,
-    Flim1: Flim1
+    Flim1: Flim1,
+
+    o_H1: o_H1, 
+    o_H2: o_H2,
+    o_F1: o_F1,
+    o_F2: o_F2,
+    o_H: o_H,
+    o_H_phay: o_H_phay,
+    o_H_max: o_H_max,
+    o_F1_max: o_F1_max,
+    o_F2_max: o_F2_max
   }
 }
 
