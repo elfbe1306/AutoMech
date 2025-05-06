@@ -74,6 +74,24 @@ class ApiService {
       throw error;
     }
   }
+
+  async Chapter4PreData(recordID) {
+    try {
+      const response = await this.api.get(`/chapter4/${recordID}`);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  async Chapter4Calculation(recordID, userData) {
+    try {
+      const response = await this.api.post(`/chapter4/calculation/${recordID}`, userData);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
 }
 
 // Singleton instance
