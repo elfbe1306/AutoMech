@@ -5,12 +5,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReturnButton from '@/components/ReturnButton';
 import apiService from '@/api';
 import { useRouter } from 'expo-router';
+import MathView from 'react-native-math-view';
 
 const Chapter4Page = () => {
   const router = useRouter();
 
   const [material, setMaterial] = useState("");
   const [heatTreatment, setHeatTreatment] = useState("");
+  const [HB1, setHB1] = useState(0);
+  const [HB2, setHB2] = useState(0);
+  const [Sb1, setSb1] = useState(0);
+  const [Sb2, setSb2] = useState(0);
+  const [Sch1, setSch1] = useState(0);
+  const [Sch2, setSch2] = useState(0);
+  const [c, setC] = useState(0);
 
   useEffect(() => {
     const FetchData = async () => {
@@ -37,14 +45,56 @@ const Chapter4Page = () => {
     try {
       setLoading(true);
 
+      if (HB1 < 192 || HB1 > 285) {
+        setLoading(false);
+        alert("HB1 phải nằm trong khoảng 192 - 285");
+        return;
+      }
+      if (HB2 < 192 || HB2 > 285) {
+        setLoading(false);
+        alert("HB2 phải nằm trong khoảng 192 - 285");
+        return;
+      }
+      const hb1min = HB1 - 15;
+      const hb1max = HB1 - 10;
+      if (HB2 < hb1min || HB2 > hb1max) {
+        setLoading(false);
+        alert(`HB2 phải nhỏ hơn 10 đến 15 đơn vị so với HB1`);
+        return;
+      }
+      if(c <= 0) {
+        setLoading(false);
+        alert("c phải lớn hơn 0");
+        return;
+      }
+
+      if(HB1 >= 192 && HB1 <= 240) {
+        setSb1(750);
+        setSch1(450);
+      } else {
+        setSb1(850);
+        setSch1(580);
+      }
+
+      if(HB2 >= 241 && HB2 <= 285) {
+        setSb2(750);
+        setSch2(450);
+      } else {
+        setSb2(850);
+        setSch2(580);
+      }
+
+
+
       const userData = {
-        Sb1: 850,
-        Sch1: 580,
-        HB1: 250,
-        Sb2: 750,
-        Sch2: 450,
-        HB2: 235,
-        c: 1 //cai nay ng dung chon
+        Sb1: Sb1,
+        Sch1: Sch1,
+        HB1: HB1,
+        Sb2: Sb2,
+        Sch2: Sch2,
+        HB2: HB2,
+        c: c, //cai nay ng dung chon
+
       }
       const recordID = await AsyncStorage.getItem("RECORDID");
       const response = await apiService.Chapter4Calculation(recordID, userData);
@@ -70,17 +120,90 @@ const Chapter4Page = () => {
       </View>
 
       <View style={styles.inputContainer}>
-        <View style>
+        <View>
           <Text style={styles.inputField}>Chọn độ cứng của bánh răng nhỏ</Text>
           <Text>(192 - 285)</Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          onChangeText={(text) => setHB1(Number(text))}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <Text style={styles.inputField}>Chọn độ cứng của bánh răng lớn</Text>
+          <Text>(192 - 285)</Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          onChangeText={(text) => setHB2(Number(text))}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <Text style={styles.inputField}>Chọn số lần ăn khớp 1 vòng quay c</Text>
+          <MathView
+            math={'(c > 0)'}
+            style={{ width: 150, height: 40 }}
+          />
+        </View>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          onChangeText={(text) => setC(Number(text))}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <Text style={styles.inputField}>Chọn module m của tính toán trụ nghiêng</Text>
+          <Text></Text>
         </View>
         <TextInput style={styles.input} />
       </View>
 
       <View style={styles.inputContainer}>
-        <View style>
-          <Text style={styles.inputField}>Chọn độ cứng của bánh răng lớn</Text>
-          <Text>(192 - 285)</Text>
+        <View>
+          <Text style={styles.inputField}>Chọn module m của tính toán trụ thẳng</Text>
+          <Text>()</Text>
+        </View>
+        <TextInput style={styles.input} />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <View style={styles.inputFieldContainer}>
+            <Text style={styles.inputField}>
+              Chọn trị số 
+            </Text>
+            <MathView
+              math={'\\psi_{ba}'}
+              style={{ width: 150, height: 40 }}
+            />
+            <Text style={styles.inputField}> của tính toán trụ nghiêng</Text>
+          </View>
+          <Text>()</Text>
+        </View>
+        <TextInput style={styles.input} />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <View style={styles.inputFieldContainer}>
+            <Text style={styles.inputField}>
+              Chọn trị số 
+            </Text>
+            <MathView
+              math={'\\psi_{ba}'}
+              style={{ width: 150, height: 40 }}
+            />
+            <Text style={styles.inputField}> của tính toán trụ thẳng</Text>
+          </View>
+          <Text>()</Text>
         </View>
         <TextInput style={styles.input} />
       </View>
@@ -114,7 +237,9 @@ const styles = StyleSheet.create({
   },
   inputFieldContainer: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 5
   },
   inputField: {
     color: 'rgb(58, 65, 99)',
