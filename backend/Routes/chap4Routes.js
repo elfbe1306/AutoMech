@@ -148,7 +148,12 @@ Chapter4Routes.route('/chapter4/calculation/:recordid').post(async (request, res
 
     }
     
-    return response.status(200).json({ TinhToanCham: TinhToanCham, TinhToanNhanh: TinhToanNhanh, message: 'Đã tính toán xong chương 4', "success": true });
+    return response.status(200).json({ 
+      ASoBoCham: TinhToanCham.aw1_so_bo, 
+      ASoBoNhanh: TinhToanNhanh.aw1_so_bo,
+      message: 'Đã tính toán xong chương 4',
+      success: true
+    });
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
   }
