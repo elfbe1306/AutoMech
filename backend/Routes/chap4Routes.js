@@ -302,10 +302,6 @@ function TinhToanCapNhanhCoBan(Chapter4Data, Chapter2Data) {
     y_bd: y_bd,
     KHB_cap_nhanh: KHB_cap_nhanh,
     aw1_so_bo: aw1_so_bo,
-    module_1: module_1,
-    module_2: module_2,
-    goc_B: goc_B,
-
   }
 }
 

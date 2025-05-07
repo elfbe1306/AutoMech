@@ -96,7 +96,7 @@ const Chapter4Page = () => {
         Sb2: Sb2,
         Sch2: Sch2,
         HB2: HB2,
-        c: c, //cai nay ng dung chon
+        c: c,
       }
       
       const recordID = await AsyncStorage.getItem("RECORDID");
