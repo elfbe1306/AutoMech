@@ -92,6 +92,15 @@ class ApiService {
       throw error;
     }
   }
+
+  async Chapter4SecondCalculation(recordID, userData) {
+    try {
+      const response = await this.api.post(`/chapter4/secondcalculation/${recordID}`, userData);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
 }
 
 // Singleton instance

@@ -5,12 +5,26 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReturnButton from '@/components/ReturnButton';
 import apiService from '@/api';
 import { useRouter } from 'expo-router';
+import MathView from 'react-native-math-view';
 
 const Chapter4Page = () => {
   const router = useRouter();
 
   const [material, setMaterial] = useState("");
   const [heatTreatment, setHeatTreatment] = useState("");
+  const [HB1, setHB1] = useState(250);
+  const [HB2, setHB2] = useState(235);
+  const [Sb1, setSb1] = useState(0);
+  const [Sb2, setSb2] = useState(0);
+  const [Sch1, setSch1] = useState(0);
+  const [Sch2, setSch2] = useState(0);
+  const [c, setC] = useState(1);
+  const [TinhToanCham, setTinhToanCham] = useState({});
+  const [TinhToanNhanh, setTinhToanNhanh] = useState({});
+  const [khoangCachNghieng, setKhoangCachNghieng] = useState(160);
+  const [khoangCachThang, setKhoangCachThang] = useState(215);
+  const [mNghieng, setMNghieng] = useState(3);
+  const [mThang, setMThang] = useState(2.5);
 
   useEffect(() => {
     const FetchData = async () => {
@@ -37,25 +51,95 @@ const Chapter4Page = () => {
     try {
       setLoading(true);
 
-      const userData = {
-        Sb1: 850,
-        Sch1: 580,
-        HB1: 250,
-        Sb2: 750,
-        Sch2: 450,
-        HB2: 235,
-        c: 1, //cai nay ng dung chon
-        y_ba: 0.3, //Cai nay ng dung chon tu 0.3...0.5
-        m_cap_nhanh: 3, //Cai nay nguoi dung chon tu khoang module_1 va module_2
+      if (HB1 < 192 || HB1 > 285) {
+        setLoading(false);
+        alert("HB1 phải nằm trong khoảng 192 - 285");
+        return;
       }
+      if (HB2 < 192 || HB2 > 285) {
+        setLoading(false);
+        alert("HB2 phải nằm trong khoảng 192 - 285");
+        return;
+      }
+      const hb1min = HB1 - 15;
+      const hb1max = HB1 - 10;
+      if (HB2 < hb1min || HB2 > hb1max) {
+        setLoading(false);
+        alert(`HB2 phải nhỏ hơn 10 đến 15 đơn vị so với HB1`);
+        return;
+      }
+      if(c <= 0) {
+        setLoading(false);
+        alert("c phải lớn hơn 0");
+        return;
+      }
+
+      if(HB1 >= 192 && HB1 <= 240) {
+        setSb1(750);
+        setSch1(450);
+      } else {
+        setSb1(850);
+        setSch1(580);
+      }
+
+      if(HB2 >= 241 && HB2 <= 285) {
+        setSb2(750);
+        setSch2(450);
+      } else {
+        setSb2(850);
+        setSch2(580);
+      }
+
+      const userData = {
+        Sb1: Sb1,
+        Sch1: Sch1,
+        HB1: HB1,
+        Sb2: Sb2,
+        Sch2: Sch2,
+        HB2: HB2,
+        c: c, //cai nay ng dung chon
+      }
+      
       const recordID = await AsyncStorage.getItem("RECORDID");
       const response = await apiService.Chapter4Calculation(recordID, userData);
+      setTinhToanNhanh(response.TinhToanNhanh);
+      setTinhToanCham(response.TinhToanCham);
       console.log(response.message);
 
     } catch(error) {
       console.error("Error Calculation Chapter 4:" , error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  const module1 = (aw) => {
+    return 0.01*aw;
+  }
+
+  const module2 = (aw) => {
+    return 0.02*aw;
+  }
+
+  const [loadingSecondTime, setLoadingSecondTime] = useState(false);
+  const handleSubmitSecondTime = async () => {
+    try {
+      setLoadingSecondTime(true);
+      const userData = {
+        mNghieng: mNghieng,
+        mThang: mThang,
+        khoangCachNghieng: khoangCachNghieng,
+        khoangCachThang: khoangCachThang
+      }
+      
+      const recordID = await AsyncStorage.getItem("RECORDID");
+      const response = await apiService.Chapter4SecondCalculation(recordID, userData);
+      console.log(response.message);
+
+    } catch(error) {
+      console.error("Error Second Calculation Chapter 4:" , error);
+    } finally {
+      setLoadingSecondTime(false);
     }
   }
 
@@ -72,23 +156,86 @@ const Chapter4Page = () => {
       </View>
 
       <View style={styles.inputContainer}>
-        <View style>
+        <View>
           <Text style={styles.inputField}>Chọn độ cứng của bánh răng nhỏ</Text>
           <Text>(192 - 285)</Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          onChangeText={(text) => setHB1(Number(text))}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <Text style={styles.inputField}>Chọn độ cứng của bánh răng lớn</Text>
+          <Text>(192 - 285)</Text>
+        </View>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          onChangeText={(text) => setHB2(Number(text))}
+        />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <Text style={styles.inputField}>Chọn số lần ăn khớp 1 vòng quay c</Text>
+          <MathView
+            math={'(c > 0)'}
+            style={{ width: 150, height: 40 }}
+          />
+        </View>
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          onChangeText={(text) => setC(Number(text))}
+        />
+      </View>
+
+      <Text>Aw1 Tính Toán Nhanh {Number(TinhToanNhanh.aw1_so_bo).toFixed(4)}</Text>
+      <Text>Aw1 Tính Toán Chậm {Number(TinhToanCham.aw1_so_bo).toFixed(4)}</Text>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <Text style={styles.inputField}>Chọn khoảng cách trục cơ bộ cho cấp nghiêng</Text>
+          <Text></Text>
         </View>
         <TextInput style={styles.input} />
       </View>
 
       <View style={styles.inputContainer}>
-        <View style>
-          <Text style={styles.inputField}>Chọn độ cứng của bánh răng lớn</Text>
-          <Text>(192 - 285)</Text>
+        <View>
+          <Text style={styles.inputField}>Chọn khoảng cách trục cơ bộ cho cấp thẳng</Text>
+          <Text></Text>
         </View>
         <TextInput style={styles.input} />
       </View>
 
+      <View style={styles.inputContainer}>
+        <View>
+          <Text style={styles.inputField}>Chọn module m của tính toán trụ nghiêng</Text>
+          <Text></Text>
+        </View>
+        <TextInput style={styles.input} />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <Text style={styles.inputField}>Chọn module m của tính toán trụ thẳng</Text>
+          <Text>()</Text>
+        </View>
+        <TextInput style={styles.input} />
+      </View>
+
+
       <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit} disabled={loading}>
         <Text style={styles.doMathButtonText}>Tính chương 4</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmitSecondTime} disabled={loadingSecondTime}>
+        <Text style={styles.doMathButtonText}>Tính chương 4 Second Time</Text>
       </TouchableOpacity>
       
     </View>
@@ -116,7 +263,9 @@ const styles = StyleSheet.create({
   },
   inputFieldContainer: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 5
   },
   inputField: {
     color: 'rgb(58, 65, 99)',
