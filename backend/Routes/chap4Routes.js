@@ -87,14 +87,75 @@ const SelectMaterial = (v, z1, z2, oh1, oh2) => {
 }
 
 function UngSuatChoPhep(Chapter4Input, Chapter2Data, Chapter3Data) {
+  const Lg = Chapter4Function.ThoiGianPhucVu(Chapter2Data.thoi_gian_phuc_vu);
+  
   const SHlim1 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB1);
-  const SHlim2 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB1);
+  const SHlim2 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB2);
   const Flim1 = Chapter4Function.UngSuatUonChoPhep(Chapter4Input.HB1);
+  const Flim2 = Chapter4Function.UngSuatUonChoPhep(Chapter4Input.HB2);
+
+  const KFC = 1;
+  const KHL1 = 1
+  const KHL2 = 1;
+  const KFL1 = 1;
+  const KFL2 = 1;
+  const SH1 = 1.1;
+  const SF1 = 1.75;
+  const SH2 = 1.1;
+  const SF2 = 1.75;
+  const NHO1 = Chapter4Function.SoCKThayDoiUsKhiThuTiepXuc(Chapter4Input.HB1);
+  const NHO2 = Chapter4Function.SoCKThayDoiUsKhiThuTiepXuc(Chapter4Input.HB2);
+  const NFO1 = 4000000;
+  const NFO2 = 4000000;
+  const NHE1 = Chapter4Function.NHE1(Chapter4Input.c, Lg, Chapter2Data.n1, Chapter2Data.t1_t, Chapter2Data.t2_t, Chapter2Data.t1, Chapter2Data.t2);
+  const NHE2 = Chapter4Function.NHE2(NHE1, Chapter2Data.he_so_truyen_cap_nhanh);
+  const mF = 6;
+  const NFE1 = Chapter4Function.NFE1(Chapter4Input.c, Lg, Chapter2Data.n1, Chapter2Data.t1_t, Chapter2Data.t2_t, Chapter2Data.t1, Chapter2Data.t2, mF);
+  const NFE2 = Chapter4Function.NFE2(NFE1, Chapter2Data.he_so_truyen_cap_nhanh);
+  const o_H1 = Chapter4Function.UngSuatTiepXuc_O_H(SHlim1,KHL1, SH1);
+  const o_H2 = Chapter4Function.UngSuatTiepXuc_O_H(SHlim2,KHL2, SH2);
+  const o_F1 = Chapter4Function.UngSuatUon_O_F(Flim1,KFC,KFL1, SF1);
+  const o_F2 = Chapter4Function.UngSuatUon_O_F(Flim2,KFC,KFL2, SF2);
+  const o_H = Chapter4Function.UngSuatTiepXucChoPhepCapNhanh(o_H1,o_H2);
+  const o_H_phay = o_H2;
+  const o_H_max = Chapter4Function.UngSuatTiepXucQuaTaiChoPhep(Chapter4Input.Sch2);
+  const o_F1_max = Chapter4Function.UngSuatUonQuaTaiChoPhep(Chapter4Input.Sch1);
+  const o_F2_max = Chapter4Function.UngSuatUonQuaTaiChoPhep(Chapter4Input.Sch2);
+ 
 
   return {
+    thoi_gian_phuc_vu_Lg: Lg,
     SHlim1: SHlim1,
     SHlim2: SHlim2,
-    Flim1: Flim1
+    SH1: SH1,
+    SH2: SH2,
+    Flim1: Flim1,
+    Flim2: Flim2,
+    SF1: SF1,
+    SF2: SF2,
+    NHO1: NHO1,
+    NHO2: NHO2,
+    NFO1: NFO1,
+    NFO2: NFO2,
+    NHE1: NHE1,
+    NHE2: NHE2,
+    NFE1: NFE1,
+    NFE2: NFE2,
+    KFC:KFC,
+    KHL1: KHL1,
+    KHL2: KHL2,
+    KFL1: KFL1,
+    KFL2:KFL2,
+    mf:mF,
+    o_H1: o_H1, 
+    o_H2: o_H2,
+    o_F1: o_F1,
+    o_F2: o_F2,
+    o_H: o_H,
+    o_H_phay: o_H_phay,
+    o_H_max: o_H_max,
+    o_F1_max: o_F1_max,
+    o_F2_max: o_F2_max,
   }
 }
 
