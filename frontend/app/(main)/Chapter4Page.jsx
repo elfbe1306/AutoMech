@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReturnButton from '@/components/ReturnButton';
 import apiService from '@/api';
 import { useRouter } from 'expo-router';
+import Collapsible from 'react-native-collapsible';
 
 const Chapter4Page = () => {
   const router = useRouter();
@@ -24,6 +25,8 @@ const Chapter4Page = () => {
   const [khoangCachThang, setKhoangCachThang] = useState(215);
   const [mNghieng, setMNghieng] = useState(3);
   const [mThang, setMThang] = useState(2.5);
+
+  const [firstDisplay, setFirstDisplay] = useState(false);
 
   useEffect(() => {
     const FetchData = async () => {
@@ -101,10 +104,11 @@ const Chapter4Page = () => {
       
       const recordID = await AsyncStorage.getItem("RECORDID");
       const response = await apiService.Chapter4Calculation(recordID, userData);
+      if(response.success) {
+        setFirstDisplay(true);
+      }
       setTinhToanNhanh(response.TinhToanNhanh);
       setTinhToanCham(response.TinhToanCham);
-      console.log(response.message);
-
     } catch(error) {
       console.error("Error Calculation Chapter 4:" , error);
     } finally {
@@ -161,6 +165,7 @@ const Chapter4Page = () => {
         </View>
         <TextInput
           style={styles.input}
+          value={HB1.toString()}
           keyboardType="numeric"
           onChangeText={(text) => setHB1(Number(text))}
         />
@@ -173,6 +178,7 @@ const Chapter4Page = () => {
         </View>
         <TextInput
           style={styles.input}
+          value={HB2.toString()}
           keyboardType="numeric"
           onChangeText={(text) => setHB2(Number(text))}
         />
@@ -184,54 +190,78 @@ const Chapter4Page = () => {
         </View>
         <TextInput
           style={styles.input}
+          value={c.toString()}
           keyboardType="numeric"
           onChangeText={(text) => setC(Number(text))}
         />
       </View>
 
-      <Text>Aw1 Tính Toán Nhanh {Number(TinhToanNhanh.aw1_so_bo).toFixed(4)}</Text>
-      <Text>Aw1 Tính Toán Chậm {Number(TinhToanCham.aw1_so_bo).toFixed(4)}</Text>
-
-      <View style={styles.inputContainer}>
-        <View>
-          <Text style={styles.inputField}>Chọn khoảng cách trục cơ bộ cho cấp nghiêng</Text>
-          <Text></Text>
-        </View>
-        <TextInput style={styles.input} />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <View>
-          <Text style={styles.inputField}>Chọn khoảng cách trục cơ bộ cho cấp thẳng</Text>
-          <Text></Text>
-        </View>
-        <TextInput style={styles.input} />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <View>
-          <Text style={styles.inputField}>Chọn module m của tính toán trụ nghiêng</Text>
-          <Text></Text>
-        </View>
-        <TextInput style={styles.input} />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <View>
-          <Text style={styles.inputField}>Chọn module m của tính toán trụ thẳng</Text>
-          <Text>()</Text>
-        </View>
-        <TextInput style={styles.input} />
-      </View>
-
-
       <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit} disabled={loading}>
         <Text style={styles.doMathButtonText}>Tính chương 4</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmitSecondTime} disabled={loadingSecondTime}>
-        <Text style={styles.doMathButtonText}>Tính chương 4 Second Time</Text>
-      </TouchableOpacity>
+      {firstDisplay && (
+        <View>
+          <Text>Aw1 Tính Toán Nhanh {Number(TinhToanNhanh.aw1_so_bo).toFixed(4)}</Text>
+          <Text>Aw1 Tính Toán Chậm {Number(TinhToanCham.aw1_so_bo).toFixed(4)}</Text>
+
+          <View style={styles.inputContainer}>
+            <View>
+              <Text style={styles.inputField}>Chọn khoảng cách trục cơ bộ cho cấp nghiêng</Text>
+              <Text></Text>
+            </View>
+            <TextInput 
+              style={styles.input} 
+              value={khoangCachNghieng.toString()} 
+              keyboardType="numeric"
+              onChange={(text) => setKhoangCachNghieng(text)} 
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <View>
+              <Text style={styles.inputField}>Chọn khoảng cách trục cơ bộ cho cấp thẳng</Text>
+              <Text></Text>
+            </View>
+            <TextInput 
+              style={styles.input} 
+              keyboardType="numeric"
+              value={khoangCachThang.toString()} 
+              onChange={(text) => setKhoangCachThang(text)}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <View>
+              <Text style={styles.inputField}>Chọn module m của tính toán trụ nghiêng</Text>
+              <Text></Text>
+            </View>
+            <TextInput 
+              style={styles.input} 
+              keyboardType='numberic'
+              value={mNghieng.toString()}
+              onChange={(text) => setMNghieng(text)}
+            />
+          </View>
+
+          <View style={styles.inputContainer}>
+            <View>
+              <Text style={styles.inputField}>Chọn module m của tính toán trụ thẳng</Text>
+              <Text>()</Text>
+            </View>
+            <TextInput 
+              style={styles.input} 
+              keyboardType='numberic'
+              value={mThang.toString()}
+              onChange={(text) => setMThang(text)}
+            />
+          </View>
+
+          <TouchableOpacity style={styles.doMathButton} onPress={handleSubmitSecondTime} disabled={loadingSecondTime}>
+            <Text style={styles.doMathButtonText}>Tính chương 4 Second Time</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       
     </View>
   )
