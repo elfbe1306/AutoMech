@@ -114,12 +114,19 @@ class Chapter4 {
     return Math.round(z1*u);
   }
 
+  cos_goc_B = (z1, z2, aw, m) => {
+    return (m*(z1 + z2))/(2*aw);
+  }
+
   tinh_goc_B = (z1, z2, aw, m) => {
     const goc_B = (m*(z1 + z2))/(2*aw);
     const goc_B_radian =  Math.acos(goc_B);
     return  goc_B_radian * 180 / Math.PI;
   }
 
+  ti_so_thuc = (z1, z2) => {
+    return z2/z1;
+  }
 }
 
 module.exports = Chapter4;
