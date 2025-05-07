@@ -62,10 +62,43 @@ Chapter4Routes.route('/chapter4/calculation/:recordid').post(async (request, res
       return response.status(400).json({ message: Chapter3DataError.message });
     }
 
-    const Chapter4InputData = UngSuatChoPhep(request.body, Chapter2Data[0], Chapter3Data[0]);
+    const Chapter4InputData = UngSuatChoPhep(request.body, Chapter2Data[0]);
 
-    console.log(Chapter4InputData);
+    if(recordData[0].chapter4_id) {
+      // Cập nhật dữ liệu chương 4
+      const {data: insertChapter4, error: InsertChapter4Error } = await supabase.from('Chapter4').update(Chapter4InputData).eq('id',recordData[0].chapter4_id)
+      if(InsertChapter4Error) {
+        console.error("InsertChapter4Error", InsertChapter4Error)
+        return response.status(400).json({ message: InsertChapter4Error.message });
+      }
+    } else {
+      const Chapter4Id = uuidv4();
+      const Chapter4InputDataWithId = {
+        id: Chapter4Id,
+        ...Chapter4InputData
+      }
 
+      // Thêm dữ liệu ban đầu chương 4
+      const {data: insertChapter4, error: InsertChapter4Error } = await supabase.from('Chapter4').insert([Chapter4InputDataWithId])
+      if(InsertChapter4Error) {
+        console.error("InsertChapter4Error", InsertChapter4Error)
+        return response.status(400).json({ message: InsertChapter4Error.message });
+      }
+
+      // Cập nhật khoá chương 4 trong HistoryRecord
+      const { data: insertChapter4ID, error: InsertChapter4IDError } = await supabase.from('HistoryRecord').update({chapter4_id: Chapter4Id}).eq('id', record_id.id)
+      if(InsertChapter4IDError) {
+        console.error("InsertChapter4IDError", InsertChapter4IDError)
+        return response.status(400).json({ message: InsertChapter4IDError.message });
+      }
+    }
+
+    const TinhToanNhanh = TinhToanCapNhanh();
+    const TinhToanCham = TinhToanCapCham();
+
+    console.log(TinhToanCapNhanh, TinhToanCapCham);
+
+    return response.status(200).json({ message: 'Đã tính toán xong chương 4' });
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
   }
@@ -86,14 +119,12 @@ const SelectMaterial = (v, z1, z2, oh1, oh2) => {
   return 1; // Gang xam
 }
 
-function UngSuatChoPhep(Chapter4Input, Chapter2Data, Chapter3Data) {
+function UngSuatChoPhep(Chapter4Input, Chapter2Data) {
   const Lg = Chapter4Function.ThoiGianPhucVu(Chapter2Data.thoi_gian_phuc_vu);
-  
   const SHlim1 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB1);
   const SHlim2 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB2);
   const Flim1 = Chapter4Function.UngSuatUonChoPhep(Chapter4Input.HB1);
   const Flim2 = Chapter4Function.UngSuatUonChoPhep(Chapter4Input.HB2);
-
   const KFC = 1;
   const KHL1 = 1
   const KHL2 = 1;
@@ -124,6 +155,13 @@ function UngSuatChoPhep(Chapter4Input, Chapter2Data, Chapter3Data) {
  
 
   return {
+    Sb1: Chapter4Input.Sb1,
+    Sch1: Chapter4Input.Sch1,
+    HB1: Chapter4Input.HB1,
+    Sb2: Chapter4Input.Sb2,
+    Sch2: Chapter4Input.Sch2,
+    HB2: Chapter4Input.HB2,
+    c: Chapter4Input.c,
     thoi_gian_phuc_vu_Lg: Lg,
     SHlim1: SHlim1,
     SHlim2: SHlim2,
@@ -156,6 +194,20 @@ function UngSuatChoPhep(Chapter4Input, Chapter2Data, Chapter3Data) {
     o_H_max: o_H_max,
     o_F1_max: o_F1_max,
     o_F2_max: o_F2_max,
+  }
+}
+
+function TinhToanCapNhanh() {
+
+  return {
+
+  }
+}
+
+function TinhToanCapCham() {
+
+  return {
+
   }
 }
 

@@ -48,7 +48,7 @@ const Chapter4Page = () => {
       }
       const recordID = await AsyncStorage.getItem("RECORDID");
       const response = await apiService.Chapter4Calculation(recordID, userData);
-      console.log(response);
+      console.log(response.message);
 
     } catch(error) {
       console.error("Error Calculation Chapter 4:" , error);
