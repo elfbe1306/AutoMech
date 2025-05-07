@@ -5,7 +5,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import ReturnButton from '@/components/ReturnButton';
 import apiService from '@/api';
 import { useRouter } from 'expo-router';
-import MathView from 'react-native-math-view';
 
 const Chapter4Page = () => {
   const router = useRouter();
@@ -182,10 +181,6 @@ const Chapter4Page = () => {
       <View style={styles.inputContainer}>
         <View>
           <Text style={styles.inputField}>Chọn số lần ăn khớp 1 vòng quay c</Text>
-          <MathView
-            math={'(c > 0)'}
-            style={{ width: 150, height: 40 }}
-          />
         </View>
         <TextInput
           style={styles.input}

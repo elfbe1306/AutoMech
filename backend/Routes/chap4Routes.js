@@ -188,7 +188,7 @@ Chapter4Routes.route('/chapter4/secondcalculation/:recordid').post(async (reques
     }
 
     const TinhToanNhanh = TinhToanCapNhanhLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
-    const TinhToanCham = TinhToanCapChamLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
+    // const TinhToanCham = TinhToanCapChamLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
 
     console.log(TinhToanNhanh);
 
