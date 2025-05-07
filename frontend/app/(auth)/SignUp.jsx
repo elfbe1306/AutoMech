@@ -12,43 +12,44 @@ const SignUp = () => {
     reEnterpassword: ""
   })
 
-  function handleLogin() {
+  function handleLoginRoute() {
     router.replace('/(auth)/Login')
   }
 
-  function handleChange(name, value) {
-    setUser({...user, [name]: value})
-  }
-
   async function handleSubmit() {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!user.email || !user.password || !user.reEnterpassword) {
       alert("Vui lòng điền đầy đủ thông tin!");
       return;
     }
-
+  
+    if (!emailRegex.test(user.email)) {
+      alert("Email không đúng định dạng!");
+      return;
+    }
+  
+    if (user.password.length < 6) {
+      alert("Mật khẩu phải có ít nhất 6 ký tự!");
+      return;
+    }
+  
     if (user.password !== user.reEnterpassword) {
       alert("Mật khẩu nhập lại không khớp!");
       return;
     }
 
-    setUser({
-      name: "",
-      password: "",
-      reEnterpassword: ""
-    })
-
-    const userData = {
+    let UserData = {
       email: user.email,
-      password: user.password,
-    };
+      password: user.password
+    }
 
     try {
-      let response = await apiService.userCreateAccount(userData);
-      console.log("User created:", response);
-      alert("Đã thành công tạo tài khoản");
-      router.replace('/Login')
-    } catch (error) {
-      alert(error.response.data.message);
+      let response = await apiService.UserCreateAccount(UserData);
+      alert(response.message)
+      router.replace('/(auth)/Login')
+    } catch(error) {
+      alert(error?.response?.data?.message || "Đăng ký thất bại!");
     }
   }
 
@@ -59,23 +60,26 @@ const SignUp = () => {
         <Text style={styles.signupContainerLabel}>Email</Text>
         <TextInput 
           style={styles.signupContainerInput} 
-          onChangeText={(text) => handleChange('email', text)} 
-          value={user.email} 
+          onChangeText={(text) => setUser(prev => ({ ...prev, email: text }))}
+          value={user.email}
           placeholder='Nhập email'
         />
+
         <Text style={styles.signupContainerLabel}>Mật khẩu</Text>
         <TextInput 
           style={styles.signupContainerInput} 
-          onChangeText={(text) => handleChange('password', text)} 
-          value={user.password} 
+          onChangeText={(text) => setUser(prev => ({ ...prev, password: text }))}
+          value={user.password}
+          secureTextEntry
           placeholder='Nhập mật khẩu'
         />
 
         <Text style={styles.signupContainerLabel}>Nhập lại mật khẩu</Text>
         <TextInput 
           style={styles.signupContainerInput} 
-          onChangeText={(text) => handleChange('reEnterpassword', text)} 
-          value={user.reEnterpassword} 
+          onChangeText={(text) => setUser(prev => ({ ...prev, reEnterpassword: text }))}
+          value={user.reEnterpassword}
+          secureTextEntry
           placeholder='Nhập mật khẩu'
         />
 
@@ -85,7 +89,7 @@ const SignUp = () => {
 
         <View style={styles.signUpContainer}>
           <Text style={styles.signUpText1}>Đã có tài khoản?</Text>
-          <TouchableOpacity onPress={handleLogin}>
+          <TouchableOpacity onPress={handleLoginRoute}>
             <Text style={styles.signUpText2}>Đăng Nhập</Text>
           </TouchableOpacity>
         </View>
