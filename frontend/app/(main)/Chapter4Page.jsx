@@ -44,7 +44,8 @@ const Chapter4Page = () => {
         Sb2: 750,
         Sch2: 450,
         HB2: 235,
-        c: 1 //cai nay ng dung chon
+        c: 1, //cai nay ng dung chon
+        y_ba: 0.3 //Cai nay ng dung chon tu 0.3...0.5
       }
       const recordID = await AsyncStorage.getItem("RECORDID");
       const response = await apiService.Chapter4Calculation(recordID, userData);

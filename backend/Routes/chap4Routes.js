@@ -92,11 +92,11 @@ Chapter4Routes.route('/chapter4/calculation/:recordid').post(async (request, res
         return response.status(400).json({ message: InsertChapter4IDError.message });
       }
     }
+    
+    const TinhToanNhanh = TinhToanCapNhanh(request.body, Chapter4InputData, Chapter2Data[0]);
+    // const TinhToanCham = TinhToanCapCham(request.body, Chapter4InputData, Chapter2Data[0]);
 
-    const TinhToanNhanh = TinhToanCapNhanh();
-    const TinhToanCham = TinhToanCapCham();
-
-    console.log(TinhToanCapNhanh, TinhToanCapCham);
+    console.log(TinhToanNhanh);
 
     return response.status(200).json({ message: 'Đã tính toán xong chương 4' });
   } catch(error) {
@@ -152,7 +152,7 @@ function UngSuatChoPhep(Chapter4Input, Chapter2Data) {
   const o_H_max = Chapter4Function.UngSuatTiepXucQuaTaiChoPhep(Chapter4Input.Sch2);
   const o_F1_max = Chapter4Function.UngSuatUonQuaTaiChoPhep(Chapter4Input.Sch1);
   const o_F2_max = Chapter4Function.UngSuatUonQuaTaiChoPhep(Chapter4Input.Sch2);
- 
+
 
   return {
     Sb1: Chapter4Input.Sb1,
@@ -197,18 +197,25 @@ function UngSuatChoPhep(Chapter4Input, Chapter2Data) {
   }
 }
 
-function TinhToanCapNhanh() {
+function TinhToanCapNhanh(Chapter4Input, Chapter4Data, Chapter2Data) {
+  const Ka_cap_nhanh = 43;
+  const y_bd = Chapter4Function.Y_bd(Chapter4Input.y_ba, Chapter2Data.he_so_truyen_cap_nhanh);
+  const KHB = Chapter4Function.KHB(y_bd);
+  const aw1 = Chapter4Function.aw1(Ka_cap_nhanh, Chapter2Data.he_so_truyen_cap_nhanh, Chapter2Data.t1_ti_so_truyen, KHB, Chapter4Data.o_H, Chapter4Input.y_ba);
 
   return {
-
+    y_ba: Chapter4Input.y_ba,
+    y_bd: y_bd,
+    KHB: KHB,
+    aw1: aw1,
   }
 }
 
-function TinhToanCapCham() {
+// function TinhToanCapCham(Chapter4Input, Chapter4Data) {
+//   const Ka_cap_cham = 49.5;
+//   return {
 
-  return {
-
-  }
-}
+//   }
+// }
 
 module.exports = Chapter4Routes;
