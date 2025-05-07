@@ -94,9 +94,9 @@ Chapter4Routes.route('/chapter4/calculation/:recordid').post(async (request, res
     }
     
     const TinhToanNhanh = TinhToanCapNhanh(request.body, Chapter4InputData, Chapter2Data[0]);
-    const TinhToanCham = TinhToanCapCham(request.body, Chapter4InputData, Chapter2Data[0]);
+    // const TinhToanCham = TinhToanCapCham(request.body, Chapter4InputData, Chapter2Data[0]);
 
-    console.log(TinhToanNhanh, TinhToanCham);
+    console.log(TinhToanNhanh);
 
     return response.status(200).json({ message: 'Đã tính toán xong chương 4' });
   } catch(error) {
@@ -202,27 +202,37 @@ function TinhToanCapNhanh(Chapter4Input, Chapter4Data, Chapter2Data) {
   const y_bd = Chapter4Function.Y_bd(Chapter4Input.y_ba, Chapter2Data.he_so_truyen_cap_nhanh);
   const KHB_cap_nhanh = Chapter4Function.KHB_cap_nhanh(y_bd);
   const aw1_so_bo = Chapter4Function.aw1_so_bo(Ka_cap_nhanh, Chapter2Data.he_so_truyen_cap_nhanh, Chapter2Data.t1_ti_so_truyen, KHB_cap_nhanh, Chapter4Data.o_H, Chapter4Input.y_ba);
+  const module_1 = Chapter4Function.module_1(160);
+  const module_2 = Chapter4Function.module_2(160);
+  const z1 = Chapter4Function.z1(40, 160, Chapter4Input.m_cap_nhanh, Chapter2Data.he_so_truyen_cap_nhanh);
+  const z2 = Chapter4Function.z2(Chapter2Data.he_so_truyen_cap_nhanh, z1);
+  const goc_B = Chapter4Function.tinh_goc_B(z1, z2,160, Chapter4Input.m_cap_nhanh);
+
 
   return {
     y_ba: Chapter4Input.y_ba,
     y_bd: y_bd,
     KHB_cap_nhanh: KHB_cap_nhanh,
     aw1_so_bo: aw1_so_bo,
+    module_1: module_1,
+    module_2: module_2,
+    goc_B: goc_B,
+
   }
 }
 
-function TinhToanCapCham(Chapter4Input, Chapter4Data, Chapter2Data) {
-  const Ka_cap_cham = 49.5;
-  const y_ba_cap_cham = Chapter4Function.Y_ba_cap_cham(Chapter4Input.y_ba);
-  const y_bd = Chapter4Function.Y_bd(y_ba_cap_cham, Chapter2Data.he_so_truyen_cap_cham);
-  const KHB_cap_cham = Chapter4Function.KHB_cap_cham(y_bd);
-  const aw1_so_bo = Chapter4Function.aw1_so_bo(Ka_cap_cham, Chapter2Data.he_so_truyen_cap_cham, Chapter2Data.t2_ti_so_truyen, KHB_cap_cham, Chapter4Data.o_H_phay, y_ba_cap_cham);
-  return {
-    y_ba_cap_cham: y_ba_cap_cham,
-    y_bd: y_bd,
-    KHB_cap_cham: KHB_cap_cham,
-    aw1_so_bo: aw1_so_bo
-  }
-}
+// function TinhToanCapCham(Chapter4Input, Chapter4Data, Chapter2Data) {
+//   const Ka_cap_cham = 49.5;
+//   const y_ba_cap_cham = Chapter4Function.Y_ba_cap_cham(Chapter4Input.y_ba);
+//   const y_bd = Chapter4Function.Y_bd(y_ba_cap_cham, Chapter2Data.he_so_truyen_cap_cham);
+//   const KHB_cap_cham = Chapter4Function.KHB_cap_cham(y_bd);
+//   const aw1_so_bo = Chapter4Function.aw1_so_bo(Ka_cap_cham, Chapter2Data.he_so_truyen_cap_cham, Chapter2Data.t2_ti_so_truyen, KHB_cap_cham, Chapter4Data.o_H_phay, y_ba_cap_cham);
+//   return {
+//     y_ba_cap_cham: y_ba_cap_cham,
+//     y_bd: y_bd,
+//     KHB_cap_cham: KHB_cap_cham,
+//     aw1_so_bo: aw1_so_bo
+//   }
+// }
 
 module.exports = Chapter4Routes;

@@ -98,6 +98,28 @@ class Chapter4 {
     return row.KHB;
   }
 
+  module_1 = (aw) => {
+    return 0.01*aw;
+  }
+  module_2 = (aw) => {
+    return 0.02*aw;
+  }
+
+  z1 = (goc, aw, m, u) => {
+    const angleRad = goc * Math.PI / 180;
+    return Math.round((2*aw*Math.cos(angleRad))/(m*(u+1)));
+  }
+
+  z2 = (u, z1) => {
+    return Math.round(z1*u);
+  }
+
+  tinh_goc_B = (z1, z2, aw, m) => {
+    const goc_B = (m*(z1 + z2))/(2*aw);
+    const goc_B_radian =  Math.acos(goc_B);
+    return  goc_B_radian * 180 / Math.PI;
+  }
+
 }
 
 module.exports = Chapter4;
