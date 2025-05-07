@@ -12,13 +12,19 @@ const Chapter4Page = () => {
 
   const [material, setMaterial] = useState("");
   const [heatTreatment, setHeatTreatment] = useState("");
-  const [HB1, setHB1] = useState(0);
-  const [HB2, setHB2] = useState(0);
+  const [HB1, setHB1] = useState(250);
+  const [HB2, setHB2] = useState(235);
   const [Sb1, setSb1] = useState(0);
   const [Sb2, setSb2] = useState(0);
   const [Sch1, setSch1] = useState(0);
   const [Sch2, setSch2] = useState(0);
-  const [c, setC] = useState(0);
+  const [c, setC] = useState(1);
+  const [TinhToanCham, setTinhToanCham] = useState({});
+  const [TinhToanNhanh, setTinhToanNhanh] = useState({});
+  const [khoangCachNghieng, setKhoangCachNghieng] = useState(160);
+  const [khoangCachThang, setKhoangCachThang] = useState(215);
+  const [mNghieng, setMNghieng] = useState(3);
+  const [mThang, setMThang] = useState(2.5);
 
   useEffect(() => {
     const FetchData = async () => {
@@ -84,8 +90,6 @@ const Chapter4Page = () => {
         setSch2(580);
       }
 
-
-
       const userData = {
         Sb1: Sb1,
         Sch1: Sch1,
@@ -94,16 +98,48 @@ const Chapter4Page = () => {
         Sch2: Sch2,
         HB2: HB2,
         c: c, //cai nay ng dung chon
-
       }
+      
       const recordID = await AsyncStorage.getItem("RECORDID");
       const response = await apiService.Chapter4Calculation(recordID, userData);
+      setTinhToanNhanh(response.TinhToanNhanh);
+      setTinhToanCham(response.TinhToanCham);
       console.log(response.message);
 
     } catch(error) {
       console.error("Error Calculation Chapter 4:" , error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  const module1 = (aw) => {
+    return 0.01*aw;
+  }
+
+  const module2 = (aw) => {
+    return 0.02*aw;
+  }
+
+  const [loadingSecondTime, setLoadingSecondTime] = useState(false);
+  const handleSubmitSecondTime = async () => {
+    try {
+      setLoadingSecondTime(true);
+      const userData = {
+        mNghieng: mNghieng,
+        mThang: mThang,
+        khoangCachNghieng: khoangCachNghieng,
+        khoangCachThang: khoangCachThang
+      }
+      
+      const recordID = await AsyncStorage.getItem("RECORDID");
+      const response = await apiService.Chapter4SecondCalculation(recordID, userData);
+      console.log(response.message);
+
+    } catch(error) {
+      console.error("Error Second Calculation Chapter 4:" , error);
+    } finally {
+      setLoadingSecondTime(false);
     }
   }
 
@@ -158,6 +194,25 @@ const Chapter4Page = () => {
         />
       </View>
 
+      <Text>Aw1 Tính Toán Nhanh {Number(TinhToanNhanh.aw1_so_bo).toFixed(4)}</Text>
+      <Text>Aw1 Tính Toán Chậm {Number(TinhToanCham.aw1_so_bo).toFixed(4)}</Text>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <Text style={styles.inputField}>Chọn khoảng cách trục cơ bộ cho cấp nghiêng</Text>
+          <Text></Text>
+        </View>
+        <TextInput style={styles.input} />
+      </View>
+
+      <View style={styles.inputContainer}>
+        <View>
+          <Text style={styles.inputField}>Chọn khoảng cách trục cơ bộ cho cấp thẳng</Text>
+          <Text></Text>
+        </View>
+        <TextInput style={styles.input} />
+      </View>
+
       <View style={styles.inputContainer}>
         <View>
           <Text style={styles.inputField}>Chọn module m của tính toán trụ nghiêng</Text>
@@ -174,42 +229,13 @@ const Chapter4Page = () => {
         <TextInput style={styles.input} />
       </View>
 
-      <View style={styles.inputContainer}>
-        <View>
-          <View style={styles.inputFieldContainer}>
-            <Text style={styles.inputField}>
-              Chọn trị số 
-            </Text>
-            <MathView
-              math={'\\psi_{ba}'}
-              style={{ width: 150, height: 40 }}
-            />
-            <Text style={styles.inputField}> của tính toán trụ nghiêng</Text>
-          </View>
-          <Text>()</Text>
-        </View>
-        <TextInput style={styles.input} />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <View>
-          <View style={styles.inputFieldContainer}>
-            <Text style={styles.inputField}>
-              Chọn trị số 
-            </Text>
-            <MathView
-              math={'\\psi_{ba}'}
-              style={{ width: 150, height: 40 }}
-            />
-            <Text style={styles.inputField}> của tính toán trụ thẳng</Text>
-          </View>
-          <Text>()</Text>
-        </View>
-        <TextInput style={styles.input} />
-      </View>
 
       <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit} disabled={loading}>
         <Text style={styles.doMathButtonText}>Tính chương 4</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmitSecondTime} disabled={loadingSecondTime}>
+        <Text style={styles.doMathButtonText}>Tính chương 4 Second Time</Text>
       </TouchableOpacity>
       
     </View>

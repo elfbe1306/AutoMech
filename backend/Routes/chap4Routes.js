@@ -63,18 +63,72 @@ Chapter4Routes.route('/chapter4/calculation/:recordid').post(async (request, res
     }
 
     const Chapter4InputData = UngSuatChoPhep(request.body, Chapter2Data[0]);
+    const TinhToanNhanh = TinhToanCapNhanhCoBan(Chapter4InputData, Chapter2Data[0]);
+    const TinhToanCham = TinhToanCapChamCoBan(Chapter4InputData, Chapter2Data[0]);
 
     if(recordData[0].chapter4_id) {
+      // Lấy data từ bảng Chapter4
+      const { data: Chapter4Data, error: Chapter4DataError } = await supabase.from('Chapter4').select('tinhtoannhanh_id, tinhtoancham_id').eq('id', recordData[0].chapter4_id);
+      if(Chapter4DataError) {
+        console.error("Chapter4DataError", Chapter4DataError)
+        return response.status(400).json({ message: Chapter4DataError.message });
+      }
+
       // Cập nhật dữ liệu chương 4
       const {data: insertChapter4, error: InsertChapter4Error } = await supabase.from('Chapter4').update(Chapter4InputData).eq('id',recordData[0].chapter4_id)
       if(InsertChapter4Error) {
         console.error("InsertChapter4Error", InsertChapter4Error)
         return response.status(400).json({ message: InsertChapter4Error.message });
       }
+
+      // Cập nhật dữ liệu bảng tính toán nhanh
+      const {data: insertTinhToanNhanh, error: InsertTinhToanNhanhError } = await supabase.from('Chapter4').update(Chapter4InputData).eq('id',Chapter4Data[0].tinhtoannhanh_id)
+      if(InsertTinhToanNhanhError) {
+        console.error("InsertTinhToanNhanhError", InsertTinhToanNhanhError)
+        return response.status(400).json({ message: InsertTinhToanNhanhError.message });
+      }
+
+      // Cập nhật dữ liệu bảng tính toán chậm
+      const {data: insertTinhToanCham, error: InsertTinhToanChamError } = await supabase.from('Chapter4').update(Chapter4InputData).eq('id',Chapter4Data[0].tinhtoancham_id)
+      if(InsertTinhToanChamError) {
+        console.error("InsertTinhToanChamError", InsertTinhToanChamError)
+        return response.status(400).json({ message: InsertTinhToanChamError.message });
+      }
     } else {
+      // Tạo dữ liệu cho bảng tính toán cấp nhanh
+      const CapNhanhId = uuidv4();
+      const TinhToanCapNhanhWithId = {
+        id: CapNhanhId,
+        ...TinhToanNhanh
+      }
+
+      // Thêm dữ liệu ban đầu cho bảng Tính toán nhanh
+      const {data: insertTinhToanNhanh, error: InsertTinhToanNhanhError } = await supabase.from('TinhToanNhanh').insert([TinhToanCapNhanhWithId])
+      if(InsertTinhToanNhanhError) {
+        console.error("InsertTinhToanNhanhError", InsertTinhToanNhanhError)
+        return response.status(400).json({ message: InsertTinhToanNhanhError.message });
+      }
+
+      // Tạo dữ liệu cho bảng tính toán cấp chậm
+      const CapChamId = uuidv4();
+      const TinhToanCapChamWithId = {
+        id: CapChamId,
+        ...TinhToanCham
+      }
+
+      // Thêm dữ liệu ban đầu cho bảng Tính toán chậm
+      const {data: insertTinhToanCham, error: InsertTinhToanChamError } = await supabase.from('TinhToanCham').insert([TinhToanCapChamWithId])
+      if(InsertTinhToanChamError) {
+        console.error("InsertTinhToanChamError", InsertTinhToanChamError)
+        return response.status(400).json({ message: InsertTinhToanChamError.message });
+      }
+
+      // Tạo dữ liệu chương 4
       const Chapter4Id = uuidv4();
       const Chapter4InputDataWithId = {
         id: Chapter4Id,
+        tinhtoannhanh_id: CapNhanhId,
+        tinhtoancham_id: CapChamId,
         ...Chapter4InputData
       }
 
@@ -91,14 +145,53 @@ Chapter4Routes.route('/chapter4/calculation/:recordid').post(async (request, res
         console.error("InsertChapter4IDError", InsertChapter4IDError)
         return response.status(400).json({ message: InsertChapter4IDError.message });
       }
+
     }
     
-    const TinhToanNhanh = TinhToanCapNhanh(request.body, Chapter4InputData, Chapter2Data[0]);
-    const TinhToanCham = TinhToanCapCham(request.body, Chapter4InputData, Chapter2Data[0]);
+    return response.status(200).json({ TinhToanCham: TinhToanCham, TinhToanNhanh: TinhToanNhanh, message: 'Đã tính toán xong chương 4' });
+  } catch(error) {
+    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+  }
+})
+
+Chapter4Routes.route('/chapter4/secondcalculation/:recordid').post(async (request, response) => {
+  const supabase = request.supabase;
+  const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
+
+  try {
+    // Lấy data từ history record
+    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('id', record_id.id);
+    if (recordDataError) {
+      console.error("recordDataError", recordDataError)
+      return response.status(400).json({ message: recordDataError.message });
+    }
+
+    // Lấy data từ bảng Chapter2
+    const { data: Chapter2Data, error: Chapter2DataError } = await supabase.from('Chapter2').select('*').eq('id', recordData[0].chapter2_id);
+    if(Chapter2DataError) {
+      console.error("Chapter2DataError", Chapter2DataError)
+      return response.status(400).json({ message: Chapter2DataError.message });
+    }
+
+    // Lấy data từ bảng Chapter3
+    const { data: Chapter3Data, error: Chapter3DataError } = await supabase.from('Chapter3').select('*').eq('id', recordData[0].chapter3_id);
+    if(Chapter3DataError) {
+      console.error("Chapter3DataError", Chapter3DataError)
+      return response.status(400).json({ message: Chapter3DataError.message });
+    }
+
+    // Lấy data từ bảng Chapter4
+    const { data: Chapter4Data, error: Chapter4DataError } = await supabase.from('Chapter4').select('tinhtoannhanh_id, tinhtoancham_id').eq('id', recordData[0].chapter4_id);
+    if(Chapter4DataError) {
+      console.error("Chapter4DataError", Chapter4DataError)
+      return response.status(400).json({ message: Chapter4DataError.message });
+    }
+
+    const TinhToanNhanh = TinhToanCapNhanhLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
+    const TinhToanCham = TinhToanCapChamLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
 
     console.log(TinhToanNhanh, TinhToanCham);
 
-    return response.status(200).json({ message: 'Đã tính toán xong chương 4' });
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
   }
@@ -153,7 +246,6 @@ function UngSuatChoPhep(Chapter4Input, Chapter2Data) {
   const o_F1_max = Chapter4Function.UngSuatUonQuaTaiChoPhep(Chapter4Input.Sch1);
   const o_F2_max = Chapter4Function.UngSuatUonQuaTaiChoPhep(Chapter4Input.Sch2);
 
-
   return {
     Sb1: Chapter4Input.Sb1,
     Sch1: Chapter4Input.Sch1,
@@ -197,31 +289,49 @@ function UngSuatChoPhep(Chapter4Input, Chapter2Data) {
   }
 }
 
-function TinhToanCapNhanh(Chapter4Input, Chapter4Data, Chapter2Data) {
+function TinhToanCapNhanhCoBan(Chapter4Data, Chapter2Data) {
   const Ka_cap_nhanh = 43;
-  const y_bd = Chapter4Function.Y_bd(Chapter4Input.y_ba, Chapter2Data.he_so_truyen_cap_nhanh);
+  const y_ba = 0.3
+  const y_bd = Chapter4Function.Y_bd(y_ba, Chapter2Data.he_so_truyen_cap_nhanh);
   const KHB_cap_nhanh = Chapter4Function.KHB_cap_nhanh(y_bd);
-  const aw1_so_bo = Chapter4Function.aw1_so_bo(Ka_cap_nhanh, Chapter2Data.he_so_truyen_cap_nhanh, Chapter2Data.t1_ti_so_truyen, KHB_cap_nhanh, Chapter4Data.o_H, Chapter4Input.y_ba);
+  const aw1_so_bo = Chapter4Function.aw1_so_bo(Ka_cap_nhanh, Chapter2Data.he_so_truyen_cap_nhanh, Chapter2Data.t1_ti_so_truyen, KHB_cap_nhanh, Chapter4Data.o_H, y_ba);
 
   return {
-    y_ba: Chapter4Input.y_ba,
+    Ka_cap_nhanh: Ka_cap_nhanh,
+    y_ba: y_ba,
     y_bd: y_bd,
     KHB_cap_nhanh: KHB_cap_nhanh,
     aw1_so_bo: aw1_so_bo,
   }
 }
 
-function TinhToanCapCham(Chapter4Input, Chapter4Data, Chapter2Data) {
+function TinhToanCapChamCoBan(Chapter4Data, Chapter2Data) {
   const Ka_cap_cham = 49.5;
-  const y_ba_cap_cham = Chapter4Function.Y_ba_cap_cham(Chapter4Input.y_ba);
+  const y_ba = 0.3;
+  const y_ba_cap_cham = Chapter4Function.Y_ba_cap_cham(y_ba);
   const y_bd = Chapter4Function.Y_bd(y_ba_cap_cham, Chapter2Data.he_so_truyen_cap_cham);
   const KHB_cap_cham = Chapter4Function.KHB_cap_cham(y_bd);
   const aw1_so_bo = Chapter4Function.aw1_so_bo(Ka_cap_cham, Chapter2Data.he_so_truyen_cap_cham, Chapter2Data.t2_ti_so_truyen, KHB_cap_cham, Chapter4Data.o_H_phay, y_ba_cap_cham);
   return {
+    Ka_cap_cham: Ka_cap_cham,
     y_ba_cap_cham: y_ba_cap_cham,
     y_bd: y_bd,
     KHB_cap_cham: KHB_cap_cham,
     aw1_so_bo: aw1_so_bo
+  }
+}
+
+function TinhToanCapNhanhLanHai(Chapter4Input, Chapter2Data, Chapter4Data) {
+
+  return {
+
+  }
+}
+
+function TinhToanCapChamLanHai(Chapter4Input, Chapter2Data, Chapter4Data) {
+
+  return {
+
   }
 }
 
