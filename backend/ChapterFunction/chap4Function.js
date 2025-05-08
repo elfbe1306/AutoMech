@@ -280,6 +280,108 @@ class Chapter4 {
   sH_cuoi = (UngSuatTiepXuc_O_H, ZV, KxH, ZR) => {
     return UngSuatTiepXuc_O_H * ZV * KxH * ZR;
   }
+
+  KfbCapNhanh = (psi_bd) => {
+    const table = [
+      { psi: 0.2, value: 1.17 },
+      { psi: 0.4, value: 1.21 },
+      { psi: 0.6, value: 1.17 },
+      { psi: 0.8, value: 1.12 },
+      { psi: 1.0, value: 1.06 },
+      { psi: 1.2, value: 1.01 },
+      { psi: 1.4, value: 1.05 },
+      { psi: 1.6, value: 1.07 }
+    ];
+  
+    for (let i = table.length - 1; i >= 0; i--) {
+      if (psi_bd >= table[i].psi) {
+        return table[i].value;
+      }
+    }
+  }
+
+  KfbCapCham = (psi_bd) => {
+    const psi_bd_fixed = Math.round(psi_bd * 10) / 10;
+    const table = [
+      { psi: 0.2, value: 1.01 },
+      { psi: 0.4, value: 1.03 },
+      { psi: 0.6, value: 1.05 },
+      { psi: 0.8, value: 1.03 },
+      { psi: 1.0, value: 1.01 },
+      { psi: 1.2, value: 1.06 },
+      { psi: 1.4, value: 1.10 },
+      { psi: 1.6, value: 1.15 }
+    ];
+  
+    for (let i = table.length - 1; i >= 0; i--) {
+      if (psi_bd_fixed >= table[i].psi) {
+        return table[i].value;
+      }
+    }
+  }
+
+  Kfa = (v) => {
+    const table = [
+      { v: 2.5, Kfa: 1.37 },
+      { v: 5,   Kfa: 1.40 },
+    ];
+  
+    for (let row of table) {
+      if (v <= row.v) {
+        return row.Kfa ?? "N/A"; 
+      }
+    }
+  }
+
+  Vf = (dF, go, v, aw1, um) => {
+    return dF * go * v * Math.sqrt(aw1 / um);
+  } 
+
+  Kfv = (Vf, bw, dw1, T1, Kfb, Kfa) => {
+    return 1 + ((Vf * bw * dw1) / (2 * T1 * Kfb * Kfa));
+  }
+
+  KF = (Kfb, Kfa, Kfv) => {
+    return Kfb * Kfa * Kfv;
+  }
+
+  Ye = (ea) => {
+    return 1 / ea;
+  }
+
+  Yb = (B) => {
+    return 1 - B / 140;
+  }
+
+  Zv1 = (z1, cosB) => {
+    return z1 / Math.pow(cosB, 3);
+  }
+
+  YF = (zv) => {
+    const table = [
+      { zv: 17, YF: 4.26 },
+      { zv: 20, YF: 4.08 },
+      { zv: 22, YF: 4 },
+      { zv: 25, YF: 3.9 },
+      { zv: 30, YF: 3.8 },
+      { zv: 40, YF: 3.7 },
+      { zv: 50, YF: 3.65 },
+      { zv: 60, YF: 3.62 },
+      { zv: 80, YF: 3.61 },
+      { zv: 100, YF: 3.6 },
+      { zv: 150, YF: 3.6 }
+    ];
+  
+    const filtered = table.filter(entry => entry.zv <= zv);
+    if (filtered.length === 0) return "Out of range";
+
+    const result = filtered.reduce((max, entry) => entry.zv > max.zv ? entry : max);
+    return result.YF;
+  }
+
+  Ys = (m) => {
+    return 1.08 - 0.0695 * Math.log(m);
+  }
 }
 
 module.exports = Chapter4;
