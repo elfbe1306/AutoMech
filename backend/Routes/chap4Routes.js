@@ -186,19 +186,43 @@ Chapter4Routes.route('/chapter4/secondcalculation/:recordid').post(async (reques
     }
 
     // Lấy data từ bảng Chapter4
-    const { data: Chapter4Data, error: Chapter4DataError } = await supabase.from('Chapter4').select('tinhtoannhanh_id, tinhtoancham_id').eq('id', recordData[0].chapter4_id);
+    const { data: Chapter4Data, error: Chapter4DataError } = await supabase.from('Chapter4').select('*').eq('id', recordData[0].chapter4_id);
     if(Chapter4DataError) {
       console.error("Chapter4DataError", Chapter4DataError)
       return response.status(400).json({ message: Chapter4DataError.message });
     }
 
+    // Lấy data từ bảng tính toán nhanh
+    const { data: TinhToanNhanhData, error: TinhToanNhanhDataError } = await supabase.from('TinhToanNhanh').select('*').eq('id', Chapter4Data[0].tinhtoannhanh_id);
+    if(TinhToanNhanhDataError) {
+      console.error("TinhToanNhanhDataError", TinhToanNhanhDataError)
+      return response.status(400).json({ message: TinhToanNhanhDataError.message });
+    }
+
+    // Lấy data từ bảng tính toán chậm
+    const { data: TinhToanChamData, error: TinhToanChamDataError } = await supabase.from('TinhToanCham').select('*').eq('id', Chapter4Data[0].tinhtoancham_id);
+    if(TinhToanChamDataError) {
+      console.error("TinhToanChamDataError", TinhToanChamDataError)
+      return response.status(400).json({ message: TinhToanChamDataError.message });
+    }
+
     const TinhToanNhanh = TinhToanCapNhanhLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
     const TinhToanCham = TinhToanCapChamLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
 
-    const KichThuocNhanh = KichThuocBoTruyenNhanh(request.body, TinhToanNhanh, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
-    const KichThuocCham = KichThuocBoTruyenCham(request.body, TinhToanCham, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
+    const TinhToanNhanhTongHop1 = {
+      ...TinhToanNhanh,
+      ...TinhToanNhanhData[0]
+    }
 
-    console.log(KichThuocNhanh, KichThuocCham);
+    const TinhToanChamTongHop1 = {
+      ...TinhToanCham,
+      ...TinhToanChamData[0]
+    }
+
+    const KichThuocNhanh = KichThuocBoTruyenNhanh(TinhToanNhanhTongHop1, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
+    const KichThuocCham = KichThuocBoTruyenCham(TinhToanChamTongHop1, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
+
+    // console.log(KichThuocNhanh, KichThuocCham);
 
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
@@ -338,6 +362,8 @@ function TinhToanCapNhanhLanHai(Chapter4Input, Chapter2Data, Chapter4Data) {
   const goc_B = Chapter4Function.tinh_goc_B(z1, z2,Chapter4Input.khoangCachNghieng, Chapter4Input.mNghieng);
   const u_m = Chapter4Function. ti_so_thuc (z1, z2);
   return {
+    mNghieng: Chapter4Input.mNghieng,
+    khoangCachNghieng: Chapter4Input.khoangCachNghieng,
     module_1: module_1,
     module_2: module_2,
     z1: z1,
@@ -357,6 +383,8 @@ function TinhToanCapChamLanHai(Chapter4Input, Chapter2Data, Chapter4Data) {
   const goc_B = 0;
   const u_m = Chapter4Function.ti_so_thuc (z1, z2);
   return {
+    mThang: Chapter4Input.mThang,
+    khoangCachThang: Chapter4Input.khoangCachThang,
     module_1: module_1,
     module_2: module_2,
     z1: z1,
@@ -367,37 +395,23 @@ function TinhToanCapChamLanHai(Chapter4Input, Chapter2Data, Chapter4Data) {
   }
 }
 
-function KichThuocBoTruyenNhanh(Chapter4Input, TinhToanNhanh, Chapter2Data, Chapter3Data, Chapter4Data) {
+function KichThuocBoTruyenNhanh(TinhToanNhanh, Chapter2Data, Chapter3Data, Chapter4Data) {
   const dich_chinh_y = 0; 
-  const khoang_cach_truc_chia_a = Chapter4Function.KhoangCachTrucChia(Chapter4Input.mNghieng,TinhToanNhanh.z1, TinhToanNhanh.z2, TinhToanNhanh.cos_goc_B);
-  const a_w1 = Chapter4Input.khoangCachNghieng;
-  const m = Chapter4Input.mNghieng;
-  const chieu_rong_vanh_rang_bw = Chapter4Function.ChieuRongVanhRang(Chapter4Input.khoangCachNghieng);
-  const u_m = TinhToanNhanh.u_m;
-  console.log(Chapter4Input);
-  console.log(TinhToanNhanh);
+  const khoang_cach_truc_chia_a = Chapter4Function.KhoangCachTrucChia(TinhToanNhanh.mNghieng,TinhToanNhanh.z1, TinhToanNhanh.z2, TinhToanNhanh.cos_goc_B);
+  const chieu_rong_vanh_rang_bw = Chapter4Function.ChieuRongVanhRang(TinhToanNhanh.khoangCachNghieng);
   return {
     dich_chinh_y: dich_chinh_y,
     khoang_cach_truc_chia_a: khoang_cach_truc_chia_a,
-    a_w1: a_w1,
-    m: m,
-    u_m: u_m,
   }
 }
 
-function KichThuocBoTruyenCham(Chapter4Input, TinhToanCham, Chapter2Data, Chapter3Data, Chapter4Data) {
+function KichThuocBoTruyenCham(TinhToanCham, Chapter2Data, Chapter3Data, Chapter4Data) {
   const dich_chinh_y = 0; 
-  const khoang_cach_truc_chia_a = Chapter4Function.KhoangCachTrucChia(Chapter4Input.mThang, TinhToanCham.z1, TinhToanCham.z2, TinhToanCham.cos_goc_B);
-  a_w1 = Chapter4Input.khoangCachThang;
-  const chieu_rong_vanh_rang_bw = Chapter4Function.ChieuRongVanhRang(Chapter4Input.khoangCachThang);
-  const u_m = TinhToanCham.u_m;
-  const m = Chapter4Input.mThang;
+  const khoang_cach_truc_chia_a = Chapter4Function.KhoangCachTrucChia(TinhToanCham.mThang, TinhToanCham.z1, TinhToanCham.z2, TinhToanCham.cos_goc_B);
+  const chieu_rong_vanh_rang_bw = Chapter4Function.ChieuRongVanhRang(TinhToanCham.khoangCachThang);
   return {
     dich_chinh_y: dich_chinh_y,
     khoang_cach_truc_chia_a: khoang_cach_truc_chia_a,
-    a_w1:a_w1,
-    m: m,
-    u_m: u_m
   }
 }
 
