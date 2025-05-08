@@ -195,7 +195,10 @@ Chapter4Routes.route('/chapter4/secondcalculation/:recordid').post(async (reques
     const TinhToanNhanh = TinhToanCapNhanhLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
     const TinhToanCham = TinhToanCapChamLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
 
-    console.log(TinhToanNhanh, TinhToanCham);
+    const KichThuocNhanh = KichThuocBoTruyenNhanh(request.body, TinhToanNhanh, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
+    const KichThuocCham = KichThuocBoTruyenCham(request.body, TinhToanCham, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
+
+    console.log(KichThuocNhanh, KichThuocCham);
 
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
@@ -361,6 +364,20 @@ function TinhToanCapChamLanHai(Chapter4Input, Chapter2Data, Chapter4Data) {
     cos_goc_B: cos_goc_B,
     goc_B: goc_B,
     u_m: u_m
+  }
+}
+
+function KichThuocBoTruyenNhanh(Chapter4Input, TinhToanNhanh, Chapter2Data, Chapter3Data, Chapter4Data) {
+
+  return {
+
+  }
+}
+
+function KichThuocBoTruyenCham(Chapter4Input, TinhToanCham, Chapter2Data, Chapter3Data, Chapter4Data) {
+
+  return {
+
   }
 }
 
