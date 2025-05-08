@@ -170,6 +170,116 @@ class Chapter4 {
     return atw * radToDeg;
   }
 
+  Tanb_b = (alpha_t, beta) => {
+    return Math.cos(alpha_t * Math.PI / 180) * Math.tan(beta * Math.PI / 180);
+  }
+
+  Beta_b = (tanb_b) => {
+    return Math.atan(tanb_b) * 180 / Math.PI;
+  }
+
+  Tana = (alpha) => {
+    return Math.tan(alpha * Math.PI / 180);
+  }
+
+  Cosb_b = (beta_b) => {
+    return Math.cos(beta_b * Math.PI / 180);
+  }
+
+  Sin2atw = (goc_an_khop) => {
+    return Math.sin(2 * goc_an_khop * Math.PI / 180);
+  }
+
+  g_o = (m) => {
+    if (m <= 3.55) 
+        return 73;
+    else 
+        return 82;
+  }
+
+  HeSoKeDenBeMatTiepXuc = (cosb_b, sin2atw) => {
+    return Math.sqrt(2 * cosb_b / sin2atw);
+  }
+
+  HeSoTrungKhopDoc = (bw, beta, m) => {
+    return bw * Math.sin(beta * Math.PI / 180) / (Math.PI * m);
+  }
+
+  HeSoTrungKhopNgang = (z1, z2, cos_beta) => {
+    return (1.88 - 3.2 *(1/z1 + 1/z2)) * cos_beta;
+  }
+
+  HeSoKeDenTrungKhopRangCapNhanh = (ea) => {
+    return Math.sqrt(1/ea);
+  }
+
+  HeSoKeDenTrungKhopRangCapCham = (ea) => {
+    return Math.sqrt((4-ea)/3);
+  }
+
+  DuongKinhVongLanBanhNho = (aw1, u) => {
+    return 2*aw1/(u+1);
+  }
+
+  VanTocVong = (dw1, n) => {
+    return (Math.PI * dw1 * n)/60000;
+  }
+
+  HeSoCacDoiRang = (v) => {
+    if (v<= 2.5) 
+        return 1.13; 
+    else return 1.16;
+  }
+
+  HeSoTrenChieuRongVanhRangCapNhanh = (y_bd) => {
+    const y_bd_fixed = Math.round(y_bd * 10) / 10;
+    const data = {
+        0.2 : 1.02,
+        0.4 : 1.05,
+        0.6 : 1.07,
+        0.8 : 1.12, 
+        1 : 1.15,
+        1.2 : 1.2, 
+        1.4 : 1.24, 
+        1.6 : 1.28
+    }
+    return Number(data[y_bd_fixed])
+  }
+
+  HeSoTrenChieuRongVanhRangCapCham = (y_bd) => {
+    const y_bd_fixed = Math.round(y_bd * 10) / 10;
+    const data = {
+        0.2 : 1.0,
+        0.4 : 1.01,
+        0.6 : 1.02,
+        0.8 : 1.02, 
+        1 : 1.03,
+        1.2 : 1.04, 
+        1.4 : 1.05, 
+        1.6 : 1.06
+    }
+    return Number(data[y_bd_fixed])
+  }
+
+  v_H = (dH,g_o, v, aw1, u) => {
+    return dH * g_o * v * Math.sqrt(aw1/u);
+  }
+
+  HeSoTaiTrongVungAnKhop = (v_H, bw, dw1, T1, K_Hb, K_Ha) => {
+    return 1 + (v_H * bw * dw1) / (2 * T1 * K_Hb * K_Ha);
+  }
+
+  HeSoTaiTrongTiepXuc = (K_Hb, K_Ha, K_Hv) => {
+    return K_Hb * K_Ha * K_Hv
+  }
+
+  UngSuatTiepXucOMatRang = (ZM, ZH, ZE, T1, KH, u, bw, dw1) => {
+    return ZM * ZH * ZE * Math.sqrt((2 * T1 * KH * (u + 1)) / (bw * u * Math.pow(dw1, 2)));
+  }
+
+  sH_cuoi = (UngSuatTiepXuc_O_H, ZV, KxH, ZR) => {
+    return UngSuatTiepXuc_O_H * ZV * KxH * ZR;
+  }
 }
 
 module.exports = Chapter4;

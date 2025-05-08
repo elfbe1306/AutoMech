@@ -1,7 +1,8 @@
 const express = require('express')
 const MachineCalculatorFactory = require('../MachineCalculator');
 const {v4: uuidv4} = require('uuid')
-const jwt = require('jsonwebtoken')
+const jwt = require('jsonwebtoken');
+const Chapter2 = require('../ChapterFunction/chap2Function');
 require('dotenv').config({ path: '../config.env' });
 
 let Chapter4Routes = express.Router();
@@ -219,10 +220,22 @@ Chapter4Routes.route('/chapter4/secondcalculation/:recordid').post(async (reques
       ...TinhToanChamData[0]
     }
 
-    const KichThuocNhanh = KichThuocBoTruyenNhanh(TinhToanNhanhTongHop1, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
-    const KichThuocCham = KichThuocBoTruyenCham(TinhToanChamTongHop1, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
+    const KichThuocNhanh = KichThuocBoTruyenNhanh(TinhToanNhanhTongHop1)
+    const KichThuocCham = KichThuocBoTruyenCham(TinhToanChamTongHop1)
 
-    console.log(KichThuocNhanh, KichThuocCham);
+    const TinhToanNhanhTongHop2 = {
+      ...TinhToanNhanhTongHop1,
+      ...KichThuocNhanh
+    }
+    const TinhToanChamTongHop2 = {
+      ...TinhToanChamTongHop1,
+      ...KichThuocCham
+    }
+
+    const KiemNghiemRangDoBenTiepXucCapNhanh = KiemNghiemRangVeDoBenTiepXucCapNhanh (TinhToanNhanhTongHop2, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
+    const KiemNghiemRangDoBenTiepXucCapCham = KiemNghiemRangVeDoBenTiepXucCapCham (TinhToanChamTongHop2, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
+
+    console.log(KiemNghiemRangDoBenTiepXucCapNhanh, KiemNghiemRangDoBenTiepXucCapCham);
 
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
@@ -395,7 +408,7 @@ function TinhToanCapChamLanHai(Chapter4Input, Chapter2Data, Chapter4Data) {
   }
 }
 
-function KichThuocBoTruyenNhanh(TinhToanNhanh, Chapter2Data, Chapter3Data, Chapter4Data) {
+function KichThuocBoTruyenNhanh(TinhToanNhanh) {
   const dich_chinh_y = 0; 
   const khoang_cach_truc_chia_a = Chapter4Function.KhoangCachTrucChia(TinhToanNhanh.mNghieng,TinhToanNhanh.z1, TinhToanNhanh.z2, TinhToanNhanh.cos_goc_B);
   const chieu_rong_vanh_rang_bw = Chapter4Function.ChieuRongVanhRang(TinhToanNhanh.y_ba, TinhToanNhanh.khoangCachNghieng);
@@ -436,7 +449,7 @@ function KichThuocBoTruyenNhanh(TinhToanNhanh, Chapter2Data, Chapter3Data, Chapt
   }
 }
 
-function KichThuocBoTruyenCham(TinhToanCham, Chapter2Data, Chapter3Data, Chapter4Data) {
+function KichThuocBoTruyenCham(TinhToanCham) {
   const dich_chinh_y = 0; 
   const khoang_cach_truc_chia_a = Chapter4Function.KhoangCachTrucChia(TinhToanCham.mThang, TinhToanCham.z1, TinhToanCham.z2, TinhToanCham.cos_goc_B);
   const chieu_rong_vanh_rang_bw = Chapter4Function.ChieuRongVanhRang(TinhToanCham.y_ba_cap_cham, TinhToanCham.khoangCachThang);
@@ -455,7 +468,6 @@ function KichThuocBoTruyenCham(TinhToanCham, Chapter2Data, Chapter3Data, Chapter
   const profin_goc = alpha;
   const goc_profin_rang = Chapter4Function.GocProfinRang(profin_goc, TinhToanCham.cos_goc_B);
   const goc_an_khop = Chapter4Function.GocAnKhop(khoang_cach_truc_chia_a, goc_profin_rang, TinhToanCham.khoangCachThang)
-  console.log(TinhToanCham)
 
   return {
     dich_chinh_y: dich_chinh_y,
@@ -474,6 +486,120 @@ function KichThuocBoTruyenCham(TinhToanCham, Chapter2Data, Chapter3Data, Chapter
     profin_goc: profin_goc,
     goc_profin_rang: goc_profin_rang,
     goc_an_khop: goc_an_khop
+  }
+}
+
+function KiemNghiemRangVeDoBenTiepXucCapNhanh(TinhToanNhanh, Chapter2Data, Chapter3Data, Chapter4Data ) {
+  const he_so_ke_den_co_tinh_vat_lieu_Zm = 274;
+  const tanb_b = Chapter4Function.Tanb_b(TinhToanNhanh.goc_profin_rang, TinhToanNhanh.goc_B);
+  const goc_nghieng_cua_rang_beta_b = Chapter4Function.Beta_b(tanb_b);
+  const tan_a = Chapter4Function.Tana(TinhToanNhanh.profin_goc);
+  const cosb_b = Chapter4Function.Cosb_b(goc_nghieng_cua_rang_beta_b);
+  const sin2atw = Chapter4Function.Sin2atw(TinhToanNhanh.goc_an_khop);
+  const dH = 0.002;
+  const g_o = Chapter4Function.g_o(TinhToanNhanh.mNghieng);
+  const ZV = 1; 
+  const he_so_ke_den_be_mat_tiep_xuc_ZH = Chapter4Function.HeSoKeDenBeMatTiepXuc(cosb_b, sin2atw);
+  const he_so_trung_khop_doc_eb = Chapter4Function.HeSoTrungKhopDoc(TinhToanNhanh.chieu_rong_vanh_rang_bw,TinhToanNhanh.goc_B, TinhToanNhanh.mNghieng);
+  const he_so_trung_khop_ngang_ea = Chapter4Function.HeSoTrungKhopNgang(TinhToanNhanh.z1, TinhToanNhanh.z2, TinhToanNhanh.cos_goc_B);
+  const he_so_ke_den_trung_khop_rang_Ze = Chapter4Function.HeSoKeDenTrungKhopRangCapNhanh(he_so_trung_khop_ngang_ea);
+  const duong_kinh_vong_lan_banh_nho_dw1 = Chapter4Function.DuongKinhVongLanBanhNho(TinhToanNhanh.khoangCachNghieng, TinhToanNhanh.u_m);
+  const van_toc_vong_v = Chapter4Function.VanTocVong(TinhToanNhanh.duong_kinh_lan_dw1, Chapter2Data.n1);
+  const cap_chinh_xac = 9; 
+  const he_so_cac_doi_rang_K_Ha = Chapter4Function.HeSoCacDoiRang(van_toc_vong_v);
+  const he_so_tren_chieu_rong_vanh_rang_K_Hb = Chapter4Function.HeSoTrenChieuRongVanhRangCapNhanh(TinhToanNhanh.y_bd);
+  const K_xH = 1;
+  const Z_R = 0.95;
+  const v_H = Chapter4Function.v_H(dH, g_o, van_toc_vong_v, TinhToanNhanh.khoangCachNghieng, TinhToanNhanh.u_m);
+  const he_so_tai_trong_vung_an_khop_KHv = Chapter4Function.HeSoTaiTrongVungAnKhop(v_H, TinhToanNhanh.chieu_rong_vanh_rang_bw, TinhToanNhanh.duong_kinh_lan_dw1, Chapter2Data.t1_ti_so_truyen, he_so_tren_chieu_rong_vanh_rang_K_Hb, he_so_cac_doi_rang_K_Ha);
+  const he_so_tai_trong_tiep_xuc_KH = Chapter4Function.HeSoTaiTrongTiepXuc(he_so_tren_chieu_rong_vanh_rang_K_Hb, he_so_cac_doi_rang_K_Ha, he_so_tai_trong_vung_an_khop_KHv);
+  const ung_suat_tiep_xuc_mat_rang_sH = Chapter4Function.UngSuatTiepXucOMatRang(he_so_ke_den_co_tinh_vat_lieu_Zm, he_so_ke_den_be_mat_tiep_xuc_ZH, he_so_ke_den_trung_khop_rang_Ze, Chapter2Data.t1_ti_so_truyen, he_so_tai_trong_tiep_xuc_KH, TinhToanNhanh.u_m, TinhToanNhanh.chieu_rong_vanh_rang_bw, TinhToanNhanh.duong_kinh_lan_dw1);
+
+  const sH_cuoi = Chapter4Function.sH_cuoi(Chapter4Data.o_H, ZV, K_xH, Z_R);
+
+  return {
+    he_so_ke_den_co_tinh_vat_lieu_Zm: he_so_ke_den_co_tinh_vat_lieu_Zm,
+    tanb_b: tanb_b,
+    goc_nghieng_cua_rang_beta_b: goc_nghieng_cua_rang_beta_b,
+    tan_a: tan_a,
+    cosb_b: cosb_b,
+    sin2atw: sin2atw,
+    dH: dH,
+    g_o: g_o,
+    Z_V: ZV,
+    he_so_ke_den_be_mat_tiep_xuc_ZH: he_so_ke_den_be_mat_tiep_xuc_ZH,
+    he_so_trung_khop_doc_eb: he_so_trung_khop_doc_eb,
+    he_so_trung_khop_ngang_ea: he_so_trung_khop_ngang_ea,
+    he_so_ke_den_trung_khop_rang_Ze: he_so_ke_den_trung_khop_rang_Ze,
+    duong_kinh_vong_lan_banh_nho_dw1: duong_kinh_vong_lan_banh_nho_dw1,
+    van_toc_vong_v: van_toc_vong_v,
+    cap_chinh_xac: cap_chinh_xac,
+    he_so_cac_doi_rang_K_Ha: he_so_cac_doi_rang_K_Ha,
+    he_so_tren_chieu_rong_vanh_rang_K_Hb: he_so_tren_chieu_rong_vanh_rang_K_Hb,
+    K_xH: K_xH,
+    Z_R: Z_R, 
+    v_H: v_H,
+    he_so_tai_trong_vung_an_khop_KHv: he_so_tai_trong_vung_an_khop_KHv,
+    he_so_tai_trong_tiep_xuc_KH: he_so_tai_trong_tiep_xuc_KH,
+    ung_suat_tiep_xuc_mat_rang_sH: ung_suat_tiep_xuc_mat_rang_sH,
+    sH_cuoi: sH_cuoi
+  }
+}
+
+function KiemNghiemRangVeDoBenTiepXucCapCham(TinhToanCham, Chapter2Data, Chapter3Data, Chapter4Data) {
+  const he_so_ke_den_co_tinh_vat_lieu_Zm = 274;
+  const tanb_b = Chapter4Function.Tanb_b(TinhToanCham.goc_profin_rang, TinhToanCham.goc_B);
+  const goc_nghieng_cua_rang_beta_b = Chapter4Function.Beta_b(tanb_b);
+  const tan_a = Chapter4Function.Tana(TinhToanCham.profin_goc);
+  const cosb_b = Chapter4Function.Cosb_b(goc_nghieng_cua_rang_beta_b);
+  const sin2atw = Chapter4Function.Sin2atw(TinhToanCham.goc_an_khop);
+  const dH = 0.006;
+  const g_o = Chapter4Function.g_o(TinhToanCham.mThang);
+  const ZV = 1; 
+  const he_so_ke_den_be_mat_tiep_xuc_ZH = Chapter4Function.HeSoKeDenBeMatTiepXuc(cosb_b, sin2atw);
+  const he_so_trung_khop_doc_eb = Chapter4Function.HeSoTrungKhopDoc(TinhToanCham.chieu_rong_vanh_rang_bw,TinhToanCham.goc_B, TinhToanCham.mThang);
+  const he_so_trung_khop_ngang_ea = Chapter4Function.HeSoTrungKhopNgang(TinhToanCham.z1, TinhToanCham.z2, TinhToanCham.cos_goc_B);
+  const he_so_ke_den_trung_khop_rang_Ze = Chapter4Function.HeSoKeDenTrungKhopRangCapCham(he_so_trung_khop_ngang_ea);
+  const duong_kinh_vong_lan_banh_nho_dw1 = TinhToanCham.duong_kinh_lan_dw1;
+  const van_toc_vong_v = Chapter4Function.VanTocVong(TinhToanCham.duong_kinh_lan_dw1, Chapter2Data.n2);
+  const cap_chinh_xac = 9; 
+  const he_so_cac_doi_rang_K_Ha = Chapter4Function.HeSoCacDoiRang(van_toc_vong_v);
+  const he_so_tren_chieu_rong_vanh_rang_K_Hb = Chapter4Function.HeSoTrenChieuRongVanhRangCapCham(TinhToanCham.y_bd);
+  const K_xH = 1;
+  const Z_R = 0.95; 
+  const v_H = Chapter4Function.v_H(dH, g_o, van_toc_vong_v, TinhToanCham.khoangCachThang, TinhToanCham.u_m);
+  const he_so_tai_trong_vung_an_khop_KHv = Chapter4Function.HeSoTaiTrongVungAnKhop(v_H, TinhToanCham.chieu_rong_vanh_rang_bw, TinhToanCham.duong_kinh_lan_dw1, Chapter2Data.t2_ti_so_truyen, he_so_tren_chieu_rong_vanh_rang_K_Hb, he_so_cac_doi_rang_K_Ha);
+  const he_so_tai_trong_tiep_xuc_KH = Chapter4Function.HeSoTaiTrongTiepXuc(he_so_tren_chieu_rong_vanh_rang_K_Hb, he_so_cac_doi_rang_K_Ha, he_so_tai_trong_vung_an_khop_KHv);
+  const ung_suat_tiep_xuc_mat_rang_sH = Chapter4Function.UngSuatTiepXucOMatRang(he_so_ke_den_co_tinh_vat_lieu_Zm, he_so_ke_den_be_mat_tiep_xuc_ZH, he_so_ke_den_trung_khop_rang_Ze, Chapter2Data.t2_ti_so_truyen, he_so_tai_trong_tiep_xuc_KH, TinhToanCham.u_m, TinhToanCham.chieu_rong_vanh_rang_bw, TinhToanCham.duong_kinh_lan_dw1);
+
+  const sH_cuoi = Chapter4Function.sH_cuoi(Chapter4Data.o_H_phay, ZV, K_xH, Z_R);
+
+  return {
+    he_so_ke_den_co_tinh_vat_lieu_Zm: he_so_ke_den_co_tinh_vat_lieu_Zm,
+    tanb_b: tanb_b,
+    goc_nghieng_cua_rang_beta_b: goc_nghieng_cua_rang_beta_b,
+    tan_a: tan_a, 
+    cosb_b: cosb_b,
+    sin2atw: sin2atw,
+    dH:dH,
+    g_o:g_o,
+    ZV: ZV,
+    he_so_ke_den_be_mat_tiep_xuc_ZH: he_so_ke_den_be_mat_tiep_xuc_ZH,
+    he_so_trung_khop_doc_eb: he_so_trung_khop_doc_eb,
+    he_so_trung_khop_ngang_ea: he_so_trung_khop_ngang_ea,
+    he_so_ke_den_trung_khop_rang_Ze: he_so_ke_den_trung_khop_rang_Ze,
+    duong_kinh_vong_lan_banh_nho_dw1: duong_kinh_vong_lan_banh_nho_dw1,
+    van_toc_vong_v: van_toc_vong_v,
+    cap_chinh_xac: cap_chinh_xac,
+    he_so_cac_doi_rang_K_Ha: he_so_cac_doi_rang_K_Ha,
+    he_so_tren_chieu_rong_vanh_rang_K_Hb: he_so_tren_chieu_rong_vanh_rang_K_Hb,
+    K_xH: K_xH,
+    Z_R: Z_R,
+    v_H: v_H, 
+    he_so_tai_trong_vung_an_khop_KHv: he_so_tai_trong_vung_an_khop_KHv,
+    he_so_tai_trong_tiep_xuc_KH: he_so_tai_trong_tiep_xuc_KH,
+    ung_suat_tiep_xuc_mat_rang_sH: ung_suat_tiep_xuc_mat_rang_sH,
+    sH_cuoi: sH_cuoi
   }
 }
 
