@@ -368,16 +368,36 @@ function TinhToanCapChamLanHai(Chapter4Input, Chapter2Data, Chapter4Data) {
 }
 
 function KichThuocBoTruyenNhanh(Chapter4Input, TinhToanNhanh, Chapter2Data, Chapter3Data, Chapter4Data) {
-
+  const dich_chinh_y = 0; 
+  const khoang_cach_truc_chia_a = Chapter4Function.KhoangCachTrucChia(Chapter4Input.mNghieng,TinhToanNhanh.z1, TinhToanNhanh.z2, TinhToanNhanh.cos_goc_B);
+  const a_w1 = Chapter4Input.khoangCachNghieng;
+  const m = Chapter4Input.mNghieng;
+  const chieu_rong_vanh_rang_bw = Chapter4Function.ChieuRongVanhRang(Chapter4Input.khoangCachNghieng);
+  const u_m = TinhToanNhanh.u_m;
+  console.log(Chapter4Input);
+  console.log(TinhToanNhanh);
   return {
-
+    dich_chinh_y: dich_chinh_y,
+    khoang_cach_truc_chia_a: khoang_cach_truc_chia_a,
+    a_w1: a_w1,
+    m: m,
+    u_m: u_m,
   }
 }
 
 function KichThuocBoTruyenCham(Chapter4Input, TinhToanCham, Chapter2Data, Chapter3Data, Chapter4Data) {
-
+  const dich_chinh_y = 0; 
+  const khoang_cach_truc_chia_a = Chapter4Function.KhoangCachTrucChia(Chapter4Input.mThang, TinhToanCham.z1, TinhToanCham.z2, TinhToanCham.cos_goc_B);
+  a_w1 = Chapter4Input.khoangCachThang;
+  const chieu_rong_vanh_rang_bw = Chapter4Function.ChieuRongVanhRang(Chapter4Input.khoangCachThang);
+  const u_m = TinhToanCham.u_m;
+  const m = Chapter4Input.mThang;
   return {
-
+    dich_chinh_y: dich_chinh_y,
+    khoang_cach_truc_chia_a: khoang_cach_truc_chia_a,
+    a_w1:a_w1,
+    m: m,
+    u_m: u_m
   }
 }
 

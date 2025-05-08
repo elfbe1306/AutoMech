@@ -127,6 +127,15 @@ class Chapter4 {
   ti_so_thuc = (z1, z2) => {
     return z2/z1;
   }
+
+  KhoangCachTrucChia = (m, z1, z2, cosb) => {
+    return 0.5*m*(z1+z2)/cosb;
+  }
+
+  ChieuRongVanhRang = (y_ba, a_w1) => {
+    return y_ba * a_w1;
+  }
+
 }
 
 module.exports = Chapter4;
