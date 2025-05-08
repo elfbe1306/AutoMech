@@ -136,6 +136,40 @@ class Chapter4 {
     return y_ba * a_w1;
   }
 
+  d1 = (m, z1, cosB) => {
+    return (m * z1) / cosB;
+  }
+
+  dw = (d1, y, z1, z2) => {
+    return d1 * (1 + (2 * y) / (z1 + z2));
+  }
+
+  DuongKinhDinhRang = (d, m) => {
+    return d + 2*m;
+  }
+
+  DuongKinhCoSo = (d, alpha) => {
+    return d * Math.cos(alpha * Math.PI / 180);
+  }
+
+  DuongKinhDayRang = (d, m) => {
+    return d - 2.5 * m
+  }
+
+  GocProfinRang = (alpha, cosB) => {
+    const degToRad = Math.PI / 180;
+    const radToDeg = 180 / Math.PI;
+    const at = (Math.atan(Math.tan(alpha * degToRad) / cosB));
+    return at * radToDeg;
+  }
+
+  GocAnKhop = (a, at, aw) => {
+    const degToRad = Math.PI / 180;
+    const radToDeg = 180 / Math.PI;
+    const atw = Math.acos(a * Math.cos(at * degToRad) / aw); 
+    return atw * radToDeg;
+  }
+
 }
 
 module.exports = Chapter4;
