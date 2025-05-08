@@ -193,9 +193,9 @@ Chapter4Routes.route('/chapter4/secondcalculation/:recordid').post(async (reques
     }
 
     const TinhToanNhanh = TinhToanCapNhanhLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
-    // const TinhToanCham = TinhToanCapChamLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
+    const TinhToanCham = TinhToanCapChamLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
 
-    console.log(TinhToanNhanh);
+    console.log(TinhToanNhanh, TinhToanCham);
 
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
@@ -327,21 +327,40 @@ function TinhToanCapChamCoBan(Chapter4Data, Chapter2Data) {
 }
 
 function TinhToanCapNhanhLanHai(Chapter4Input, Chapter2Data, Chapter4Data) {
-  const aw1_so_bo = Chapter4Function.aw1_so_bo(Ka_cap_nhanh, Chapter2Data.he_so_truyen_cap_nhanh, Chapter2Data.t1_ti_so_truyen, KHB_cap_nhanh, Chapter4Data.o_H, Chapter4Input.y_ba);
-  const module_1 = Chapter4Function.module_1(160);
-  const module_2 = Chapter4Function.module_2(160);
-  const z1 = Chapter4Function.z1(40, 160, Chapter4Input.m_cap_nhanh, Chapter2Data.he_so_truyen_cap_nhanh);
+  const module_1 = Chapter4Function.module_1(Chapter4Input.khoangCachNghieng);
+  const module_2 = Chapter4Function.module_2(Chapter4Input.khoangCachNghieng);
+  const z1 = Chapter4Function.z1(40, Chapter4Input.khoangCachNghieng, Chapter4Input.mNghieng, Chapter2Data.he_so_truyen_cap_nhanh);
   const z2 = Chapter4Function.z2(Chapter2Data.he_so_truyen_cap_nhanh, z1);
-  const goc_B = Chapter4Function.tinh_goc_B(z1, z2,160, Chapter4Input.m_cap_nhanh);
+  const cos_goc_B = Chapter4Function.cos_goc_B(z1, z2,Chapter4Input.khoangCachNghieng, Chapter4Input.mNghieng);
+  const goc_B = Chapter4Function.tinh_goc_B(z1, z2,Chapter4Input.khoangCachNghieng, Chapter4Input.mNghieng);
+  const u_m = Chapter4Function. ti_so_thuc (z1, z2);
   return {
-
+    module_1: module_1,
+    module_2: module_2,
+    z1: z1,
+    z2: z2,
+    cos_goc_B: cos_goc_B,
+    goc_B: goc_B,
+    u_m: u_m
   }
 }
 
 function TinhToanCapChamLanHai(Chapter4Input, Chapter2Data, Chapter4Data) {
-
+  const module_1 = Chapter4Function.module_1(Chapter4Input.khoangCachThang);
+  const module_2 = Chapter4Function.module_2(Chapter4Input.khoangCachThang);
+  const z1 = Chapter4Function.z1(0, Chapter4Input.khoangCachThang, Chapter4Input.mThang, Chapter2Data.he_so_truyen_cap_cham);
+  const z2 = Chapter4Function.z2(Chapter2Data.he_so_truyen_cap_cham, z1);
+  const cos_goc_B = 1;
+  const goc_B = 0;
+  const u_m = Chapter4Function.ti_so_thuc (z1, z2);
   return {
-
+    module_1: module_1,
+    module_2: module_2,
+    z1: z1,
+    z2: z2,
+    cos_goc_B: cos_goc_B,
+    goc_B: goc_B,
+    u_m: u_m
   }
 }
 
