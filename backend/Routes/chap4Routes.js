@@ -530,8 +530,8 @@ function KiemNghiemRangVeDoBenTiepXucCapNhanh(TinhToanNhanh, Chapter2Data, Chapt
   const Kqt = 2.2;
   const so_rang_tuong_duong_zv1 = Chapter4Function.Zv1(TinhToanNhanh.z1, TinhToanNhanh.cos_goc_B)
   const so_rang_tuong_duong_zv2 = Chapter4Function.Zv1(TinhToanNhanh.z2, TinhToanNhanh.cos_goc_B);
-  const Yf1 = YF(so_rang_tuong_duong_zv1);
-  // const Yf2 = YF(so_rang_tuong_duong_zv2);
+  const Yf1 = Chapter4Function.YF(so_rang_tuong_duong_zv1);
+  const Yf2 = Chapter4Function.YF(so_rang_tuong_duong_zv2);
 
 
   return {
@@ -574,7 +574,7 @@ function KiemNghiemRangVeDoBenTiepXucCapNhanh(TinhToanNhanh, Chapter2Data, Chapt
     so_rang_tuong_duong_zv1: so_rang_tuong_duong_zv1,
     so_rang_tuong_duong_zv2: so_rang_tuong_duong_zv2,
     Yf1: Yf1,
-    // Yf2: Yf2, 
+    Yf2: Yf2, 
   }
 }
 
@@ -618,8 +618,8 @@ function KiemNghiemRangVeDoBenTiepXucCapCham(TinhToanCham, Chapter2Data, Chapter
   const Kqt = 2.2;
   const so_rang_tuong_duong_zv1 = 105.6540;
   const so_rang_tuong_duong_zv2 = 275.1406;
-  // const Yf1 = YF(so_rang_tuong_duong_zv1);
-  // const Yf2 = YF(so_rang_tuong_duong_zv2);
+  const Yf1 = Chapter4Function.YF(so_rang_tuong_duong_zv1);
+  const Yf2 = Chapter4Function.YF(so_rang_tuong_duong_zv2);
 
   return {
     he_so_ke_den_co_tinh_vat_lieu_Zm: he_so_ke_den_co_tinh_vat_lieu_Zm,
@@ -660,8 +660,8 @@ function KiemNghiemRangVeDoBenTiepXucCapCham(TinhToanCham, Chapter2Data, Chapter
     Kqt: Kqt,
     so_rang_tuong_duong_zv1: so_rang_tuong_duong_zv1,
     so_rang_tuong_duong_zv2: so_rang_tuong_duong_zv2,
-    // Yf1: Yf1,
-    // Yf2: Yf2
+    Yf1: Yf1,
+    Yf2: Yf2
   }
 }
 
