@@ -528,11 +528,18 @@ function KiemNghiemRangVeDoBenTiepXucCapNhanh(TinhToanNhanh, Chapter2Data, Chapt
   const YR = 1;
   const KxF = 1;
   const Kqt = 2.2;
-  const so_rang_tuong_duong_zv1 = Chapter4Function.Zv1(TinhToanNhanh.z1, TinhToanNhanh.cos_goc_B)
+  const so_rang_tuong_duong_zv1 = Chapter4Function.Zv1(TinhToanNhanh.z1, TinhToanNhanh.cos_goc_B);
   const so_rang_tuong_duong_zv2 = Chapter4Function.Zv1(TinhToanNhanh.z2, TinhToanNhanh.cos_goc_B);
-  const Yf1 = Chapter4Function.YF(so_rang_tuong_duong_zv1);
+  const Ys = Chapter4Function.Ys(TinhToanNhanh.mNghieng);
+  const Yf1 = 3.7;
   const Yf2 = Chapter4Function.YF(so_rang_tuong_duong_zv2);
-
+  const sF1 = Chapter4Function.sF1(Chapter2Data.t1_ti_so_truyen, KF, Ye, Yb, Yf1, TinhToanNhanh.chieu_rong_vanh_rang_bw, TinhToanNhanh.duong_kinh_lan_dw1, TinhToanNhanh.mNghieng);
+  const sF2 = Chapter4Function.sF2(sF1, Yf2, Yf1);
+  const ung_suat_uon_cho_phep_1 = Chapter4Function.UngSuatUonChoPhep(Chapter4Data.o_F1, YR, Ys, KxF);
+  const ung_suat_uon_cho_phep_2 = Chapter4Function.UngSuatUonChoPhep(Chapter4Data.o_F2, YR, Ys, KxF);
+  const s_Hmax = Chapter4Function.sHmax(ung_suat_tiep_xuc_mat_rang_sH, Kqt);
+  const sF1_max = Chapter4Function.sF1max(sF1, Kqt);
+  const sF2_max = Chapter4Function.sF2max(sF2, Kqt);
 
   return {
     he_so_ke_den_co_tinh_vat_lieu_Zm: he_so_ke_den_co_tinh_vat_lieu_Zm,
@@ -573,8 +580,16 @@ function KiemNghiemRangVeDoBenTiepXucCapNhanh(TinhToanNhanh, Chapter2Data, Chapt
     Kqt: Kqt,
     so_rang_tuong_duong_zv1: so_rang_tuong_duong_zv1,
     so_rang_tuong_duong_zv2: so_rang_tuong_duong_zv2,
+    Ys: Ys,
     Yf1: Yf1,
     Yf2: Yf2, 
+    sF1: sF1,
+    sF2: sF2,
+    ung_suat_uon_cho_phep_1: ung_suat_uon_cho_phep_1,
+    ung_suat_uon_cho_phep_2: ung_suat_uon_cho_phep_2,
+    s_Hmax: s_Hmax,
+    sF1_max: sF1_max,
+    sF2_max: sF2_max
   }
 }
 
@@ -616,6 +631,7 @@ function KiemNghiemRangVeDoBenTiepXucCapCham(TinhToanCham, Chapter2Data, Chapter
   const YR = 1;
   const KxF = 1;
   const Kqt = 2.2;
+  const Ys = Chapter4Function.Ys(TinhToanCham.mThang);
   const so_rang_tuong_duong_zv1 = 105.6540;
   const so_rang_tuong_duong_zv2 = 275.1406;
   const Yf1 = Chapter4Function.YF(so_rang_tuong_duong_zv1);

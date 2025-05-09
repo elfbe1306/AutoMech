@@ -382,6 +382,30 @@ class Chapter4 {
   Ys = (m) => {
     return 1.08 - 0.0695 * Math.log(m);
   }
+
+    sF1 = (T1, KF, Ye, Yb, YF1, bw, dw1, m) => {
+    return (2 * T1 * KF * Ye * Yb * YF1) / (bw * dw1 * m);
+  }
+
+  sF2 = (sF1, YF2, YF1) => {
+    return (sF1 * YF2) / (YF1);
+  }
+
+  UngSuatUonChoPhep = (oF, YR, Ys, KxF) => {
+    return oF * YR * Ys * KxF;
+  }
+
+  sHmax = (sH, Kqt) => {
+    return sH * Math.sqrt(Kqt);
+  }
+
+  sF1max = (sF1, Kqt) => {
+    return sF1 * Kqt;
+  }
+
+  sF2max = (sF2, Kqt) => {
+    return sF2 * Kqt;
+  }
 }
 
 module.exports = Chapter4;
