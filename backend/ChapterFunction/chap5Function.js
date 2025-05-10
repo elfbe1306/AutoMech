@@ -1,8 +1,37 @@
 
 class Chapter5 {
 
+    duong_kinh_so_bo_truc_d1 = (T, us_xoan) => {
+        const d = Math.cbrt(T/(2*0.2 *us_xoan));
+        return Math.ceil(d / 5) * 5;
+    }
+
     duong_kinh_so_bo_truc = (T, us_xoan) => {
-        return Math.cbrt(T/(0.2 *us_xoan));
+        const d = Math.cbrt(T/(0.2 *us_xoan));
+        return Math.ceil(d / 5) * 5;
+    }
+
+    chieu_rong_o_lan = (d) => {
+        const table = [
+            { d: 20, bo: 15},
+            { d: 25, bo: 17},
+            { d: 30, bo: 19},
+            { d: 35, bo: 21},
+            { d: 40, bo: 23},
+            { d: 45, bo: 25},
+            { d: 50, bo: 27},
+            { d: 55, bo: 29},
+            { d: 60, bo: 31},
+            { d: 65, bo: 33},
+            { d: 70, bo: 35},
+            { d: 75, bo: 37},
+            { d: 80, bo: 39},
+            { d: 85, bo: 41},
+            { d: 90, bo: 43},
+            { d: 100, bo: 47}
+        ];
+    const row = table.find(entry => entry.d === d);
+    return row.bo;
     }
 
 }

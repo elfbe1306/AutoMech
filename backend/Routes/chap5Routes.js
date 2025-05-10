@@ -50,12 +50,27 @@ Chapter5Routes.route('/chapter5/:recordid').post(async (request, response) => {
 })
 
 function TinhToanTruc(Chapter2Data, Chapter3Data, Chapter4Data) {
-  const us_xoan = 20;
-  const duong_kinh_so_bo_truc_d1 = Chapter5Function.duong_kinh_so_bo_truc(Chapter2Data.t1_ti_so_truyen, us_xoan);
+  const us_xoan = 20; // người dùng chọn
+  const duong_kinh_so_bo_truc_d1 = Chapter5Function.duong_kinh_so_bo_truc_d1(Chapter2Data.t1_ti_so_truyen, us_xoan);
+  const duong_kinh_so_bo_truc_d2 = Chapter5Function.duong_kinh_so_bo_truc(Chapter2Data.t2_ti_so_truyen, us_xoan);
+  const duong_kinh_so_bo_truc_d3 = Chapter5Function.duong_kinh_so_bo_truc(Chapter2Data.t3_ti_so_truyen, us_xoan);
+  const bo1 = Chapter5Function.chieu_rong_o_lan(duong_kinh_so_bo_truc_d1);
+  const bo2 = Chapter5Function.chieu_rong_o_lan(duong_kinh_so_bo_truc_d2);
+  const bo3 = Chapter5Function.chieu_rong_o_lan(duong_kinh_so_bo_truc_d3);
+  const k1 = 12; // người dùng chọn từ khoảng quy định theo sách 8..15
+  const k2 = 10; // người dùng chọn từ khoảng quy định theo sách 5..15
+  const k3 = 15; // người dùng chọn từ khoảng quy định theo sách 10..20
+  const h_n = 17; // người dùng chọn từ khoảng quy định theo sách 15..20
+  
 
   return {
     us_xoan: us_xoan,
-    duong_kinh_so_bo_truc_d1: duong_kinh_so_bo_truc_d1
+    duong_kinh_so_bo_truc_d1: duong_kinh_so_bo_truc_d1,
+    duong_kinh_so_bo_truc_d2: duong_kinh_so_bo_truc_d2,
+    duong_kinh_so_bo_truc_d3: duong_kinh_so_bo_truc_d3,
+    bo1: bo1,
+    bo2: bo2,
+    bo3: bo3
   }
 }
 
