@@ -50,9 +50,12 @@ Chapter5Routes.route('/chapter5/:recordid').post(async (request, response) => {
 })
 
 function TinhToanTruc(Chapter2Data, Chapter3Data, Chapter4Data) {
+  const us_xoan = 20;
+  const duong_kinh_so_bo_truc_d1 = Chapter5Function.duong_kinh_so_bo_truc(us_xoan);
 
   return {
-    
+    us_xoan: us_xoan,
+    duong_kinh_so_bo_truc_d1: duong_kinh_so_bo_truc_d1
   }
 }
 
