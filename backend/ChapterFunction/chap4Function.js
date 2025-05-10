@@ -5,11 +5,11 @@ class Chapter4 {
   }
 
   UngSuatTiepXucChoPhep = (HB) => {
-    return 2 * HB + 70;
+    return 2 * Number(HB) + 70;
   }
 
-  UngSuatUonChoPhep = (HB) => {
-    return 1.8 * HB;
+  UngSuatUonChoPhepBd = (HB) => {
+    return 1.8 * Number(HB);
   }
 
   UngSuatTiepXuc_O_H = (o_Hlim1,KHL, SH) => {

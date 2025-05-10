@@ -4,9 +4,9 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 const InputField = ({ label, sublabel, value, onChange, keyboardType = 'numeric' }) => {
   return (
     <View style={styles.inputContainer}>
-      <View>
+      <View style={styles.labelContainer}>
         <Text style={styles.inputField}>{label}</Text>
-        {sublabel ? <Text>{sublabel}</Text> : null}
+        {sublabel ? <Text style={styles.sublabel}>{sublabel}</Text> : null}
       </View>
       <TextInput
         style={styles.input}
@@ -22,18 +22,25 @@ export default InputField;
 
 const styles = StyleSheet.create({
   inputContainer: {
-    display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 15,
-    marginVertical: 5
+    marginVertical: 5,
+  },
+  labelContainer: {
+    flexShrink: 1,
+    marginRight: 10,
   },
   inputField: {
     color: 'rgb(58, 65, 99)',
     fontFamily: 'quicksand-bold',
     fontSize: 14,
   },
+  sublabel: {
+    fontSize: 12,
+    color: '#666',
+  },
   input: {
+    width: 50,
     borderColor: '#213555',
     borderWidth: 1,
     borderRadius: 10,
@@ -42,7 +49,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     backgroundColor: '#F8FAFC',
-    flexGrow: 1,
-    marginRight: 15
   },
 });
+
