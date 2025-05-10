@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, ScrollView, SafeAreaView, FlatList } from 'reac
 import React from 'react'
 import { useRouter } from 'expo-router';
 import ReturnButton from '@/components/ReturnButton';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const timelineData = [
   { date: 'T2 10.3.25', time: '13:05', title: 'Bài tập lớn 1', primary: true },
@@ -28,9 +29,14 @@ const TimelineItem = ({ item, isLast }) => (
 
     {/* Content box */}
     <View style={[styles.contentBox, item.primary ? styles.contentBox : styles.whiteBox]}>
-      <Text style={[styles.titleContent, item.primary ? styles.titleContent : styles.titleWhiteBox]}>{item.title}</Text>
-      <Text style={[styles.desc, item.primary? styles.desc: styles.descWhiteBox]}>Kết quả tính toán</Text>
-      <Text style={[styles.desc, item.primary? styles.desc: styles.descWhiteBox]}>Chi tiết máy đã chọn</Text>
+        <View>
+          <Text style={[styles.titleContent, item.primary ? styles.titleContent : styles.titleWhiteBox]}>{item.title}</Text>
+          <Text style={[styles.desc, item.primary? styles.desc: styles.descWhiteBox]}>Kết quả tính toán</Text>
+          <Text style={[styles.desc, item.primary? styles.desc: styles.descWhiteBox]}>Chi tiết máy đã chọn</Text>
+        </View>
+        <View style>
+          <MaterialCommunityIcons name="trash-can-outline" size={24}  color="firebrick"/> 
+        </View>
     </View>
   </View>
 );
@@ -96,13 +102,20 @@ const styles = StyleSheet.create({
   },
   contentBox: {
     flex: 1,
+    flexDirection:'row',
     backgroundColor: '#213555',
     borderRadius: 20,
     paddingInline: 15,
     paddingVertical:10,
     width: 20,
     marginLeft: 10,
-    justifyContent: "center",
+    alignContent:'center',
+    alignItems:'center',
+    gap: '15%',
+    // justifyContent: "center",
+  },
+  icon:{
+    color:'89AC46',
   },
   whiteBox: {
     backgroundColor: '#F5EFE7',
@@ -126,6 +139,9 @@ const styles = StyleSheet.create({
   descWhiteBox:{
     color: '#3E5879'
   },
+  // icon: {
+  //   marginTop:'0auto'
+  // },
 //   timelineContainer: {
 //   alignItems: 'center',
 //   position: 'relative',
