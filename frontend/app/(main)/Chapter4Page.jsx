@@ -283,18 +283,18 @@ const Chapter4Page = () => {
         {secondDisplayResult && (
           <View style={styles.ThirdContainer}>
             <Text>Tính toán nhanh</Text>
-            <Text>Khoảng cách trục: {FastResult.khoangCach}</Text>
-            <Text>Số bánh răng z1 : {FastResult.z1}</Text>
-            <Text>Số bánh răng z2 : {FastResult.z2}</Text>
-            <Text>Đường kính bánh răng ngoài da1 : {Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
-            <Text>Đường kính bánh răng ngoài da2 : {Number(FastResult.duong_kinh_dinh_rang_da2).toFixed(4)}</Text>
+            <DisplayResult variable={"Khoảng cách trục"} value={FastResult.khoangCach}/>
+            <DisplayResult variable={"Số bánh răng z1"} value={FastResult.z1}/>
+            <DisplayResult variable={"Số bánh răng z2"} value={FastResult.z2}/>
+            <DisplayResult variable={"Đường kính bánh răng ngoài da1"} value={Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(4)}/>
+            <DisplayResult variable={"Đường kính bánh răng ngoài da2"} value={Number(FastResult.duong_kinh_dinh_rang_da2).toFixed(4)}/>
 
             <Text>Tính toán Chậm</Text>
-            <Text>Khoảng cách trục: {SlowResult.khoangCach}</Text>
-            <Text>Số bánh răng z1 : {SlowResult.z1}</Text>
-            <Text>Số bánh răng z2 : {SlowResult.z2}</Text>
-            <Text>Đường kính bánh răng ngoài da1 : {Number(SlowResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
-            <Text>Đường kính bánh răng ngoài da2 : {Number(SlowResult.duong_kinh_dinh_rang_da2).toFixed(4)}</Text>
+            <DisplayResult variable={"Khoảng cách trục"} value={SlowResult.khoangCach}/>
+            <DisplayResult variable={"Số bánh răng z1"} value={SlowResult.z1}/>
+            <DisplayResult variable={"Số bánh răng z2"} value={SlowResult.z2}/>
+            <DisplayResult variable={"Đường kính bánh răng ngoài da1"} value={Number(SlowResult.duong_kinh_dinh_rang_da1).toFixed(4)}/>
+            <DisplayResult variable={"Đường kính bánh răng ngoài da2"} value={Number(SlowResult.duong_kinh_dinh_rang_da2).toFixed(4)}/>
 
             <TouchableOpacity style={styles.doMathButton} onPress={handleChapter5}>
               <Text style={styles.doMathButtonText}>Lưu</Text>

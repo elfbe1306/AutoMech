@@ -24,31 +24,35 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 5,
+    marginVertical: 8,
+    justifyContent: 'space-between',
   },
   labelContainer: {
-    flexShrink: 1,
+    flex: 1,
     marginRight: 10,
   },
   inputField: {
     color: 'rgb(58, 65, 99)',
     fontFamily: 'quicksand-bold',
     fontSize: 14,
+    marginBottom: 2,
+    width: 250
   },
   sublabel: {
     fontSize: 12,
     color: '#666',
   },
   input: {
-    width: 50,
+    width: 80,
+    height: 36,
     borderColor: '#213555',
     borderWidth: 1,
-    borderRadius: 10,
-    padding: 5,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    fontSize: 14,
     backgroundColor: '#F8FAFC',
+    textAlign: 'center',
   },
 });
+
 
