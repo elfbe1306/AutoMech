@@ -61,7 +61,28 @@ function TinhToanTruc(Chapter2Data, Chapter3Data, Chapter4Data) {
   const k2 = 10; // người dùng chọn từ khoảng quy định theo sách 5..15
   const k3 = 15; // người dùng chọn từ khoảng quy định theo sách 10..20
   const h_n = 17; // người dùng chọn từ khoảng quy định theo sách 15..20
-  
+  const chieu_dai_nua_khoi_noi_mayo = Chapter5Function.chieu_dai_nua_khoi_noi_mayo(duong_kinh_so_bo_truc_d1);
+  const lmd_min = Chapter5Function.lmd_min(duong_kinh_so_bo_truc_d3);
+  const lmd_max = Chapter5Function.lmd_max(duong_kinh_so_bo_truc_d3);
+  const lmd = 95; // chọn từ khoảng lmd_min...lmd_max
+  const lm22 = Chapter5Function.lm(duong_kinh_so_bo_truc_d2);
+  const lm23 = Chapter5Function.lm(duong_kinh_so_bo_truc_d3);
+
+  const l22 = Chapter5Function.l22(lm22, bo2, k1, k2);
+  const l23 = Chapter5Function.l23(l22, lm22, lm23, k1 );
+  const l24 = Chapter5Function.l24 (l23, l22);
+  const l21 = Chapter5Function.l21 (l23);
+
+  const lm12 = chieu_dai_nua_khoi_noi_mayo;
+  const l11 = l21;
+  const l12 = Chapter5Function.l12(lm12, bo1, k3, h_n);
+  const l13 = l22;
+  const l14 = l24;
+
+  const lm33 = Chapter5Function.lm(duong_kinh_so_bo_truc_d3);
+  const l31 = l21;
+  const l32 = l23;
+  const l33 = Chapter5Function.l33(lm33, bo3, l31, k3, h_n); 
 
   return {
     us_xoan: us_xoan,
@@ -70,7 +91,25 @@ function TinhToanTruc(Chapter2Data, Chapter3Data, Chapter4Data) {
     duong_kinh_so_bo_truc_d3: duong_kinh_so_bo_truc_d3,
     bo1: bo1,
     bo2: bo2,
-    bo3: bo3
+    bo3: bo3,
+    chieu_dai_nua_khoi_noi_mayo: chieu_dai_nua_khoi_noi_mayo,
+    lmd_min: lmd_min,
+    lmd_max: lmd_max,
+    lm22: lm22,
+    lm23: lm23,
+    l21: l21,
+    l22: l22,
+    l23: l23,
+    l24: l24,
+    lm12: lm12,
+    l11: l11,
+    l12: l12,
+    l13: l13,
+    l14: l14,
+    lm33: lm33,
+    l31: l31,
+    l32: l32,
+    l33: l33
   }
 }
 

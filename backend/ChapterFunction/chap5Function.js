@@ -34,6 +34,45 @@ class Chapter5 {
     return row.bo;
     }
 
+    chieu_dai_nua_khoi_noi_mayo = (d) => {
+        return d*2;
+    } 
+
+    lmd_min = (d) => {
+        return 1.2 * d;
+    }
+
+    lmd_max = (d) => {
+        return 1.5 * d;
+    }
+
+    lm = (d) => {
+        return 1.5 * d;
+    }
+
+    l22 = (lm22, bo2, k1, k2) => {
+        return ((lm22+bo2)/2) + k1 + k2;
+    }
+
+    l23 = (l22, lm22, lm23, k1) => {
+        return l22 + ((lm22 + lm23)/2) + k1;
+    }
+
+    l24 = (l23, l22) => {
+        return 2*l23 - l22; 
+    }
+
+    l21 = (l23) => {
+        return 2*l23; 
+    }
+
+    l12 = (lm12, bo1, k3, h_n) => {
+        return ((lm12+bo1)/2) + k3 + h_n;
+    }
+
+    l33 = (lm33, bo3, l31, k3, h_n) => {
+        return ((lm33 + bo3)/2) + l31 + k3 + h_n;
+    }
 }
 
 module.exports = Chapter5;
