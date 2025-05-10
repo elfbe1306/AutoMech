@@ -2,7 +2,6 @@ const express = require('express')
 const MachineCalculatorFactory = require('../MachineCalculator');
 const {v4: uuidv4} = require('uuid')
 const jwt = require('jsonwebtoken');
-const Chapter2 = require('../ChapterFunction/chap2Function');
 require('dotenv').config({ path: '../config.env' });
 
 let Chapter4Routes = express.Router();

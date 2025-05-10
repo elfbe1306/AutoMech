@@ -101,6 +101,15 @@ class ApiService {
       throw error;
     }
   }
+
+  async Chapter5Calculation(recordID) {
+    try {
+      const response = await this.api.post(`/chapter5/${recordID}`);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
 }
 
 // Singleton instance
