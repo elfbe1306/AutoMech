@@ -83,14 +83,14 @@ Chapter4Routes.route('/chapter4/calculation/:recordid').post(async (request, res
       }
 
       // Cập nhật dữ liệu bảng tính toán nhanh
-      const {data: insertTinhToanNhanh, error: InsertTinhToanNhanhError } = await supabase.from('Chapter4').update(Chapter4InputData).eq('id',Chapter4Data[0].tinhtoannhanh_id)
+      const {data: insertTinhToanNhanh, error: InsertTinhToanNhanhError } = await supabase.from('TinhToanNhanh').update(TinhToanNhanh).eq('id',Chapter4Data[0].tinhtoannhanh_id)
       if(InsertTinhToanNhanhError) {
         console.error("InsertTinhToanNhanhError", InsertTinhToanNhanhError)
         return response.status(400).json({ message: InsertTinhToanNhanhError.message });
       }
 
       // Cập nhật dữ liệu bảng tính toán chậm
-      const {data: insertTinhToanCham, error: InsertTinhToanChamError } = await supabase.from('Chapter4').update(Chapter4InputData).eq('id',Chapter4Data[0].tinhtoancham_id)
+      const {data: insertTinhToanCham, error: InsertTinhToanChamError } = await supabase.from('TinhToanCham').update(TinhToanCham).eq('id',Chapter4Data[0].tinhtoancham_id)
       if(InsertTinhToanChamError) {
         console.error("InsertTinhToanChamError", InsertTinhToanChamError)
         return response.status(400).json({ message: InsertTinhToanChamError.message });
@@ -211,13 +211,13 @@ Chapter4Routes.route('/chapter4/secondcalculation/:recordid').post(async (reques
     const TinhToanCham = TinhToanCapChamLanHai(request.body, Chapter2Data[0], Chapter4Data[0]);
 
     const TinhToanNhanhTongHop1 = {
+      ...TinhToanNhanhData[0],
       ...TinhToanNhanh,
-      ...TinhToanNhanhData[0]
     }
 
     const TinhToanChamTongHop1 = {
+      ...TinhToanChamData[0],
       ...TinhToanCham,
-      ...TinhToanChamData[0]
     }
 
     const KichThuocNhanh = KichThuocBoTruyenNhanh(TinhToanNhanhTongHop1)
@@ -235,8 +235,70 @@ Chapter4Routes.route('/chapter4/secondcalculation/:recordid').post(async (reques
     const KiemNghiemRangDoBenTiepXucCapNhanh = KiemNghiemRangVeDoBenTiepXucCapNhanh (TinhToanNhanhTongHop2, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
     const KiemNghiemRangDoBenTiepXucCapCham = KiemNghiemRangVeDoBenTiepXucCapCham (TinhToanChamTongHop2, Chapter2Data[0], Chapter3Data[0], Chapter4Data[0])
 
-    console.log(KiemNghiemRangDoBenTiepXucCapNhanh, KiemNghiemRangDoBenTiepXucCapCham);
+    const TinhToanNhanhInputData = {
+      khoangCachNghieng: TinhToanNhanhTongHop2.khoangCachNghieng,
+      z1: TinhToanNhanhTongHop2.z1,
+      z2: TinhToanNhanhTongHop2.z2,
+      duong_kinh_dinh_rang_da1: TinhToanNhanhTongHop2.duong_kinh_dinh_rang_da1,
+      duong_kinh_dinh_rang_da2: TinhToanNhanhTongHop2.duong_kinh_dinh_rang_da2,
+      duong_kinh_chia_d1: TinhToanNhanhTongHop2.duong_kinh_chia_d1,
+      duong_kinh_chia_d2: TinhToanNhanhTongHop2.duong_kinh_chia_d2,
+      duong_kinh_lan_dw1: TinhToanNhanhTongHop2.duong_kinh_lan_dw1,
+      duong_kinh_lan_dw2: TinhToanNhanhTongHop2.duong_kinh_lan_dw2,
+      duong_kinh_co_so_db1: TinhToanNhanhTongHop2.duong_kinh_co_so_db1,
+      duong_kinh_co_so_db2: TinhToanNhanhTongHop2.duong_kinh_co_so_db2,
+      duong_kinh_day_rang_df1: TinhToanNhanhTongHop2.duong_kinh_day_rang_df1,
+      duong_kinh_day_rang_df2: TinhToanNhanhTongHop2.duong_kinh_day_rang_df2,
+    }
 
+    const TinhToanChamInputData = {
+      khoangCachThang: TinhToanChamTongHop2.khoangCachThang,
+      z1: TinhToanChamTongHop2.z1,
+      z2: TinhToanChamTongHop2.z2,
+      duong_kinh_dinh_rang_da1: TinhToanChamTongHop2.duong_kinh_dinh_rang_da1,
+      duong_kinh_dinh_rang_da2: TinhToanChamTongHop2.duong_kinh_dinh_rang_da2,
+      duong_kinh_chia_d1: TinhToanChamTongHop2.duong_kinh_chia_d1,
+      duong_kinh_chia_d2: TinhToanChamTongHop2.duong_kinh_chia_d2,
+      duong_kinh_lan_dw1: TinhToanChamTongHop2.duong_kinh_lan_dw1,
+      duong_kinh_lan_dw2: TinhToanChamTongHop2.duong_kinh_lan_dw2,
+      duong_kinh_co_so_db1: TinhToanChamTongHop2.duong_kinh_co_so_db1,
+      duong_kinh_co_so_db2: TinhToanChamTongHop2.duong_kinh_co_so_db2,
+      duong_kinh_day_rang_df1: TinhToanChamTongHop2.duong_kinh_day_rang_df1,
+      duong_kinh_day_rang_df2: TinhToanChamTongHop2.duong_kinh_day_rang_df2,
+    }
+
+    // // Cập nhật dữ liệu bảng tính toán nhanh
+    const {data: insertTinhToanNhanh, error: InsertTinhToanNhanhError } = await supabase.from('TinhToanNhanh').update(TinhToanNhanhInputData).eq('id',Chapter4Data[0].tinhtoannhanh_id)
+    if(InsertTinhToanNhanhError) {
+      console.error("InsertTinhToanNhanhError", InsertTinhToanNhanhError)
+      return response.status(400).json({ message: InsertTinhToanNhanhError.message });
+    }
+
+    // // Cập nhật dữ liệu bảng tính toán chậm
+    const {data: insertTinhToanCham, error: InsertTinhToanChamError } = await supabase.from('TinhToanCham').update(TinhToanChamInputData).eq('id',Chapter4Data[0].tinhtoancham_id)
+    if(InsertTinhToanChamError) {
+      console.error("InsertTinhToanChamError", InsertTinhToanChamError)
+      return response.status(400).json({ message: InsertTinhToanChamError.message });
+    }
+
+    return response.status(200).json({ 
+      cham: {
+        khoangCach: TinhToanChamTongHop2.khoangCachThang,
+        z1: TinhToanChamTongHop2.z1,
+        z2: TinhToanChamTongHop2.z2,
+        duong_kinh_dinh_rang_da1: TinhToanChamTongHop2.duong_kinh_dinh_rang_da1,
+        duong_kinh_dinh_rang_da2: TinhToanChamTongHop2.duong_kinh_dinh_rang_da2,
+      },
+      nhanh: {
+        khoangCach: TinhToanNhanhTongHop2.khoangCachNghieng,
+        z1: TinhToanNhanhTongHop2.z1,
+        z2: TinhToanNhanhTongHop2.z2,
+        duong_kinh_dinh_rang_da1: TinhToanNhanhTongHop2.duong_kinh_dinh_rang_da1,
+        duong_kinh_dinh_rang_da2: TinhToanNhanhTongHop2.duong_kinh_dinh_rang_da2,
+      },
+      message: 'Đã tính toán xong chương 4',
+      success: true
+    });
   } catch(error) {
     return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
   }

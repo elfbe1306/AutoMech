@@ -27,6 +27,9 @@ const Chapter4Page = () => {
   const [mThang, setMThang] = useState(2.5);
 
   const [displayResult, setDisplayResult] = useState(false);
+  const [secondDisplayResult, setSecondDisplayResult] = useState(false);
+  const [FastResult, setFastResult] = useState({});
+  const [SlowResult, setSlowResult] = useState({});
 
   useEffect(() => {
     const FetchData = async () => {
@@ -47,6 +50,20 @@ const Chapter4Page = () => {
   
     FetchData();
   }, []);
+
+
+  const module1 = (aw) => {
+    return 0.01*aw;
+  }
+
+  const module2 = (aw) => {
+    return 0.02*aw;
+  }
+
+  const [mNghiengMin, setMNghiengMin] = useState(0);
+  const [mNghiengMax, setMNghiengMax] = useState(0);
+  const [mThangMin, setMThangMin] = useState(0);
+  const [mThangMax, setMThangMax] = useState(0);
 
   const [loading, setLoading] = useState(false)
   const handleSubmit = async () => {
@@ -116,18 +133,35 @@ const Chapter4Page = () => {
     }
   }
 
-  const module1 = (aw) => {
-    return 0.01*aw;
-  }
-
-  const module2 = (aw) => {
-    return 0.02*aw;
-  }
-
   const [loadingSecondTime, setLoadingSecondTime] = useState(false);
   const handleSubmitSecondTime = async () => {
     try {
       setLoadingSecondTime(true);
+
+      if(khoangCachNghieng < ASoboNhanh) {
+        alert(`Khoảng cách phải lớn hơn ${Number(ASoboNhanh).toFixed(4)}`)
+        setLoadingSecondTime(false);
+        return;
+      }
+
+      if(khoangCachThang < ASoboCham) {
+        alert(`Khoảng cách phải lớn hơn ${Number(ASoboCham).toFixed(4)}`)
+        setLoadingSecondTime(false);
+        return;
+      }
+
+      if(mNghieng < mNghiengMin || mNghieng > mNghiengMax) {
+        alert(`m phải nằm trong khoảng ${Number(mNghiengMin).toFixed(1)} - ${Number(mNghiengMax).toFixed(1)}`)
+        setLoadingSecondTime(false);
+        return;
+      }
+
+      if(mThang < mThangMin || mThang > mThangMax) {
+        alert(`m phải nằm trong khoảng ${Number(mThangMin).toFixed(1)} - ${Number(mThangMax).toFixed(1)}`)
+        setLoadingSecondTime(false);
+        return;
+      }
+
       const userData = {
         mNghieng: mNghieng,
         mThang: mThang,
@@ -137,6 +171,11 @@ const Chapter4Page = () => {
       
       const recordID = await AsyncStorage.getItem("RECORDID");
       const response = await apiService.Chapter4SecondCalculation(recordID, userData);
+      if(response.success) {
+        setFastResult(response.nhanh);
+        setSlowResult(response.cham);
+        setSecondDisplayResult(true);
+      }
       console.log(response.message);
 
     } catch(error) {
@@ -146,8 +185,12 @@ const Chapter4Page = () => {
     }
   }
 
+  const handleChapter5 = () => {
+    router.push('/(main)/Chapter5Page');
+  }
+
   return (
-    <View>
+    <ScrollView>
       <ReturnButton onPress={() => router.back()}/>
       
       <View style={styles.titleContainer}>
@@ -194,30 +237,40 @@ const Chapter4Page = () => {
 
           <InputField
             label="Chọn khoảng cách trục cơ bộ cho cấp nghiêng"
-            sublabel="()"
+            sublabel={`(Khoảng cách >${Number(ASoboNhanh).toFixed(4)})`}
             value={khoangCachNghieng.toString()}
-            onChange={(text) => setKhoangCachNghieng(Number(text))}
+            onChange={(text) => {
+              const val = Number(text);
+              setKhoangCachNghieng(val);
+              setMNghiengMin(module1(val));
+              setMNghiengMax(module2(val));
+            }}          
           />
 
           <InputField
             label="Chọn khoảng cách trục cơ bộ cho cấp thẳng"
-            sublabel="()"
+            sublabel={`(Khoảng cách >${Number(ASoboCham).toFixed(4)})`}
             value={khoangCachThang.toString()}
-            onChange={(text) => setKhoangCachThang(Number(text))}
+            onChange={(text) => {
+              const val = Number(text);
+              setKhoangCachThang(val);
+              setMThangMin(module1(val));
+              setMThangMax(module2(val));
+            }}     
           />
 
           <InputField
             label="Chọn module m của tính toán trụ nghiêng"
-            sublabel="()"
+            sublabel={`(${Number(mNghiengMin).toFixed(1)} - ${Number(mNghiengMax).toFixed(1)})`}
             value={mNghieng.toString()}
-            onChange={(text) => setMNghieng(Number(text))}
+            onChange={(text) => setMNghieng(text)}
           />
 
           <InputField
             label="Chọn module m của tính toán trụ thẳng"
-            sublabel="()"
+            sublabel={`(${Number(mThangMin).toFixed(1)} - ${Number(mThangMax).toFixed(1)})`}
             value={mThang.toString()}
-            onChange={(text) => setMThang(Number(text))}
+            onChange={(text) => setMThang(text)}
           />
 
           <TouchableOpacity style={styles.doMathButton} onPress={handleSubmitSecondTime} disabled={loadingSecondTime}>
@@ -225,7 +278,29 @@ const Chapter4Page = () => {
           </TouchableOpacity>
         </View>
       )}
-    </View>
+
+      {secondDisplayResult && (
+        <View>
+          <Text>Tính toán nhanh</Text>
+          <Text>Khoảng cách trục: {FastResult.khoangCach}</Text>
+          <Text>Số bánh răng z1 : {FastResult.z1}</Text>
+          <Text>Số bánh răng z2 : {FastResult.z2}</Text>
+          <Text>Đường kính bánh răng ngoài da1 : {Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
+          <Text>Đường kính bánh răng ngoài da11 : {Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
+
+          <Text>Tính toán Chậm</Text>
+          <Text>Khoảng cách trục: {SlowResult.khoangCach}</Text>
+          <Text>Số bánh răng z1 : {SlowResult.z1}</Text>
+          <Text>Số bánh răng z2 : {SlowResult.z2}</Text>
+          <Text>Đường kính bánh răng ngoài da1 : {Number(SlowResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
+          <Text>Đường kính bánh răng ngoài da11 : {Number(SlowResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
+
+          <TouchableOpacity style={styles.doMathButton} onPress={handleChapter5}>
+            <Text style={styles.doMathButtonText}>Lưu</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </ScrollView>
   )
 }
 
