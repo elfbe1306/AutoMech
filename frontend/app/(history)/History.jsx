@@ -109,10 +109,8 @@ const styles = StyleSheet.create({
     paddingVertical:10,
     width: 20,
     marginLeft: 10,
-    alignContent:'center',
     alignItems:'center',
     gap: '15%',
-    // justifyContent: "center",
   },
   icon:{
     color:'89AC46',
