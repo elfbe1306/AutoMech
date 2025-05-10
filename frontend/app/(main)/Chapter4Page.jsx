@@ -14,10 +14,6 @@ const Chapter4Page = () => {
   const [heatTreatment, setHeatTreatment] = useState("");
   const [HB1, setHB1] = useState(250);
   const [HB2, setHB2] = useState(235);
-  const [Sb1, setSb1] = useState(0);
-  const [Sb2, setSb2] = useState(0);
-  const [Sch1, setSch1] = useState(0);
-  const [Sch2, setSch2] = useState(0);
   const [c, setC] = useState(1);
   const [ASoboNhanh, setAsoboNhanh] = useState(0);
   const [ASoboCham, setAsoboCham] = useState(0);
@@ -93,31 +89,33 @@ const Chapter4Page = () => {
         return;
       }
 
-      if(HB1 >= 192 && HB1 <= 240) {
-        setSb1(750);
-        setSch1(450);
-      } else {
-        setSb1(850);
-        setSch1(580);
-      }
+      let sb1, sch1, sb2, sch2;
 
-      if(HB2 >= 241 && HB2 <= 285) {
-        setSb2(750);
-        setSch2(450);
+      if (HB1 >= 192 && HB1 <= 240) {
+        sb1 = 750;
+        sch1 = 450;
       } else {
-        setSb2(850);
-        setSch2(580);
+        sb1 = 850;
+        sch1 = 580;
       }
-
+      
+      if (HB2 >= 241 && HB2 <= 285) {
+        sb2 = 850;
+        sch2 = 580;
+      } else {
+        sb2 = 750;
+        sch2 = 450;
+      }
+      
       const userData = {
-        Sb1: Sb1,
-        Sch1: Sch1,
+        Sb1: sb1,
+        Sch1: sch1,
         HB1: HB1,
-        Sb2: Sb2,
-        Sch2: Sch2,
+        Sb2: sb2,
+        Sch2: sch2,
         HB2: HB2,
         c: c,
-      }
+      };
       
       const recordID = await AsyncStorage.getItem("RECORDID");
       const response = await apiService.Chapter4Calculation(recordID, userData);
@@ -138,29 +136,29 @@ const Chapter4Page = () => {
     try {
       setLoadingSecondTime(true);
 
-      if(khoangCachNghieng < ASoboNhanh) {
-        alert(`Khoảng cách phải lớn hơn ${Number(ASoboNhanh).toFixed(4)}`)
-        setLoadingSecondTime(false);
-        return;
-      }
+      // if(khoangCachNghieng < ASoboNhanh) {
+      //   alert(`Khoảng cách phải lớn hơn ${Number(ASoboNhanh).toFixed(4)}`)
+      //   setLoadingSecondTime(false);
+      //   return;
+      // }
 
-      if(khoangCachThang < ASoboCham) {
-        alert(`Khoảng cách phải lớn hơn ${Number(ASoboCham).toFixed(4)}`)
-        setLoadingSecondTime(false);
-        return;
-      }
+      // if(khoangCachThang < ASoboCham) {
+      //   alert(`Khoảng cách phải lớn hơn ${Number(ASoboCham).toFixed(4)}`)
+      //   setLoadingSecondTime(false);
+      //   return;
+      // }
 
-      if(mNghieng < mNghiengMin || mNghieng > mNghiengMax) {
-        alert(`m phải nằm trong khoảng ${Number(mNghiengMin).toFixed(1)} - ${Number(mNghiengMax).toFixed(1)}`)
-        setLoadingSecondTime(false);
-        return;
-      }
+      // if(mNghieng < mNghiengMin || mNghieng > mNghiengMax) {
+      //   alert(`m phải nằm trong khoảng ${Number(mNghiengMin).toFixed(1)} - ${Number(mNghiengMax).toFixed(1)}`)
+      //   setLoadingSecondTime(false);
+      //   return;
+      // }
 
-      if(mThang < mThangMin || mThang > mThangMax) {
-        alert(`m phải nằm trong khoảng ${Number(mThangMin).toFixed(1)} - ${Number(mThangMax).toFixed(1)}`)
-        setLoadingSecondTime(false);
-        return;
-      }
+      // if(mThang < mThangMin || mThang > mThangMax) {
+      //   alert(`m phải nằm trong khoảng ${Number(mThangMin).toFixed(1)} - ${Number(mThangMax).toFixed(1)}`)
+      //   setLoadingSecondTime(false);
+      //   return;
+      // }
 
       const userData = {
         mNghieng: mNghieng,
@@ -286,14 +284,14 @@ const Chapter4Page = () => {
           <Text>Số bánh răng z1 : {FastResult.z1}</Text>
           <Text>Số bánh răng z2 : {FastResult.z2}</Text>
           <Text>Đường kính bánh răng ngoài da1 : {Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
-          <Text>Đường kính bánh răng ngoài da11 : {Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
+          <Text>Đường kính bánh răng ngoài da2 : {Number(FastResult.duong_kinh_dinh_rang_da2).toFixed(4)}</Text>
 
           <Text>Tính toán Chậm</Text>
           <Text>Khoảng cách trục: {SlowResult.khoangCach}</Text>
           <Text>Số bánh răng z1 : {SlowResult.z1}</Text>
           <Text>Số bánh răng z2 : {SlowResult.z2}</Text>
           <Text>Đường kính bánh răng ngoài da1 : {Number(SlowResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
-          <Text>Đường kính bánh răng ngoài da11 : {Number(SlowResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
+          <Text>Đường kính bánh răng ngoài da2 : {Number(SlowResult.duong_kinh_dinh_rang_da2).toFixed(4)}</Text>
 
           <TouchableOpacity style={styles.doMathButton} onPress={handleChapter5}>
             <Text style={styles.doMathButtonText}>Lưu</Text>
