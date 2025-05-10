@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginTop: '20%',
+    marginTop: '35%',
   },
   title: {
     fontFamily: 'quicksand-bold',
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 5,
-    padding: 10,
+    padding: 8,
     backgroundColor: 'rgb(33,53,85)',
     borderRadius: 10,
     marginBottom: 5, 
@@ -222,13 +222,13 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: 'rgb(33,53,85)',
     borderRadius: 10,
-    marginBottom:'10%', 
+    marginBottom:'30%', 
   },
 
   saveButtonText: {
     color: 'white',
     fontFamily: 'quicksand-semibold',
-    fontSize: 16
+    fontSize: 14
   },
   collapseButton: {
     marginTop: '5%',

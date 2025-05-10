@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, TextInput } from 'react-native'
 import React from 'react'
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,6 +6,7 @@ import ReturnButton from '@/components/ReturnButton';
 import apiService from '@/api';
 import { useRouter } from 'expo-router';
 import InputField from '@/components/InputField';
+import DisplayResult from '@/components/DisplayResult';
 
 const Chapter4Page = () => {
   const router = useRouter();
@@ -188,127 +189,140 @@ const Chapter4Page = () => {
   }
 
   return (
-    <ScrollView>
-      <ReturnButton onPress={() => router.back()}/>
-      
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>TÍNH TOÁN BỘ TRUYỀN HỞ</Text>
-      </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={100} // adjust if needed
+    >
+      <ScrollView keyboardShouldPersistTaps="handled">
+        <ReturnButton onPress={() => router.back()}/>
 
-      <View>
-        <Text>{material} - {heatTreatment}</Text>
-      </View>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>TÍNH TOÁN BỘ TRUYỀN HỞ</Text>
+        </View>
 
-      <InputField
-        label="Chọn độ cứng của bánh răng nhỏ"
-        sublabel="(192 - 285)"
-        value={HB1.toString()}
-        onChange={(text) => setHB1(Number(text))}
-      />
-
-      <InputField
-        label="Chọn độ cứng của bánh răng lớn"
-        sublabel="(192 - 285)"
-        value={HB2.toString()}
-        onChange={(text) => setHB2(Number(text))}
-      />
-
-      <InputField
-        label="Chọn số lần ăn khớp 1 vòng quay c"
-        sublabel="()"
-        value={c.toString()}
-        onChange={(text) => setC(Number(text))}
-      />
-
-      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit} disabled={loading}>
-        <Text style={styles.doMathButtonText}>Tính chương 4</Text>
-      </TouchableOpacity>
-
-      {displayResult && (
-        <View>
-          <Text>
-            Aw1 Tính Toán Nhanh {Number(ASoboNhanh).toFixed(4)}
-          </Text>
-          <Text>
-            Aw1 Tính Toán Chậm {Number(ASoboCham).toFixed(4)}
-          </Text>
+        <View style={styles.FirstContainer}>
+          <DisplayResult variable={"Vật liệu"} value={material}/>
+          <DisplayResult variable={"Nhiệt luyện"} value={heatTreatment}/>
 
           <InputField
-            label="Chọn khoảng cách trục cơ bộ cho cấp nghiêng"
-            sublabel={`(Khoảng cách >${Number(ASoboNhanh).toFixed(4)})`}
-            value={khoangCachNghieng.toString()}
-            onChange={(text) => {
-              const val = Number(text);
-              setKhoangCachNghieng(val);
-              setMNghiengMin(module1(val));
-              setMNghiengMax(module2(val));
-            }}          
+            label="Chọn độ cứng của bánh răng nhỏ"
+            sublabel="(192 - 285)"
+            value={HB1.toString()}
+            onChange={(text) => setHB1(Number(text))}
           />
 
           <InputField
-            label="Chọn khoảng cách trục cơ bộ cho cấp thẳng"
-            sublabel={`(Khoảng cách >${Number(ASoboCham).toFixed(4)})`}
-            value={khoangCachThang.toString()}
-            onChange={(text) => {
-              const val = Number(text);
-              setKhoangCachThang(val);
-              setMThangMin(module1(val));
-              setMThangMax(module2(val));
-            }}     
+            label="Chọn độ cứng của bánh răng lớn"
+            sublabel="(192 - 285)"
+            value={HB2.toString()}
+            onChange={(text) => setHB2(Number(text))}
           />
 
           <InputField
-            label="Chọn module m của tính toán trụ nghiêng"
-            sublabel={`(${Number(mNghiengMin).toFixed(1)} - ${Number(mNghiengMax).toFixed(1)})`}
-            value={mNghieng.toString()}
-            onChange={(text) => setMNghieng(text)}
+            label="Chọn số lần ăn khớp 1 vòng quay c"
+            sublabel="()"
+            value={c.toString()}
+            onChange={(text) => setC(Number(text))}
           />
 
-          <InputField
-            label="Chọn module m của tính toán trụ thẳng"
-            sublabel={`(${Number(mThangMin).toFixed(1)} - ${Number(mThangMax).toFixed(1)})`}
-            value={mThang.toString()}
-            onChange={(text) => setMThang(text)}
-          />
-
-          <TouchableOpacity style={styles.doMathButton} onPress={handleSubmitSecondTime} disabled={loadingSecondTime}>
-            <Text style={styles.doMathButtonText}>Tính chương 4 Second Time</Text>
+          <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit} disabled={loading}>
+            <Text style={styles.doMathButtonText}>Tính chương 4</Text>
           </TouchableOpacity>
         </View>
-      )}
 
-      {secondDisplayResult && (
-        <View>
-          <Text>Tính toán nhanh</Text>
-          <Text>Khoảng cách trục: {FastResult.khoangCach}</Text>
-          <Text>Số bánh răng z1 : {FastResult.z1}</Text>
-          <Text>Số bánh răng z2 : {FastResult.z2}</Text>
-          <Text>Đường kính bánh răng ngoài da1 : {Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
-          <Text>Đường kính bánh răng ngoài da2 : {Number(FastResult.duong_kinh_dinh_rang_da2).toFixed(4)}</Text>
+        {displayResult && (
+          <View style={styles.SecondContainer}>
+            <DisplayResult variable={"Khoảng cách trục (Trụ Nghiêng)"} value={Number(ASoboNhanh).toFixed(4)}/>
+            <DisplayResult variable={"Khoảng cách trục (Trụ Thẳng)"} value={Number(ASoboCham).toFixed(4)}/>
 
-          <Text>Tính toán Chậm</Text>
-          <Text>Khoảng cách trục: {SlowResult.khoangCach}</Text>
-          <Text>Số bánh răng z1 : {SlowResult.z1}</Text>
-          <Text>Số bánh răng z2 : {SlowResult.z2}</Text>
-          <Text>Đường kính bánh răng ngoài da1 : {Number(SlowResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
-          <Text>Đường kính bánh răng ngoài da2 : {Number(SlowResult.duong_kinh_dinh_rang_da2).toFixed(4)}</Text>
+            <InputField
+              label="Chọn khoảng cách trục cơ bộ cho cấp nghiêng"
+              sublabel={`(Khoảng cách >${Number(ASoboNhanh).toFixed(4)})`}
+              value={khoangCachNghieng.toString()}
+              onChange={(text) => {
+                const val = Number(text);
+                setKhoangCachNghieng(val);
+                setMNghiengMin(module1(val));
+                setMNghiengMax(module2(val));
+              }}          
+            />
 
-          <TouchableOpacity style={styles.doMathButton} onPress={handleChapter5}>
-            <Text style={styles.doMathButtonText}>Lưu</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-    </ScrollView>
+            <InputField
+              label="Chọn khoảng cách trục cơ bộ cho cấp thẳng"
+              sublabel={`(Khoảng cách >${Number(ASoboCham).toFixed(4)})`}
+              value={khoangCachThang.toString()}
+              onChange={(text) => {
+                const val = Number(text);
+                setKhoangCachThang(val);
+                setMThangMin(module1(val));
+                setMThangMax(module2(val));
+              }}     
+            />
+
+            <InputField
+              label="Chọn module m của tính toán trụ nghiêng"
+              sublabel={`(${Number(mNghiengMin).toFixed(1)} - ${Number(mNghiengMax).toFixed(1)})`}
+              value={mNghieng.toString()}
+              onChange={(text) => setMNghieng(text)}
+            />
+
+            <InputField
+              label="Chọn module m của tính toán trụ thẳng"
+              sublabel={`(${Number(mThangMin).toFixed(1)} - ${Number(mThangMax).toFixed(1)})`}
+              value={mThang.toString()}
+              onChange={(text) => setMThang(text)}
+            />
+
+            <TouchableOpacity style={styles.doMathButton} onPress={handleSubmitSecondTime} disabled={loadingSecondTime}>
+              <Text style={styles.doMathButtonText}>Tính chương 4 Second Time</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {secondDisplayResult && (
+          <View style={styles.ThirdContainer}>
+            <Text>Tính toán nhanh</Text>
+            <Text>Khoảng cách trục: {FastResult.khoangCach}</Text>
+            <Text>Số bánh răng z1 : {FastResult.z1}</Text>
+            <Text>Số bánh răng z2 : {FastResult.z2}</Text>
+            <Text>Đường kính bánh răng ngoài da1 : {Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
+            <Text>Đường kính bánh răng ngoài da2 : {Number(FastResult.duong_kinh_dinh_rang_da2).toFixed(4)}</Text>
+
+            <Text>Tính toán Chậm</Text>
+            <Text>Khoảng cách trục: {SlowResult.khoangCach}</Text>
+            <Text>Số bánh răng z1 : {SlowResult.z1}</Text>
+            <Text>Số bánh răng z2 : {SlowResult.z2}</Text>
+            <Text>Đường kính bánh răng ngoài da1 : {Number(SlowResult.duong_kinh_dinh_rang_da1).toFixed(4)}</Text>
+            <Text>Đường kính bánh răng ngoài da2 : {Number(SlowResult.duong_kinh_dinh_rang_da2).toFixed(4)}</Text>
+
+            <TouchableOpacity style={styles.doMathButton} onPress={handleChapter5}>
+              <Text style={styles.doMathButtonText}>Lưu</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
 export default Chapter4Page
 
 const styles = StyleSheet.create({
+  FirstContainer: {
+    marginHorizontal: 15
+  },
+  SecondContainer: {
+    marginHorizontal: 15
+  },
+  ThirdContainer: {
+    marginHorizontal: 15
+  },
   titleContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginTop: '20%'
+    marginTop: '30%',
+    marginBottom: '5%'
   },
   title: {
     fontFamily: 'quicksand-bold',
