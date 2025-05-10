@@ -10,6 +10,10 @@ const HomePage = () => {
     router.push('/InputPage');
   }
 
+  const handleHistoryPage = () => {
+    router.push('/(history)/History');
+  }
+
   useEffect(() => {
     AsyncStorage.removeItem("RECORDID");
   }, [])
@@ -22,7 +26,7 @@ const HomePage = () => {
           <Text style={styles.TextButton}>Tính toán</Text>
           <Text style={styles.TextButton}>Chọn chi tiết máy</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.CalculateButtonContainer}>
+        <TouchableOpacity style={styles.CalculateButtonContainer} onPress={handleHistoryPage}>
           <Image source={require('../../assets/images/list-right.png')}/>
           <Text style={styles.TextButton}>Lịch sử</Text>
           <Text style={styles.TextButton}>tính toán</Text>
