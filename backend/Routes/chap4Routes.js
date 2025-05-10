@@ -322,8 +322,8 @@ function UngSuatChoPhep(Chapter4Input, Chapter2Data) {
   const Lg = Chapter4Function.ThoiGianPhucVu(Chapter2Data.thoi_gian_phuc_vu);
   const SHlim1 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB1);
   const SHlim2 = Chapter4Function.UngSuatTiepXucChoPhep(Chapter4Input.HB2);
-  const Flim1 = Chapter4Function.UngSuatUonChoPhep(Chapter4Input.HB1);
-  const Flim2 = Chapter4Function.UngSuatUonChoPhep(Chapter4Input.HB2);
+  const Flim1 = Chapter4Function.UngSuatUonChoPhepBd(Chapter4Input.HB1);
+  const Flim2 = Chapter4Function.UngSuatUonChoPhepBd(Chapter4Input.HB2);
   const KFC = 1;
   const KHL1 = 1
   const KHL2 = 1;
