@@ -16,7 +16,7 @@ const PdfPage = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>PDF Preview</Text>
+      <Text style={styles.title}>THÔNG TIN HỘP GIẢM TỐC</Text>
       <View style={styles.webviewContainer}>
         <WebView
           originWhitelist={['*']}
@@ -24,7 +24,7 @@ const PdfPage = () => {
         />
       </View>
       <TouchableOpacity onPress={handlePrint} style={styles.button}>
-        <Text style={styles.buttonText}>Print</Text>
+        <Text style={styles.buttonText}>In ấn và chia sẻ</Text>
       </TouchableOpacity>
     </View>
   );
@@ -37,11 +37,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingTop: 60,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 20,
-    marginBottom: 10
+    marginBottom: 10,
+    marginTop: '10%',
+    color:'rgb(33,53,85)',
+    fontFamily: 'quicksand-bold',
   },
   webviewContainer: {
     height: 500,
@@ -51,15 +54,20 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   button: {
-    marginTop: 20,
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
+    display: 'flex',
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: 'rgb(33,53,85)',
+    borderRadius: 10,
+    marginBottom:'15%',
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
+    fontFamily: 'quicksand-bold',
   }
 });
 
