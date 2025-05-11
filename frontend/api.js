@@ -102,9 +102,18 @@ class ApiService {
     }
   }
 
-  async Chapter5Calculation(recordID) {
+  async Chapter5Calculation(recordID, userInput) {
     try {
-      const response = await this.api.post(`/chapter5/${recordID}`);
+      const response = await this.api.post(`/chapter5/${recordID}`, userInput);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  async Chapter5SecondCalculation(recordID) {
+    try {
+      const response = await this.api.post(`/chapter5/${recordID}`)
       return response.data;
     } catch(error) {
       throw error;
@@ -113,6 +122,6 @@ class ApiService {
 }
 
 // Singleton instance
-const apiService = new ApiService("http://localhost:3000");
+const apiService = new ApiService("https://8f14-1-54-152-18.ngrok-free.app");
 
 export default apiService;

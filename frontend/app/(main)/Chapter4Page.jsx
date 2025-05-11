@@ -175,7 +175,6 @@ const Chapter4Page = () => {
         setSlowResult(response.cham);
         setSecondDisplayResult(true);
       }
-      console.log(response.message);
 
     } catch(error) {
       console.error("Error Second Calculation Chapter 4:" , error);
