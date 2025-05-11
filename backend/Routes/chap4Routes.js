@@ -22,7 +22,6 @@ Chapter4Routes.route('/chapter4/:recordid').get(async (request, response) => {
 
     // Lấy data từ bảng Chapter3
     const { data: chapter3Data, error: chapter3DataError } = await supabase.from('Chapter3').select('v, z1, z2, oh1, oh2').eq('id', recordData[0].chapter3_id);
-
     if(chapter3DataError) {
       console.error("chapter3DataError", chapter3DataError)
       return response.status(400).json({ message: chapter3DataError.message });

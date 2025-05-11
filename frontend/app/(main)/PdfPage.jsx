@@ -1,14 +1,35 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import * as Print from 'expo-print';
 import { WebView } from 'react-native-webview';
 import generateHtml from '../../components/printTemplate';
+import apiService from '@/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PdfPage = () => {
-  const name = "Ngọc Nhơn";
-  const message = "This is a personalized message rendered into HTML.";
+  const [selectMaterial, setSelectMaterial] = useState({});
+  const [renderData, setRenderData] = useState({});
 
-  const html = generateHtml(name, message); // Create the HTML
+  useEffect(() => {
+    const FetchData = async () => {
+      const recordID = await AsyncStorage.getItem("RECORDID");
+      const response = await apiService.FetchReportData(recordID);
+
+      const materialMap = {
+        1: { material: "Gang xám", heatTreatment: "Tôi, ram" },
+        2: { material: "Thép 45", heatTreatment: "Tôi cải thiện" },
+        3: { material: "Thép 45", heatTreatment: "Tôi, ram" },
+        default: { material: "Thép 15", heatTreatment: "Thấm cacbon, tôi, ram" }
+      };
+
+      setSelectMaterial(materialMap[response.returnData.material]);
+      setRenderData(response.returnData);
+    }
+
+    FetchData();
+  }, []);
+
+  const html = generateHtml(selectMaterial, renderData); // Create the HTML
 
   const handlePrint = async () => {
     await Print.printAsync({ html });

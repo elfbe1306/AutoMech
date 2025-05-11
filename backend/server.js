@@ -40,6 +40,10 @@ app.use(Chapter4Routes); // Chapter4Routes will access request.supabase
 const Chapter5Routes = require('./Routes/chap5Routes')
 app.use(Chapter5Routes); // Chapter5Routes will access request.supabase
 
+// History Routes
+const HistoryRoutes = require('./Routes/historyRoutes')
+app.use(HistoryRoutes); // HistoryRoutes will access request.supabase
+
 // Start Server
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
