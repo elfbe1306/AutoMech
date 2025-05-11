@@ -52,13 +52,23 @@ HistoryRoutes.route('/fetchcalculation/:recordid').post(async (request, response
         return response.status(400).json({ message: ChamDataError.message });
       }
 
+      // Lấy data từ bảng Chapter5
+      const { data: Chapter5Data, error: Chapter5DataError } = await supabase.from('Chapter5').select('table1, table2, table3').eq('id', recordData[0].chapter5_id);
+      if(Chapter5DataError) {
+        console.error("Chapter5DataError", Chapter5DataError)
+        return response.status(400).json({ message: Chapter5DataError.message });
+      }
+
       const material = SelectMaterial(Chapter3Data[0].v, Chapter3Data[0].z1, Chapter3Data[0].z2, Chapter3Data[0].oh1, Chapter3Data[0].oh2)
       const returnData = {
         engine: EngineData[0],
         chapter3: Chapter3Data[0],
         tinhToanNhanh: NhanhData[0],
         tinhToanCham: ChamData[0],      
-        material: material
+        material: material,
+        table1: Chapter5Data[0].table1,
+        table2: Chapter5Data[0].table2,
+        table3: Chapter5Data[0].table3
       }
 
       return response.status(200).json({ 

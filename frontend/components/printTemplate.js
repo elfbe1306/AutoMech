@@ -1,6 +1,6 @@
 // printTemplate.js
 
-const generateHtml = (SelectMaterial, RenderData) => `
+const generateHtml = (SelectMaterial, RenderData, Table1, Table2, Table3) => `
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -124,7 +124,7 @@ const generateHtml = (SelectMaterial, RenderData) => `
         <caption>
           II - BỘ TRUYỀN HỞ - XÍCH <br>
           <span class="sub-caption">
-            Loại xích: <span>${SelectMaterial?.material}</span> Nhiệt luyện <span>${SelectMaterial?.heatTreatment}</span> Số mắt xích <span>${RenderData?.chapter3?.so_mat_xich}</span>
+            Loại xích: <span>${SelectMaterial?.material}</span> Nhiệt luyện: <span>${SelectMaterial?.heatTreatment}</span> Số mắt xích: <span>${RenderData?.chapter3?.so_mat_xich}</span>
           </span>
         </caption>
         <thead>
@@ -170,30 +170,30 @@ const generateHtml = (SelectMaterial, RenderData) => `
         <tbody>
           <tr>
             <td rowspan="2">I</td>
-            <td class="left-align"></td>
-            <td><span></span>mm</td>
+            <td class="left-align">1C</td>
+            <td><span></span>${Table1[4][3]}mm</td>
           </tr>
           <tr>
-            <td class="left-align"></td>
-            <td><span></span>mm</td>
+            <td class="left-align">1E</td>
+            <td><span></span>${Table1[4][5]}mm</td>
           </tr>
           <tr>
             <td rowspan="2">II</td>
-            <td class="left-align"></td>
-            <td><span></span>mm</td>
+            <td class="left-align">2B</td>
+            <td><span></span>${Table2[4][2]}mm</td>
           </tr>
           <tr>
-            <td class="left-align"></td>
-            <td><span></span>mm</td>
+            <td class="left-align">2C</td>
+            <td><span></span>${Table2[4][3]}mm</td>
           </tr>
           <tr>
             <td rowspan="2">III</td>
-            <td class="left-align"></td>
-            <td><span></span>mm</td>
+            <td class="left-align">3A</td>
+            <td><span></span>${Table3[4][2]}mm</td>
           </tr>
           <tr>
-            <td class="left-align"></td>
-            <td><span></span>mm</td>
+            <td class="left-align">3C</td>
+            <td><span></span>${Table3[4][3]}mm</td>
           </tr>
         </tbody>
       </table>

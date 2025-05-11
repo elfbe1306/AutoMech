@@ -1,14 +1,20 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import * as Print from 'expo-print';
 import { WebView } from 'react-native-webview';
 import generateHtml from '../../components/printTemplate';
 import apiService from '@/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 
 const PdfPage = () => {
+  const router = useRouter();
+
   const [selectMaterial, setSelectMaterial] = useState({});
   const [renderData, setRenderData] = useState({});
+  const [table1, setTable1] = useState([]);
+  const [table2, setTable2] = useState([]);
+  const [table3, setTable3] = useState([]);
 
   useEffect(() => {
     const FetchData = async () => {
@@ -24,16 +30,32 @@ const PdfPage = () => {
 
       setSelectMaterial(materialMap[response.returnData.material]);
       setRenderData(response.returnData);
+      setTable1(JSON.parse(response.returnData.table1));
+      setTable2(JSON.parse(response.returnData.table2));
+      setTable3(JSON.parse(response.returnData.table3));
     }
 
     FetchData();
   }, []);
 
-  const html = generateHtml(selectMaterial, renderData); // Create the HTML
+  const html = useMemo(() => {
+    if (
+      Object.keys(selectMaterial).length &&
+      Object.keys(renderData).length &&
+      table1.length && table2.length && table3.length
+    ) {
+      return generateHtml(selectMaterial, renderData, table1, table2, table3);
+    }
+    return "";
+  }, [selectMaterial, renderData, table1, table2, table3]);
 
   const handlePrint = async () => {
     await Print.printAsync({ html });
   };
+
+  const handleHome = () => {
+    router.replace('/(main)/HomePage');
+  }
 
   return (
     <View style={styles.container}>
@@ -46,6 +68,10 @@ const PdfPage = () => {
       </View>
       <TouchableOpacity onPress={handlePrint} style={styles.button}>
         <Text style={styles.buttonText}>In ấn và chia sẻ</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={handleHome} style={styles.button}>
+        <Text style={styles.buttonText}>Trở về trang chính</Text>
       </TouchableOpacity>
     </View>
   );
@@ -83,7 +109,6 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: 'rgb(33,53,85)',
     borderRadius: 10,
-    marginBottom:'15%',
   },
   buttonText: {
     color: 'white',
