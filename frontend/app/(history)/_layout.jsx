@@ -5,6 +5,7 @@ const HistoryLayout = () => {
   return (
     <Stack screenOptions={{headerShown: false}}>
       <Stack.Screen name="History"/>
+      <Stack.Screen name="Pdf"/>
     </Stack>
   )
 }

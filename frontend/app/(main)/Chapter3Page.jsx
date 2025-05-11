@@ -20,7 +20,8 @@ const Chapter3Page = () => {
   const [hasChecked, setHasChecked] = useState(false);
 
   const [chapter3DataResult, setChapter3DataResult] = useState({});
-  const [isCollapsedResult, setIsCollapsedResult] = useState(true);
+  const [isCollapsedDiscResult, setIsCollapsedDiscResult] = useState(true);
+  const [isCollapsedForceResult, setIsCollapsedForceResult] = useState(true);
   const [loadingButton1, setLoadingButton1] = useState(false);
 
   const Chapter3PreData = {
@@ -43,12 +44,12 @@ const Chapter3Page = () => {
 
   async function handleCalculationI() {
     if(![50, 200, 400, 600, 800, 1000, 1200, 1600].includes(n01)) {
-      alert("Vui lòng chọn giá trị cho n01");
+      alert("Vui lòng chọn giá trị để tính toán");
       return;
     }
   
     if(![0.002, 0.003, 0.004].includes(Da)) {
-      alert("Vui lòng chọn giá trị cho Da");
+      alert("Vui lòng chọn giá trị để tính toán");
       return;
     }
   
@@ -88,23 +89,23 @@ const Chapter3Page = () => {
       <ScrollView style={styles.inputContainer}>
         <Text style={styles.inputTitle}>Các thông số đầu vào</Text>
         <View style={styles.displayInput}>
-          <DisplayResult variable={"P3"} value={Number(chapter2Data.p3).toFixed(4)} unit={"kW"} />
-          <DisplayResult variable={"n3"} value={Number(chapter2Data.n3).toFixed(4)} unit={"vòng/phút"} />
-          <DisplayResult variable={"ux"} value={Number(chapter2Data.he_so_truyen_dong_xich).toFixed(4)} unit={""} />
+          <DisplayResult variable={"Công suất trục 3 (P3)"} value={Number(chapter2Data.p3).toFixed(4)} unit={"kW"} />
+          <DisplayResult variable={"Số vòng quay trục 3 (n3)"} value={Number(chapter2Data.n3).toFixed(4)} unit={"vòng/phút"} />
+          <DisplayResult variable={"Hệ số truyền động xích (ux)"} value={Number(chapter2Data.he_so_truyen_dong_xich).toFixed(4)} unit={""} />
           <View style={styles.optionButtonContainer}>
-            <Text style={styles.optionButtonText}>n01:</Text>
+            <Text style={styles.optionButtonText}>Bộ xích tiêu chuẩn (n01):</Text>
             <PickerModalButton onSelect={(value) => setN01(value)} options={[50, 200, 400, 600, 800, 1000, 1200, 1600]}/>
           </View>
           <View style={styles.optionButtonContainer}>
-            <Text style={styles.optionButtonText}>Da:</Text>
+            <Text style={styles.optionButtonText}>Để không chịu lực căng lớn, Da:</Text>
             <PickerModalButton onSelect={(value) => setDa(value)} options={[0.002, 0.003, 0.004]}/>
           </View>
           <TouchableOpacity style={styles.calculateButton} onPress={handleCalculationI} disabled={loadingButton1}>
             <Text style={styles.saveButtonText}>Kiểm tra</Text>
           </TouchableOpacity>
           {hasChecked && (
-            <Text style={{marginTop: -60,marginBottom: 50, fontWeight: 600, color: safetyCheck ? 'rgb(33, 53, 85)' : 'red' }}>
-              {safetyCheck ? 'Kiểm nghiệm đạt' : 'Kiểm nghiệm không đạt'}
+            <Text style={{marginTop: -55,marginBottom: 50, fontWeight: 600, color: 'crimson' }}>
+              {safetyCheck ? 'KIỂM NGHIỆM ĐẠT!' : 'KIỂM NGHIỆM KHÔNG ĐẠT!'}
             </Text>
           )}
         </View>
@@ -112,36 +113,56 @@ const Chapter3Page = () => {
           <>
             <Text style={styles.resultTitle}>Kết quả tính toán</Text>
 
-            <View style={[styles.collapseButton, !isCollapsedResult ? styles.collapseButtonActive : null]}>
-              <Text style={[styles.buttonText, !isCollapsedResult ? styles.buttonTextActive : null]}>
-                Kết quả tính toán tổng quan
+            <View style={[styles.collapseButton, !isCollapsedDiscResult ? styles.collapseButtonActive : null]}>
+              <Text style={[styles.buttonText, !isCollapsedDiscResult ? styles.buttonTextActive : null]}>
+                Thông số đĩa xích
               </Text>
-              <TouchableOpacity onPress={() => setIsCollapsedResult(!isCollapsedResult)}>
+              <TouchableOpacity onPress={() => setIsCollapsedDiscResult(!isCollapsedDiscResult)}>
                 <AntDesign 
-                  name={isCollapsedResult ? "caretright" : "caretdown"} 
+                  name={isCollapsedDiscResult ? "caretright" : "caretdown"} 
                   size={28} 
-                  color={isCollapsedResult ? "rgb(33,53,85)" : "#DBE2EC"} 
+                  color={isCollapsedDiscResult ? "rgb(33,53,85)" : "#DBE2EC"} 
                 />
               </TouchableOpacity>
             </View>
 
-            <Collapsible collapsed={isCollapsedResult}>
+            <Collapsible collapsed={isCollapsedDiscResult}>
               <View style={styles.resultContainer}>
-                <DisplayResult variable={"Z1"} value={Number(chapter3DataResult.z1)} unit={""} />
-                <DisplayResult variable={"Z2"} value={Number(chapter3DataResult.z2)} unit={""} />
-                <DisplayResult variable={"d1"} value={Number(chapter3DataResult.d1).toFixed(4)} unit={"mm"} />
-                <DisplayResult variable={"d2"} value={Number(chapter3DataResult.d2).toFixed(4)} unit={"mm"} />
-                <DisplayResult variable={"da1"} value={Number(chapter3DataResult.da1).toFixed(4)} unit={"mm"} />
-                <DisplayResult variable={"da2"} value={Number(chapter3DataResult.da2).toFixed(4)} unit={"mm"} />
-                <DisplayResult variable={"dl"} value={Number(chapter3DataResult.d1_chon_bang).toFixed(4)} unit={""} />
-                <DisplayResult variable={"r"} value={Number(chapter3DataResult.r).toFixed(4)} unit={"mm"} />
-                <DisplayResult variable={"df1"} value={Number(chapter3DataResult.df1).toFixed(4)} unit={"mm"} />
-                <DisplayResult variable={"df2"} value={Number(chapter3DataResult.df2).toFixed(4)} unit={"mm"} />
-                <DisplayResult variable={"Lực tác dụng lên trục (Fr)"} value={Number(chapter3DataResult.fr).toFixed(4)} unit={"N"} />
-                <DisplayResult variable={"Ứng suất tiếp xúc (sH1)"} value={Number(chapter3DataResult.oh1).toFixed(4)} unit={"Mpa"} />
-                <DisplayResult variable={"Ứng suất tiếp xúc (sH2)"} value={Number(chapter3DataResult.oh2).toFixed(4)} unit={"Mpa"} />
+                <DisplayResult variable={"Răng đĩa nhỏ (Z1)"} value={Number(chapter3DataResult.z1)} unit={"răng"} />
+                <DisplayResult variable={"Răng đĩa lớn (Z2)"} value={Number(chapter3DataResult.z2)} unit={"răng"} />
+                <DisplayResult variable={"Đường kính bánh đai nhỏ (d1)"} value={Number(chapter3DataResult.d1).toFixed(2)} unit={"mm"} />
+                <DisplayResult variable={"Đường kính bánh đai lớn (d2)"} value={Number(chapter3DataResult.d2).toFixed(2)} unit={"mm"} />
+                <DisplayResult variable={"Đường kính ngoài bánh đai nhỏ (da1)"} value={Number(chapter3DataResult.da1).toFixed(2)} unit={"mm"} />
+                <DisplayResult variable={"Đường kính ngoài bánh đai lớn (da2)"} value={Number(chapter3DataResult.da2).toFixed(2)} unit={"mm"} />
+                <DisplayResult variable={"Đường kính vòng lăn (dl)"} value={Number(chapter3DataResult.d1_chon_bang).toFixed(2)} unit={"mm"} />
+                <DisplayResult variable={"Bán kính vòng lăn (r)"} value={Number(chapter3DataResult.r).toFixed(2)} unit={"mm"} />
+                <DisplayResult variable={"Đường kính đỉnh răng nhỏ (df1)"} value={Number(chapter3DataResult.df1).toFixed(2)} unit={"mm"} />
+                <DisplayResult variable={"Đường kính đỉnh răng lớn (df2)"} value={Number(chapter3DataResult.df2).toFixed(2)} unit={"mm"} />
               </View>
             </Collapsible>
+
+            <View style={[styles.collapseButton, !isCollapsedForceResult ? styles.collapseButtonActive : null]}>
+              <Text style={[styles.buttonText, !isCollapsedForceResult ? styles.buttonTextActive : null]}>
+                Lực tác dụng lên trục
+              </Text>
+              <TouchableOpacity onPress={() => setIsCollapsedForceResult(!isCollapsedForceResult)}>
+                <AntDesign 
+                  name={isCollapsedForceResult ? "caretright" : "caretdown"} 
+                  size={28} 
+                  color={isCollapsedForceResult ? "rgb(33,53,85)" : "#DBE2EC"} 
+                />
+              </TouchableOpacity>
+            </View>
+
+            <Collapsible collapsed={isCollapsedForceResult}>
+              <View style={styles.resultContainer}>
+                <DisplayResult variable={"Lực tác dụng lên trục (Fr)"} value={Number(chapter3DataResult.fr).toFixed(2)} unit={"N"} />
+                <DisplayResult variable={"Ứng suất tiếp xúc (sH1)"} value={Number(chapter3DataResult.oh1).toFixed(2)} unit={"Mpa"} />
+                <DisplayResult variable={"Ứng suất tiếp xúc (sH2)"} value={Number(chapter3DataResult.oh2).toFixed(2)} unit={"Mpa"} />
+              </View>
+            </Collapsible>
+            
+            
           </>
         )}
 
@@ -159,7 +180,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginTop: '35%',
+    marginTop: '30%',
   },
   title: {
     fontFamily: 'quicksand-bold',
@@ -168,12 +189,13 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginTop: '5%',
-    marginHorizontal: '10%',
+    marginHorizontal: '8%',
     marginBottom: '30%'
   },
   inputTitle: {
     fontFamily: 'quicksand-semibold',
     fontSize: 16,
+    marginBottom: '2%',
     color: 'rgb(33, 53, 85)'
   },
 
@@ -183,7 +205,6 @@ const styles = StyleSheet.create({
     gap: 10
   },
   resultTitle: {
-    marginTop: 10,
     fontFamily: 'quicksand-semibold',
     fontSize: 16,
     color: 'rgb(33, 53, 85)'
@@ -197,7 +218,7 @@ const styles = StyleSheet.create({
     padding: 8,
     backgroundColor: 'rgb(33,53,85)',
     borderRadius: 10,
-    marginBottom: 5, 
+    marginBottom: 0, 
     alignSelf: 'flex-end'
   },
   optionButtonContainer: {
@@ -205,6 +226,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
+    marginBottom: '3%'
   },
   optionButtonText: {
     fontFamily: 'quicksand-bold',
@@ -249,7 +271,7 @@ const styles = StyleSheet.create({
 
   resultContainer: {
     paddingVertical: '4%',
-    paddingHorizontal:'8%',
+    paddingHorizontal:'7%',
     backgroundColor:'#F5EFE7',
     
   },
