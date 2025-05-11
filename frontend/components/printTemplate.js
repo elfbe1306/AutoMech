@@ -1,9 +1,5 @@
 // printTemplate.js
 
-const formatNumber = (value) => {
-  return parseFloat(value).toString();
-};
-
 const generateHtml = (SelectMaterial, RenderData) => `
 <!DOCTYPE html>
 <html lang="vi">
@@ -148,15 +144,15 @@ const generateHtml = (SelectMaterial, RenderData) => `
         <tbody>
           <tr>
             <td>Trụ nghiêng</td>
-            <td><span>${formatNumber(RenderData?.tinhToanNhanh?.duong_kinh_dinh_rang_da1)}</span>mm</td>
-            <td><span>${formatNumber(RenderData?.tinhToanNhanh?.duong_kinh_dinh_rang_da2)}</span>mm</td>
+            <td><span>${Number(RenderData?.tinhToanNhanh?.duong_kinh_dinh_rang_da1).toFixed(4)}</span>mm</td>
+            <td><span>${Number(RenderData?.tinhToanNhanh?.duong_kinh_dinh_rang_da2).toFixed(4)}</span>mm</td>
             <td>${RenderData?.tinhToanNhanh?.z1}</td><td>${RenderData?.tinhToanNhanh?.z2}</td>
             <td><span>${RenderData?.tinhToanNhanh?.khoangCachNghieng}</span>mm</td>
           </tr>
           <tr>
             <td>Trụ thẳng</td>
-            <td><span>${formatNumber(RenderData?.tinhToanCham?.duong_kinh_dinh_rang_da1)}</span>mm</td>
-            <td><span>${formatNumber(RenderData?.tinhToanCham?.duong_kinh_dinh_rang_da2)}</span>mm</td>
+            <td><span>${Number(RenderData?.tinhToanCham?.duong_kinh_dinh_rang_da1).toFixed(4)}</span>mm</td>
+            <td><span>${Number(RenderData?.tinhToanCham?.duong_kinh_dinh_rang_da2).toFixed(4)}</span>mm</td>
             <td>${RenderData?.tinhToanCham?.z1}</td><td>${RenderData?.tinhToanCham?.z2}</td>
             <td><span>${RenderData?.tinhToanCham?.khoangCachThang}</span>mm</td>
           </tr>
