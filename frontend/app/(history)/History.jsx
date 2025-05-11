@@ -5,16 +5,21 @@ import ReturnButton from '@/components/ReturnButton';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 const timelineData = [
-  { date: 'T2 10.3.25', time: '13:05', title: 'Bài tập lớn 1', primary: true },
-  { date: 'T5 13.3.25', time: '07:20', title: 'Bài tập lớn 2', primary: false },
-  { date: 'CN 9.3.25', time: '13:05', title: 'Đồ án đa ngành', primary: true },
-  { date: 'T6 10.2.22', time: '13:05', title: 'Bài tập lớn 1', primary: false },
-  { date: 'T3 12.3.21', time: '09:30', title: 'Bài tập lớn 2', primary: true },
-  { date: 'T2 28.6.04', time: '11:00', title: 'Đồ án đa ngành', primary: false },
+  { date: 'T2 10.3.25', time: '13:05', title: 'Bài tập lớn 1'},
+  { date: 'T5 13.3.25', time: '07:20', title: 'Bài tập lớn 2'},
+  { date: 'CN 9.3.25', time: '13:05', title: 'Đồ án đa ngành'},
+  { date: 'T6 10.2.22', time: '13:05', title: 'Bài tập lớn 1'},
+  { date: 'T3 12.3.21', time: '09:30', title: 'Bài tập lớn 2'},
+  { date: 'T2 28.6.04', time: '11:00', title: 'Đồ án đa ngành' },
 ];
 
-const TimelineItem = ({ item, isLast }) => (
-  <View style={styles.itemContainer}>
+const TimelineItem = ({ item, index, isLast }) => {
+  const isOdd = index % 2 === 0;
+  const containerStyle = isOdd ? styles.contentBox : styles.whiteBox;
+  const titleStyle = isOdd ? styles.titleContent : styles.titleWhiteBox;
+  const descStyle = isOdd ? styles.desc : styles.descWhiteBox;
+  return(
+      <View style={styles.itemContainer}>
     {/* Time column */}
     <View style={styles.timeContainer}>
       <Text style={styles.date}>{item.date}</Text>
@@ -28,18 +33,19 @@ const TimelineItem = ({ item, isLast }) => (
     </View>
 
     {/* Content box */}
-    <View style={[styles.contentBox, item.primary ? styles.contentBox : styles.whiteBox]}>
+    <View style={containerStyle}>
         <View>
-          <Text style={[styles.titleContent, item.primary ? styles.titleContent : styles.titleWhiteBox]}>{item.title}</Text>
-          <Text style={[styles.desc, item.primary? styles.desc: styles.descWhiteBox]}>Kết quả tính toán</Text>
-          <Text style={[styles.desc, item.primary? styles.desc: styles.descWhiteBox]}>Chi tiết máy đã chọn</Text>
+          <Text style={titleStyle}>{item.title}</Text>
+          <Text style={descStyle}>Kết quả tính toán</Text>
+          <Text style={descStyle}>Chi tiết máy đã chọn</Text>
         </View>
         <View style>
           <MaterialCommunityIcons name="trash-can-outline" size={24}  color="firebrick"/> 
         </View>
     </View>
   </View>
-);
+  );
+};
 
 
 const History = () => {
@@ -56,9 +62,9 @@ const History = () => {
       <SafeAreaView>
         <FlatList
           data={timelineData}
-          keyExtractor={(_, index) => index.toString()}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
-            <TimelineItem item={item} isLast={index === timelineData.length} />
+            <TimelineItem item={item} index={index} isLast={index === timelineData.length} />
           )}
         />
       </SafeAreaView>
@@ -110,12 +116,21 @@ const styles = StyleSheet.create({
     width: 20,
     marginLeft: 10,
     alignItems:'center',
-    gap: '15%',
+    gap: '20%',
   },
   icon:{
     color:'89AC46',
   },
   whiteBox: {
+    flex: 1,
+    flexDirection:'row',
+    borderRadius: 20,
+    paddingInline: 15,
+    paddingVertical:10,
+    width: 20,
+    marginLeft: 10,
+    alignItems:'center',
+    gap: '20%',
     backgroundColor: '#F5EFE7',
   },
   titleContent: {
@@ -126,16 +141,25 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   titleWhiteBox: {
+    fontSize: 14,
+    fontFamily: 'quicksand-bold',
+    fontWeight: '600',
+    marginBottom: 6,
     color:'#213555'
   },
   desc: {
     fontFamily: 'quicksand-bold',
+    fontWeight:'500',
     fontSize: 12,
     color: '#F5EFE7',
     marginBottom: 6,
   },
   descWhiteBox:{
-    color: '#3E5879'
+    fontFamily: 'quicksand-bold',
+    fontWeight:'500',
+    fontSize: 12,
+    color: '#3E5879',
+    marginBottom: 6,
   },
   // icon: {
   //   marginTop:'0auto'
