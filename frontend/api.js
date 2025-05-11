@@ -164,6 +164,24 @@ class ApiService {
       throw error;
     }
   }
+
+  async GetUser(userID) {
+    try {
+      const response = await this.api.get(`/getuser/${userID}`);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  async CountTotalRecord(userID) {
+    try {
+      const response = await this.api.get(`/countrecord/${userID}`);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
 }
 
 // Singleton instance

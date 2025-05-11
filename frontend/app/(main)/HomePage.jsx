@@ -45,6 +45,8 @@ const HomePage = () => {
   const router = useRouter();
 
   const [records, setRecords] = useState([]);
+  const [userData, setUserData] = useState({});
+
   const FetchData = async () => {
     const response = await apiService.FetchHistoryData();
     if (response.success) {
@@ -66,6 +68,12 @@ const HomePage = () => {
   
       setRecords(sorted);
     }
+  }
+
+  const FetchUser = async () => {
+    const userId = await AsyncStorage.getItem("USERID");
+    const response = await apiService.GetUser(userId);
+    setUserData(response.userData);
   }
 
   const handlePdfViewPage = (recordID) => {
@@ -93,10 +101,19 @@ const HomePage = () => {
   useEffect(() => {
     AsyncStorage.removeItem("RECORDID");
     FetchData();
+    FetchUser();
   }, [])
 
   return(
     <View>
+      <TouchableOpacity style={styles.profileButton} onPress={() => router.navigate('/Profile')}>
+        <Text style={styles.profileText}>{userData.name}</Text>
+        <Image
+          source={{ uri: userData.image }}
+          style={{ width: 60, height: 60, borderRadius: 60 }}
+        />
+      </TouchableOpacity>
+
       <View style={styles.ButtonContainer}>
         <TouchableOpacity style={styles.CalculateButtonContainer} onPress={handleCalculatePage}>
           <Image source={require('../../assets/images/calendar-edit.png')}/>
@@ -135,11 +152,25 @@ const HomePage = () => {
 export default HomePage
 
 const styles = StyleSheet.create({
+  profileButton: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    columnGap: 10,
+    alignItems: 'center',
+    marginTop: '20%',
+    marginRight: '5%'
+  },
+  profileText: {
+    color: 'rgb(58, 65, 99)',
+    fontFamily: 'quicksand-bold',
+    fontSize: 16,
+  },
   ButtonContainer: {
     display: 'flex',
     flexDirection: 'row',
     marginHorizontal: 'auto',
-    marginTop: '40%',
+    marginTop: '10%',
     gap: 10
   },
   CalculateButtonContainer: {

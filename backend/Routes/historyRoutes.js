@@ -256,6 +256,27 @@ HistoryRoutes.route('/deleterecord/:recordid').get(async (request, response) => 
   }
 })
 
+HistoryRoutes.route('/countrecord/:userid').get(async (request, response) => {
+  const supabase = request.supabase;
+  const decoded = jwt.verify(request.params.userid, process.env.SECRET_KEY);
+
+   try {
+    // Lấy data từ history record
+    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('user_id', decoded.id);
+    if (recordDataError) {
+      console.error("recordDataError", recordDataError)
+      return response.status(400).json({ message: recordDataError.message });
+    } 
+
+    const totalRecords = recordData.length;
+    response.status(200).json({
+      total: totalRecords,
+    });
+   } catch(error) {
+    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+   }
+})
+
 const SelectMaterial = (v, z1, z2, oh1, oh2) => {
   if(z1 <= 19 && z2 <= 19) {
     return 4; // Thep 15 Tham cacbon, toi, ram
