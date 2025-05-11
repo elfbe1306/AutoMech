@@ -111,9 +111,9 @@ class ApiService {
     }
   }
 
-  async Chapter5SecondCalculation(recordID) {
+  async Chapter5SecondCalculation(recordID, userInput) {
     try {
-      const response = await this.api.post(`/chapter5/${recordID}`)
+      const response = await this.api.post(`/chapter5/secondcalculation/${recordID}`, userInput);
       return response.data;
     } catch(error) {
       throw error;
@@ -122,6 +122,6 @@ class ApiService {
 }
 
 // Singleton instance
-const apiService = new ApiService("https://8f14-1-54-152-18.ngrok-free.app");
+const apiService = new ApiService("http://localhost:3000");
 
 export default apiService;

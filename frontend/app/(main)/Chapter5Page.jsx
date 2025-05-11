@@ -5,6 +5,7 @@ import ReturnButton from "@/components/ReturnButton";
 import apiService from "@/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import InputField from "@/components/InputField";
+import DisplayResult from "@/components/DisplayResult";
 
 const Chapter5Page = () => {
   const router = useRouter();
@@ -18,8 +19,12 @@ const Chapter5Page = () => {
   const [lmd_min, setLmd_min] = useState(0);
   const [lmd_max, setLmd_max] = useState(0);
   const [lmd, setLmd] = useState(95);
+  const [table1, setTable1] = useState([]);
+  const [table2, setTable2] = useState([]);
+  const [table3, setTable3] = useState([]);
 
   const [displayResult1, setDisplayResult1] = useState(false);
+  const [displayResult2, setDisplayResult2] = useState(false);
 
   useEffect(() => {
     const FetchRecordId = async () => {
@@ -87,6 +92,35 @@ const Chapter5Page = () => {
     }
   }
 
+  const [loading2, setLoading2] = useState(false);
+  const handleSecondCalculation = async () => {
+    try {
+      setLoading2(true);
+
+      const userInput = {
+        lmd: lmd
+      }
+
+      const response = await apiService.Chapter5SecondCalculation(recordID, userInput);
+      
+      if(response.success) {
+        setTable1(JSON.parse(response.Table1));
+        setTable2(JSON.parse(response.Table2));
+        setTable3(JSON.parse(response.Table3));
+        setDisplayResult2(true);
+      }
+
+    } catch(error) {
+      console.error("Error while fetching Chapter 5 calculation:", error);
+    } finally {
+      setLoading2(false);
+    }
+  }
+
+  const handleSave = async () => {
+
+  }
+
   return(
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -149,6 +183,42 @@ const Chapter5Page = () => {
               value={lmd.toString()}
               onChange={(text) => setLmd(text)}
             />
+
+            <TouchableOpacity style={styles.doMathButton} onPress={handleSecondCalculation} disabled={loading2}>
+              <Text style={styles.doMathButtonText}>Tính chương 5 lần thứ 2</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {displayResult2 && (
+          <View style={styles.ThirdContainer}>
+            <View>
+              <Text>Truc 1</Text>
+              <DisplayResult variable={"Đường Kính Trục - A"} value={table1[4][1]}/>
+              <DisplayResult variable={"Đường Kính Trục - B"} value={table1[4][2]}/>
+              <DisplayResult variable={"Đường Kính Trục - C"} value={table1[4][3]}/>
+              <DisplayResult variable={"Đường Kính Trục - D"} value={table1[4][4]}/>
+              <DisplayResult variable={"Đường Kính Trục - E"} value={table1[4][5]}/>
+            </View>
+            <View>
+              <Text>Truc 2</Text>
+              <DisplayResult variable={"Đường Kính Trục - A"} value={table2[4][1]}/>
+              <DisplayResult variable={"Đường Kính Trục - B"} value={table2[4][2]}/>
+              <DisplayResult variable={"Đường Kính Trục - C"} value={table2[4][3]}/>
+              <DisplayResult variable={"Đường Kính Trục - D"} value={table2[4][4]}/>
+              <DisplayResult variable={"Đường Kính Trục - E"} value={table2[4][5]}/>
+            </View>
+            <View>
+              <Text>Truc 3</Text>
+              <DisplayResult variable={"Đường Kính Trục - A"} value={table3[4][1]}/>
+              <DisplayResult variable={"Đường Kính Trục - B"} value={table3[4][2]}/>
+              <DisplayResult variable={"Đường Kính Trục - C"} value={table3[4][3]}/>
+              <DisplayResult variable={"Đường Kính Trục - D"} value={table3[4][4]}/>
+            </View>
+
+            <TouchableOpacity style={styles.doMathButton} onPress={handleSave}>
+              <Text style={styles.doMathButtonText}>Save Chương 5</Text>
+            </TouchableOpacity>
           </View>
         )}
       </ScrollView>
@@ -174,6 +244,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 15
   },
   SecondContainer : {
+    marginHorizontal: 15
+  },
+  ThirdContainer: {
     marginHorizontal: 15
   },
   doMathButton: {

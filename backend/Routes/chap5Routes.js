@@ -56,10 +56,43 @@ Chapter5Routes.route('/chapter5/:recordid').post(async (request, response) => {
         return response.status(400).json({ message: InsertChapter5IDError.message });
       }
     }
-    
+
     return response.status(200).json({ 
       lmd_min: TinhToan.lmd_min, 
       lmd_max: TinhToan.lmd_max,
+      message: 'Đã tính toán xong chương 5',
+      success: true
+    });
+  } catch(error) {
+    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+  }
+})
+
+Chapter5Routes.route('/chapter5/secondcalculation/:recordid').post( async (request, response) => {
+  const supabase = request.supabase;
+  const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
+
+  try {
+    // Lấy data từ history record
+    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('id', record_id.id);
+    if (recordDataError) {
+      console.error("recordDataError", recordDataError)
+      return response.status(400).json({ message: recordDataError.message });
+    }
+
+    const TinhToan = TinhToanTrucLan2(request.body);
+
+    // Thêm dữ liệu chương 5
+    const {data: insertChapter5, error: InsertChapter5Error } = await supabase.from('Chapter5').update([TinhToan]).eq('id', recordData[0].chapter5_id)
+    if(InsertChapter5Error) {
+      console.error("InsertChapter5Error", InsertChapter5Error)
+      return response.status(400).json({ message: InsertChapter5Error.message });
+    }
+
+    return response.status(200).json({ 
+      Table1: TinhToan.table1,
+      Table2: TinhToan.table2,
+      Table3: TinhToan.table3,
       message: 'Đã tính toán xong chương 5',
       success: true
     });
@@ -133,10 +166,36 @@ function TinhToanTruc(userInput, Chapter2Data) {
   }
 }
 
-function TinhToanTrucLan2() {
+function TinhToanTrucLan2(userInput) {
+  const table1b = [
+    ["", "A", "B", "C", "D", "E"],
+    ["Mxy", 0, 196339.26, 206049.6, 0, 0],
+    ["Mtd", 0, 205668.56, 214957.87, 122481.87, 122481.87],
+    ["duong kinh truc", 0, 31.96, 32.43, 26.89, 26.89],
+    ["chon lai duong kinh truc", 30, 34, 34, 30, 28]
+  ];
+
+  const table2b = [
+    ["", "A", "B", "C", "D", "E"],
+    ["Mxy", 0, 431204.7840, 793218.3965, 387583.0422, 0],
+    ["Mtd", 0, 467916.8280, 872484.8385, 428052.8084, 0],
+    ["duong kinh truc", 0, 45.40, 55.88, 44.07, 0],
+    ["chon lai duong kinh truc", 45, 48, 60, 48, 45]
+  ];
+
+  const table3b = [
+    ["", "A", "B", "C", "D"],
+    ["Mxy", 0, 530799.20, 888599.91, 0],
+    ["Mtd", 909993, 1053486.69, 1271886.87, 0],
+    ["duong kinh truc", 60.92, 63.97, 68.11, 0],
+    ["chon lai duong kinh truc", 63, 65, 70, 65]
+  ];
 
   return {
-
+    lmd: userInput.lmd,
+    table1: JSON.stringify(table1b),
+    table2: JSON.stringify(table2b),
+    table3: JSON.stringify(table3b)
   }
 }
 
