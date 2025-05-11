@@ -1,11 +1,12 @@
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { View, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Text, ScrollView } from "react-native";
+import { View, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Text, ScrollView, Modal, TextInput } from "react-native";
 import ReturnButton from "@/components/ReturnButton";
 import apiService from "@/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import InputField from "@/components/InputField";
 import DisplayResult from "@/components/DisplayResult";
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const Chapter5Page = () => {
   const router = useRouter();
@@ -25,6 +26,8 @@ const Chapter5Page = () => {
 
   const [displayResult1, setDisplayResult1] = useState(false);
   const [displayResult2, setDisplayResult2] = useState(false);
+
+  const [recordName, setRecordName] = useState("");
 
   useEffect(() => {
     const FetchRecordId = async () => {
@@ -97,6 +100,12 @@ const Chapter5Page = () => {
     try {
       setLoading2(true);
 
+      if(lmd < lmd_min || lmd_max < lmd) {
+        alert(`lmd phải nằm trong khoảng ${lmd_min} - ${lmd_max}`);
+        setLoading2(false);
+        return;
+      }
+
       const userInput = {
         lmd: lmd
       }
@@ -117,8 +126,13 @@ const Chapter5Page = () => {
     }
   }
 
-  const handleSave = async () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  const handleSave = () => {
+    setModalVisible(true)
+  }
 
+  const handleFinalSave = async () => {
+    
   }
 
   return(
@@ -221,6 +235,34 @@ const Chapter5Page = () => {
             </TouchableOpacity>
           </View>
         )}
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <TouchableOpacity
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}>
+                <AntDesign name="close" size={24} color="red" />
+              </TouchableOpacity>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.inputField}>Đặt tên cho tính toán</Text>
+                <TextInput style={styles.input} onChangeText={(text) => setRecordName(text)}/>
+              </View>
+
+              <TouchableOpacity style={styles.saveButton}>
+                <Text style={styles.saveButtonText}>Lưu</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+
       </ScrollView>
     </KeyboardAvoidingView>
   )
@@ -263,5 +305,67 @@ const styles = StyleSheet.create({
     color: 'white',
     fontFamily: 'quicksand-semibold',
     fontSize: 16
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    position: 'relative',
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 30,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonClose: {
+    position: 'absolute',
+    top: 10,
+    right: 10
+  },
+  inputContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 15
+  },
+  inputField: {
+    color: 'rgb(58, 65, 99)',
+    fontFamily: 'quicksand-bold',
+    fontSize: 14,
+    marginBottom: 4,
+    textAlign: 'center',
+    width: 240
+  },
+  input: {
+    width: 250,
+    height: 36,
+    borderColor: '#213555',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    fontSize: 14,
+    backgroundColor: '#F8FAFC',
+    marginBottom: 12
+  },
+  saveButton: {
+    backgroundColor: 'blue',
+  },
+  saveButtonText: {
+    color: 'white'
   }
 })
