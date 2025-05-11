@@ -4,12 +4,14 @@ import React from 'react'
 const DisplayResult = (props) => {
   const {variable, value, unit} = props;
   return (
-    <Text style={styles.displayNum}>
-      <Text style={styles.displayVar}>
-        {variable}: {" "}
-      </Text> 
-        {value} {unit}
-    </Text>
+    <View style={{ marginBottom: 10 }}>
+      <Text style={styles.displayNum}>
+        <Text style={styles.displayVar}>
+          {variable}: {" "}
+        </Text> 
+          {value} {unit}
+      </Text>
+    </View>
   )
 }
 

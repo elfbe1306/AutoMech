@@ -7,6 +7,8 @@ import apiService from '@/api';
 import { useRouter } from 'expo-router';
 import InputField from '@/components/InputField';
 import DisplayResult from '@/components/DisplayResult';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Collapsible from 'react-native-collapsible';
 
 const Chapter4Page = () => {
   const router = useRouter();
@@ -27,6 +29,9 @@ const Chapter4Page = () => {
   const [secondDisplayResult, setSecondDisplayResult] = useState(false);
   const [FastResult, setFastResult] = useState({});
   const [SlowResult, setSlowResult] = useState({});
+
+  const [isCollapsedFastResult, setIsCollapsedFastResult] = useState(true);
+  const [isCollapsedSlowResult, setIsCollapsedSlowResult] = useState(true);
 
   useEffect(() => {
     const FetchData = async () => {
@@ -192,49 +197,48 @@ const Chapter4Page = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={100} // adjust if needed
+      keyboardVerticalOffset={0} // adjust if needed
     >
-      <ScrollView keyboardShouldPersistTaps="handled">
+      
         <ReturnButton onPress={() => router.back()}/>
-
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>TÍNH TOÁN BỘ TRUYỀN HỞ</Text>
+          <Text style={styles.title}>TÍNH TOÁN {"\n"} TRUYỀN ĐỘNG BÁNH RĂNG</Text>
         </View>
-
+        <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.FirstContainer}>
           <DisplayResult variable={"Vật liệu"} value={material}/>
           <DisplayResult variable={"Nhiệt luyện"} value={heatTreatment}/>
 
           <InputField
-            label="Chọn độ cứng của bánh răng nhỏ"
+            label="Độ cứng của bánh răng nhỏ"
             sublabel="(192 - 285)"
             value={HB1.toString()}
             onChange={(text) => setHB1(Number(text))}
           />
 
           <InputField
-            label="Chọn độ cứng của bánh răng lớn"
+            label="Độ cứng của bánh răng lớn"
             sublabel="(192 - 285)"
             value={HB2.toString()}
             onChange={(text) => setHB2(Number(text))}
           />
 
           <InputField
-            label="Chọn số lần ăn khớp 1 vòng quay c"
-            sublabel="()"
+            label="Số lần ăn khớp 1 vòng quay c"
+            sublabel=""
             value={c.toString()}
             onChange={(text) => setC(Number(text))}
           />
 
           <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit} disabled={loading}>
-            <Text style={styles.doMathButtonText}>Tính chương 4</Text>
+            <Text style={styles.doMathButtonText}>Chọn</Text>
           </TouchableOpacity>
         </View>
 
         {displayResult && (
           <View style={styles.SecondContainer}>
-            <DisplayResult variable={"Khoảng cách trục (Trụ Nghiêng)"} value={Number(ASoboNhanh).toFixed(4)}/>
-            <DisplayResult variable={"Khoảng cách trục (Trụ Thẳng)"} value={Number(ASoboCham).toFixed(4)}/>
+            <DisplayResult variable={"Khoảng cách trục (Trụ Nghiêng)"} value={Number(ASoboNhanh).toFixed(2)} unit={"mm"}/>
+            <DisplayResult variable={"Khoảng cách trục (Trụ Thẳng)"} value={Number(ASoboCham).toFixed(2)} unit={"mm"}/>
 
             <InputField
               label="Chọn khoảng cách trục cơ bộ cho cấp nghiêng"
@@ -275,32 +279,65 @@ const Chapter4Page = () => {
             />
 
             <TouchableOpacity style={styles.doMathButton} onPress={handleSubmitSecondTime} disabled={loadingSecondTime}>
-              <Text style={styles.doMathButtonText}>Tính chương 4 Second Time</Text>
+              <Text style={styles.doMathButtonText}>Chọn</Text>
             </TouchableOpacity>
           </View>
         )}
 
         {secondDisplayResult && (
           <View style={styles.ThirdContainer}>
-            <Text>Tính toán nhanh</Text>
-            <DisplayResult variable={"Khoảng cách trục"} value={FastResult.khoangCach}/>
-            <DisplayResult variable={"Số bánh răng z1"} value={FastResult.z1}/>
-            <DisplayResult variable={"Số bánh răng z2"} value={FastResult.z2}/>
-            <DisplayResult variable={"Đường kính bánh răng ngoài da1"} value={Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(4)}/>
-            <DisplayResult variable={"Đường kính bánh răng ngoài da2"} value={Number(FastResult.duong_kinh_dinh_rang_da2).toFixed(4)}/>
+            <View style={[styles.collapseButton, !isCollapsedFastResult ? styles.collapseButtonActive : null]}>
+              <Text style={[styles.buttonText, !isCollapsedFastResult ? styles.buttonTextActive : null]}>
+                Kết quả tính toán nhanh
+              </Text>
+              <TouchableOpacity onPress={() => setIsCollapsedFastResult(!isCollapsedFastResult)}>
+                <AntDesign 
+                  name={isCollapsedFastResult ? "caretright" : "caretdown"} 
+                  size={28} 
+                  color={isCollapsedFastResult ? "rgb(33,53,85)" : "#DBE2EC"} 
+                />
+              </TouchableOpacity>
+            </View>
 
-            <Text>Tính toán Chậm</Text>
-            <DisplayResult variable={"Khoảng cách trục"} value={SlowResult.khoangCach}/>
-            <DisplayResult variable={"Số bánh răng z1"} value={SlowResult.z1}/>
-            <DisplayResult variable={"Số bánh răng z2"} value={SlowResult.z2}/>
-            <DisplayResult variable={"Đường kính bánh răng ngoài da1"} value={Number(SlowResult.duong_kinh_dinh_rang_da1).toFixed(4)}/>
-            <DisplayResult variable={"Đường kính bánh răng ngoài da2"} value={Number(SlowResult.duong_kinh_dinh_rang_da2).toFixed(4)}/>
+            <Collapsible collapsed={isCollapsedFastResult}>
+              <View style={styles.resultContainer}>
+                <DisplayResult variable={"Khoảng cách trục (a)"} value={FastResult.khoangCach} unit={"mm"} />
+                <DisplayResult variable={"Số bánh răng nhỏ (z1)"} value={FastResult.z1} unit={"răng"}/>
+                <DisplayResult variable={"Số bánh răng lớn (z2)"} value={FastResult.z2} unit={"răng"}/>
+                <DisplayResult variable={"Đường kính đỉnh răng 1(da1)"} value={Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(2)} unit={"mm"}/>
+                <DisplayResult variable={"Đường kính đỉnh răng 2 (da2)"} value={Number(FastResult.duong_kinh_dinh_rang_da2).toFixed(2)} unit={"mm"} />
+              </View>
+            </Collapsible>
 
-            <TouchableOpacity style={styles.doMathButton} onPress={handleChapter5}>
-              <Text style={styles.doMathButtonText}>Lưu</Text>
+            {/* Collapsible - Tính toán chậm */}
+            <View style={[styles.collapseButton, !isCollapsedSlowResult ? styles.collapseButtonActive : null]}>
+              <Text style={[styles.buttonText, !isCollapsedSlowResult ? styles.buttonTextActive : null]}>
+                Kết quả tính toán chậm
+              </Text>
+              <TouchableOpacity onPress={() => setIsCollapsedSlowResult(!isCollapsedSlowResult)}>
+                <AntDesign 
+                  name={isCollapsedSlowResult ? "caretright" : "caretdown"} 
+                  size={28} 
+                  color={isCollapsedSlowResult ? "rgb(33,53,85)" : "#DBE2EC"} 
+                />
+              </TouchableOpacity>
+            </View>
+
+            <Collapsible collapsed={isCollapsedSlowResult}>
+              <View style={styles.resultContainer}>
+                <DisplayResult variable={"Khoảng cách trục (a)"} value={SlowResult.khoangCach} unit={"mm"} />
+                <DisplayResult variable={"Số bánh răng (z1)"} value={SlowResult.z1} unit={"răng"} />
+                <DisplayResult variable={"Số bánh răng (z2)"} value={SlowResult.z2} unit={"răng"}/>
+                <DisplayResult variable={"Đường kính đỉnh răng 1 (da1)"} value={Number(SlowResult.duong_kinh_dinh_rang_da1).toFixed(2)} unit={"mm"}/>
+                <DisplayResult variable={"Đường kính đỉnh răng 2 (da2)"} value={Number(SlowResult.duong_kinh_dinh_rang_da2).toFixed(2)} unit={"mm"}/>
+              </View>
+            </Collapsible>
+            <TouchableOpacity style={styles.saveButton} onPress={handleChapter5}>
+                  <Text style={styles.doMathButtonText}>Lưu</Text>
             </TouchableOpacity>
           </View>
         )}
+
       </ScrollView>
     </KeyboardAvoidingView>
   )
@@ -310,30 +347,33 @@ export default Chapter4Page
 
 const styles = StyleSheet.create({
   FirstContainer: {
-    marginHorizontal: 15
+    marginTop: '5%',
+    marginHorizontal: '8%',
   },
   SecondContainer: {
-    marginHorizontal: 15
+    marginTop: '5%',
+    marginHorizontal: '8%',
   },
   ThirdContainer: {
-    marginHorizontal: 15
+    marginTop: '2%',
+    marginHorizontal: '8%',
   },
   titleContainer: {
     display: 'flex',
     alignItems: 'center',
     marginTop: '30%',
-    marginBottom: '5%'
   },
   title: {
     fontFamily: 'quicksand-bold',
     fontSize: 20,
-    color: 'rgb(33, 53, 85)'
+    color: 'rgb(33, 53, 85)',
+    textAlign: 'center',
   },
   inputContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 15
+    gap: 15,
   },
   inputFieldContainer: {
     display: 'flex',
@@ -360,17 +400,61 @@ const styles = StyleSheet.create({
   },
   doMathButton: {
     display: 'flex',
+    width: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 15,
-    padding: 10,
+    marginTop: 5,
+    padding: 8,
     backgroundColor: 'rgb(33,53,85)',
     borderRadius: 10,
-    marginBottom:5
+    marginBottom: 0, 
+    alignSelf: 'flex-end'
   },
   doMathButtonText: {
     color: 'white',
     fontFamily: 'quicksand-semibold',
-    fontSize: 16
-  }
+    fontSize: 14
+  },
+  saveButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: 'rgb(33,53,85)',
+    borderRadius: 10,
+    marginBottom:'15%', 
+  },
+  collapseButton: {
+    marginTop: '5%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'rgb(33, 53, 85)',
+    borderRadius: 24,
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
+  },
+  collapseButtonActive: {
+    backgroundColor:'rgb(33,53,85)',
+    borderBottomRightRadius:0,
+    borderBottomLeftRadius:0
+  },
+  resultContainer: {
+    paddingVertical: '4%',
+    paddingHorizontal:'7%',
+    backgroundColor:'#F5EFE7',
+    
+  },
+  buttonText: {
+    fontFamily: 'quicksand-medium',
+    fontSize: 14,
+    color: 'rgb(33, 53, 85)'
+  },
+  buttonTextActive: {
+    fontFamily: 'quicksand-medium',
+    fontSize: 14,
+    color: '#DBE2EC'
+  },
 })
