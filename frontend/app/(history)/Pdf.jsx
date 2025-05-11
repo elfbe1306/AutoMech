@@ -70,7 +70,7 @@ const Pdf = () => {
       </TouchableOpacity>
 
       <TouchableOpacity onPress={handleHistory} style={styles.button}>
-        <Text style={styles.buttonText}>Trở về lịch sử</Text>
+        <Text style={styles.buttonText}>Trở về</Text>
       </TouchableOpacity>
     </View>
   );
