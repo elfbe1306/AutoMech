@@ -37,8 +37,7 @@ const TimelineItem = ({ item, index, isLast }) => {
     <View style={containerStyle}>
         <View>
           <Text style={titleStyle}>{item.title}</Text>
-          <Text style={descStyle}>Kết quả tính toán</Text>
-          <Text style={descStyle}>Chi tiết máy đã chọn</Text>
+          <Text style={descStyle}>Kết quả tính toán</Text> 
         </View>
         <View style ={styles.icon}>
           <MaterialCommunityIcons name="trash-can-outline" size={22}  color="firebrick"/> 
