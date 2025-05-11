@@ -152,14 +152,14 @@ const styles = StyleSheet.create({
   desc: {
     fontFamily: 'quicksand-bold',
     fontWeight:'500',
-    fontSize: 12,
+    fontSize: 13,
     color: '#F5EFE7',
     marginBottom: 6,
   },
   descWhiteBox:{
     fontFamily: 'quicksand-bold',
     fontWeight:'500',
-    fontSize: 12,
+    fontSize: 13,
     color: '#3E5879',
     marginBottom: 6,
   },
