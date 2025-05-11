@@ -131,8 +131,33 @@ const Chapter5Page = () => {
     setModalVisible(true)
   }
 
+  const [loading3, setLoading3] = useState(false);
   const handleFinalSave = async () => {
-    
+    try {
+      setLoading3(true);
+
+      if(recordName == "") {
+        alert("Vui lòng đặt tên cho tính toán");
+        setLoading3(false);
+        return;
+      }
+
+      const userInput = {
+        recordname: recordName
+      }
+
+      const response = await apiService.Chapter5RecordSave(recordID, userInput);
+      
+      if(response.success) {
+        setModalVisible(!modalVisible);
+        router.push('/(main)/PdfPage');
+      }
+
+    } catch(error) {
+      console.error("Error setting record name:", error);
+    } finally {
+      setLoading3(false)
+    }
   }
 
   return(
@@ -257,7 +282,7 @@ const Chapter5Page = () => {
               </View>
 
               <TouchableOpacity style={styles.saveButton}>
-                <Text style={styles.saveButtonText}>Lưu</Text>
+                <Text style={styles.saveButtonText} onPress={handleFinalSave} disabled={loading3}>Lưu</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -101,6 +101,31 @@ Chapter5Routes.route('/chapter5/secondcalculation/:recordid').post( async (reque
   }
 })
 
+Chapter5Routes.route('/chapter5/saverecord/:recordid').post(async (request, response) => {
+  const supabase = request.supabase;
+  const record_id = jwt.decode(request.params.recordid, process.env.SECRET_KEY);
+
+  try {
+    const inputData = {
+      name: request.body.recordname
+    }
+
+    // Cập nhật dữ liệu trong HistoryRecord
+    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').update([inputData]).eq('id', record_id.id);
+    if (recordDataError) {
+      console.error("recordDataError", recordDataError)
+      return response.status(400).json({ message: recordDataError.message });
+    }
+
+    return response.status(200).json({ 
+      message: 'Đã cập nhật tên tính toán',
+      success: true
+    });
+  } catch(error) {
+    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+  }
+})
+
 function TinhToanTruc(userInput, Chapter2Data) {
   const us_xoan = userInput.tau; // người dùng chọn
   const duong_kinh_so_bo_truc_d1 = Chapter5Function.duong_kinh_so_bo_truc_d1(Chapter2Data.t1_ti_so_truyen, us_xoan);

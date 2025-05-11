@@ -119,6 +119,15 @@ class ApiService {
       throw error;
     }
   }
+
+  async Chapter5RecordSave(recordID, userInput) {
+    try {
+      const response = await this.api.post(`/chapter5/saverecord/${recordID}`, userInput);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  } 
 }
 
 // Singleton instance

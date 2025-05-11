@@ -7,11 +7,13 @@ const AuthLayout = () => {
   return (
     <EngineProvider>
       <Stack screenOptions={{headerShown: false}}>
-        <Stack.Screen options = {{gestureEnabled: false}} name="HomePage"/>
+        <Stack.Screen name="HomePage"/>
         <Stack.Screen name="InputPage"/>
         <Stack.Screen name="EngineSelectPage"/>
         <Stack.Screen name="Chapter3Page"/>
         <Stack.Screen name="Chapter4Page"/>
+        <Stack.Screen name="Chapter5Page"/>
+        <Stack.Screen name="PdfPage"/>
       </Stack>
     </EngineProvider>
   )
