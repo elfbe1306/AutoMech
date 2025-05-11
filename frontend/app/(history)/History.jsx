@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     width: 20,
     marginLeft: 10,
     alignItems:'center',
-    gap: '15%',
+    gap: '20%',
   },
   icon:{
     color:'89AC46',
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     width: 20,
     marginLeft: 10,
     alignItems:'center',
-    gap: '15%',
+    gap: '20%',
     backgroundColor: '#F5EFE7',
   },
   titleContent: {
@@ -149,12 +149,14 @@ const styles = StyleSheet.create({
   },
   desc: {
     fontFamily: 'quicksand-bold',
+    fontWeight:'500',
     fontSize: 12,
     color: '#F5EFE7',
     marginBottom: 6,
   },
   descWhiteBox:{
     fontFamily: 'quicksand-bold',
+    fontWeight:'500',
     fontSize: 12,
     color: '#3E5879',
     marginBottom: 6,
