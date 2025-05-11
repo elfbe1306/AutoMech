@@ -15,7 +15,7 @@ import apiService from '@/api';
 //   { date: 'T2 28.6.04', time: '11:00', title: 'Đồ án đa ngành' },
 // ];
 
-const TimelineItem = ({ item, index, isLast, handlePdfViewPage }) => {
+const TimelineItem = ({ item, index, isLast, handlePdfViewPage, handleDeleteRecord }) => {
   const isOdd = index % 2 === 0;
   const containerStyle = isOdd ? styles.contentBox : styles.whiteBox;
   const titleStyle = isOdd ? styles.titleContent : styles.titleWhiteBox;
@@ -41,7 +41,9 @@ const TimelineItem = ({ item, index, isLast, handlePdfViewPage }) => {
           <Text style={descStyle}>Kết quả tính toán</Text> 
         </TouchableOpacity>
         <View style ={styles.icon}>
-          <MaterialCommunityIcons name="trash-can-outline" size={22}  color="firebrick"/> 
+          <TouchableOpacity onPress={() => handleDeleteRecord(item.id)}>
+            <MaterialCommunityIcons name="trash-can-outline" size={22}  color="firebrick"/> 
+          </TouchableOpacity>
           {/* <AntDesign name="delete" size={24} color="firebrick" /> */}
         </View>
       </View>
@@ -55,15 +57,15 @@ const History = () => {
 
   const [records, setRecords] = useState([]);
 
-  useEffect(() => {
-    const FetchData = async () => {
-      const response = await apiService.FetchHistoryData();
-      
-      if(response.success) {
-        setRecords(response.record);
-      }
+  const FetchData = async () => {
+    const response = await apiService.FetchHistoryData();
+    
+    if(response.success) {
+      setRecords(response.record);
     }
+  }
 
+  useEffect(() => {
     FetchData();
   }, []);
 
@@ -72,6 +74,13 @@ const History = () => {
       pathname: '/(history)/Pdf',
       params: { recordID }
     });
+  }
+
+  const handleDeleteRecord = async (recordID) => {
+    const response = await apiService.DeleteRecord(recordID);
+    if(response.success) {
+      FetchData();
+    }
   }
 
   return (
@@ -92,6 +101,7 @@ const History = () => {
               index={index} 
               isLast={index === records.length}
               handlePdfViewPage={handlePdfViewPage}
+              handleDeleteRecord={handleDeleteRecord}
             />
           )}
         />

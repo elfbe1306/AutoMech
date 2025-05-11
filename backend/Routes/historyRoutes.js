@@ -186,6 +186,76 @@ HistoryRoutes.route('/fetchsecondcalculation/:recordid').post(async (request, re
   }
 })
 
+HistoryRoutes.route('/deleterecord/:recordid').get(async (request, response) => {
+  const supabase = request.supabase;
+
+  try {
+    // Lấy data từ history record
+    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('*').eq('id', request.params.recordid);
+    if (recordDataError) {
+      console.error("recordDataError", recordDataError)
+      return response.status(400).json({ message: recordDataError.message });
+    } 
+
+    if(recordData[0].chapter4_id) {
+      // Lấy data từ chương 4
+      const { data: Chapter4Data, error: Chapter4DataError } = await supabase.from('Chapter4').select('tinhtoannhanh_id, tinhtoancham_id').eq('id', recordData[0].chapter4_id);
+      if (Chapter4DataError) {
+        console.error("Chapter4DataError", Chapter4DataError)
+        return response.status(400).json({ message: Chapter4DataError.message });
+      }
+
+      // Xoá bảng tính toán nhanh
+      const { data: nhanhData, error: nhanhDataError } = await supabase.from('TinhToanNhanh').delete().eq('id', Chapter4Data[0].tinhtoannhanh_id);
+      if (nhanhDataError) {
+        console.error("nhanhDataError", nhanhDataError)
+        return response.status(400).json({ message: nhanhDataError.message });
+      }
+
+      // Xoá bảng tính toán chậm
+      const { data: chamData, error: chamDataError } = await supabase.from('TinhToanCham').delete().eq('id', Chapter4Data[0].tinhtoancham_id);
+      if (chamDataError) {
+        console.error("chamDataError", chamDataError)
+        return response.status(400).json({ message: chamDataError.message });
+      }
+    }
+
+    if(recordData[0].chapter3_id) {
+      // Xoá chương 3
+      const { data: deleteChapter3, error: deleteChapterError } = await supabase.from('Chapter3').delete().eq('id', recordData[0].chapter3_id);
+      if (deleteChapterError) {
+        console.error("deleteChapterError", deleteChapterError)
+        return response.status(400).json({ message: deleteChapterError.message });
+      }
+    }
+
+    if(recordData[0].chapter2_id) {
+      // Xoá chương 2
+      const { data: deleteChapter2, error: deleteChapter2Error } = await supabase.from('Chapter2').delete().eq('id', recordData[0].chapter2_id);
+      if (deleteChapter2Error) {
+        console.error("deleteChapter2Error", deleteChapter2Error)
+        return response.status(400).json({ message: deleteChapter2Error.message });
+      }
+    }
+
+    if(recordData[0].chapter5_id) {
+      // Xoá chương 5
+      const { data: deleteChapter5, error: deleteChapter5Error } = await supabase.from('Chapter5').delete().eq('id', recordData[0].chapter5_id);
+      if (deleteChapter5Error) {
+        console.error("deleteChapter5Error", deleteChapter5Error)
+        return response.status(400).json({ message: deleteChapter5Error.message });
+      }
+    }
+
+    return response.status(200).json({ 
+      message: 'Đã xoá thành công',
+      success: true
+    });
+  } catch(error) {
+    return response.status(500).json({ message: 'Lỗi máy chủ', error: error.message });
+  }
+})
+
 const SelectMaterial = (v, z1, z2, oh1, oh2) => {
   if(z1 <= 19 && z2 <= 19) {
     return 4; // Thep 15 Tham cacbon, toi, ram

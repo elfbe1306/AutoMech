@@ -155,6 +155,15 @@ class ApiService {
       throw error;
     }
   }
+
+  async DeleteRecord(recordID) {
+    try {
+      const response = await this.api.get(`/deleterecord/${recordID}`);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
 }
 
 // Singleton instance
