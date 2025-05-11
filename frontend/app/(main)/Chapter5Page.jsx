@@ -7,6 +7,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import InputField from "@/components/InputField";
 import DisplayResult from "@/components/DisplayResult";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import Collapsible from 'react-native-collapsible';
 
 const Chapter5Page = () => {
   const router = useRouter();
@@ -26,6 +27,10 @@ const Chapter5Page = () => {
 
   const [displayResult1, setDisplayResult1] = useState(false);
   const [displayResult2, setDisplayResult2] = useState(false);
+
+  const [isCollapsedTruc1, setIsCollapsedTruc1] = useState(true);
+  const [isCollapsedTruc2, setIsCollapsedTruc2] = useState(true);
+  const [isCollapsedTruc3, setIsCollapsedTruc3] = useState(true);
 
   const [recordName, setRecordName] = useState("");
 
@@ -141,97 +146,141 @@ const Chapter5Page = () => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={100} // adjust if needed
     >
-      <ScrollView>
+      
         <ReturnButton onPress={() => router.back()}/>
 
         <View style={styles.titleContainer}>
           <Text style={styles.title}>TÍNH TOÁN TRỤC</Text>
         </View>
-
+        <ScrollView>
         <View style={styles.firstContainer}>
           <InputField
-            label="Chọn tau cho phép"
+            label="Chọn ứng suất xoắn cho phép ([τ])"
             sublabel="(15 - 30)"
             value={tau.toString()}
             onChange={(text) => setTau(text)}
           />
 
           <InputField
-            label="Khoảng cách giữa các chi tiết quay k1"
+            label="Khoảng cách giữa các chi tiết quay (k1)"
             sublabel="(8 - 15)"
             value={k1.toString()}
             onChange={(text) => setK1(text)}
           />
 
           <InputField
-            label="Khoảng cách từ mặt mút ổ đến thành trong của hộp k2"
+            label="Khoảng cách từ mặt mút ổ đến thành trong của hộp (k2)"
             sublabel="(5 - 15)"
             value={k2.toString()}
             onChange={(text) => setK2(text)}
           />
 
           <InputField
-            label="Khoảng cách từ mặt mút của chi tiết quay đến nắp ổ k3"
+            label="Khoảng cách từ mặt mút của chi tiết quay đến nắp ổ (k3)"
             sublabel="(10 - 20)"
             value={k3.toString()}
             onChange={(text) => setK3(text)}
           />
 
           <InputField
-            label="Chiều cao nắp ổ và đầu bulông"
+            label="Chiều cao nắp ổ và đầu bulông (hn)"
             sublabel="(15 - 20)"
             value={hn.toString()}
             onChange={(text) => setHn(text)}
           />
 
           <TouchableOpacity style={styles.doMathButton} onPress={handleFirstCalculation} disabled={loading1}>
-            <Text style={styles.doMathButtonText}>Tính chương 5</Text>
+            <Text style={styles.doMathButtonText}>Chọn</Text>
           </TouchableOpacity>
         </View>
 
         {displayResult1 && (
           <View style={styles.SecondContainer}>
             <InputField
-              label="Chọn chiều dài mayo xích"
+              label="Chọn chiều dài mayơ xích (lm)"
               sublabel={`(${lmd_min} - ${lmd_max})`}
               value={lmd.toString()}
               onChange={(text) => setLmd(text)}
             />
 
             <TouchableOpacity style={styles.doMathButton} onPress={handleSecondCalculation} disabled={loading2}>
-              <Text style={styles.doMathButtonText}>Tính chương 5 lần thứ 2</Text>
+              <Text style={styles.doMathButtonText}>Chọn</Text>
             </TouchableOpacity>
           </View>
         )}
 
         {displayResult2 && (
           <View style={styles.ThirdContainer}>
-            <View>
-              <Text>Truc 1</Text>
-              <DisplayResult variable={"Đường Kính Trục - A"} value={table1[4][1]}/>
-              <DisplayResult variable={"Đường Kính Trục - B"} value={table1[4][2]}/>
-              <DisplayResult variable={"Đường Kính Trục - C"} value={table1[4][3]}/>
-              <DisplayResult variable={"Đường Kính Trục - D"} value={table1[4][4]}/>
-              <DisplayResult variable={"Đường Kính Trục - E"} value={table1[4][5]}/>
-            </View>
-            <View>
-              <Text>Truc 2</Text>
-              <DisplayResult variable={"Đường Kính Trục - A"} value={table2[4][1]}/>
-              <DisplayResult variable={"Đường Kính Trục - B"} value={table2[4][2]}/>
-              <DisplayResult variable={"Đường Kính Trục - C"} value={table2[4][3]}/>
-              <DisplayResult variable={"Đường Kính Trục - D"} value={table2[4][4]}/>
-              <DisplayResult variable={"Đường Kính Trục - E"} value={table2[4][5]}/>
-            </View>
-            <View>
-              <Text>Truc 3</Text>
-              <DisplayResult variable={"Đường Kính Trục - A"} value={table3[4][1]}/>
-              <DisplayResult variable={"Đường Kính Trục - B"} value={table3[4][2]}/>
-              <DisplayResult variable={"Đường Kính Trục - C"} value={table3[4][3]}/>
-              <DisplayResult variable={"Đường Kính Trục - D"} value={table3[4][4]}/>
-            </View>
 
-            <TouchableOpacity style={styles.doMathButton} onPress={handleSave}>
-              <Text style={styles.doMathButtonText}>Save Chương 5</Text>
+            <View style={[styles.collapseButton, !isCollapsedTruc1 ? styles.collapseButtonActive : null]}>
+              <Text style={[styles.buttonText, !isCollapsedTruc1 ? styles.buttonTextActive : null]}>
+                Trục 1
+              </Text>
+              <TouchableOpacity onPress={() => setIsCollapsedTruc1(!isCollapsedTruc1)}>
+                <AntDesign 
+                  name={isCollapsedTruc1 ? "caretright" : "caretdown"} 
+                  size={28} 
+                  color={isCollapsedTruc1 ? "rgb(33,53,85)" : "#DBE2EC"} 
+                />
+              </TouchableOpacity>
+            </View>
+            <Collapsible collapsed={isCollapsedTruc1}>
+              <View style={styles.resultContainer}>
+                <DisplayResult variable={"Đường Kính Trục - A"} value={table1[4][1]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - B"} value={table1[4][2]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - C"} value={table1[4][3]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - D"} value={table1[4][4]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - E"} value={table1[4][5]} unit={"mm"}/>
+              </View>
+            </Collapsible>
+
+            {/* Collapsible - Trục 2 */}
+            <View style={[styles.collapseButton, !isCollapsedTruc2 ? styles.collapseButtonActive : null]}>
+              <Text style={[styles.buttonText, !isCollapsedTruc2 ? styles.buttonTextActive : null]}>
+                Trục 2
+              </Text>
+              <TouchableOpacity onPress={() => setIsCollapsedTruc2(!isCollapsedTruc2)}>
+                <AntDesign 
+                  name={isCollapsedTruc2 ? "caretright" : "caretdown"} 
+                  size={28} 
+                  color={isCollapsedTruc2 ? "rgb(33,53,85)" : "#DBE2EC"} 
+                />
+              </TouchableOpacity>
+            </View>
+            <Collapsible collapsed={isCollapsedTruc2}>
+              <View style={styles.resultContainer}>
+                <DisplayResult variable={"Đường Kính Trục - A"} value={table2[4][1]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - B"} value={table2[4][2]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - C"} value={table2[4][3]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - D"} value={table2[4][4]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - E"} value={table2[4][5]} unit={"mm"}/>
+              </View>
+            </Collapsible>
+
+            {/* Collapsible - Trục 3 */}
+            <View style={[styles.collapseButton, !isCollapsedTruc3 ? styles.collapseButtonActive : null]}>
+              <Text style={[styles.buttonText, !isCollapsedTruc3 ? styles.buttonTextActive : null]}>
+                Trục 3
+              </Text>
+              <TouchableOpacity onPress={() => setIsCollapsedTruc3(!isCollapsedTruc3)}>
+                <AntDesign 
+                  name={isCollapsedTruc3 ? "caretright" : "caretdown"} 
+                  size={28} 
+                  color={isCollapsedTruc3 ? "rgb(33,53,85)" : "#DBE2EC"} 
+                />
+              </TouchableOpacity>
+            </View>
+            <Collapsible collapsed={isCollapsedTruc3}>
+              <View style={styles.resultContainer}>
+                <DisplayResult variable={"Đường Kính Trục - A"} value={table3[4][1]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - B"} value={table3[4][2]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - C"} value={table3[4][3]} unit={"mm"}/>
+                <DisplayResult variable={"Đường Kính Trục - D"} value={table3[4][4]} unit={"mm"}/>
+              </View>
+            </Collapsible>
+
+            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+              <Text style={styles.doMathButtonText}>Lưu</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -248,15 +297,15 @@ const Chapter5Page = () => {
               <TouchableOpacity
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => setModalVisible(!modalVisible)}>
-                <AntDesign name="close" size={24} color="red" />
+                <AntDesign name="close" size={24} color="rgb(33,53,85)" />
               </TouchableOpacity>
 
               <View style={styles.inputContainer}>
-                <Text style={styles.inputField}>Đặt tên cho tính toán</Text>
+                <Text style={styles.inputField}>Đặt tên cho lần tính toán này</Text>
                 <TextInput style={styles.input} onChangeText={(text) => setRecordName(text)}/>
               </View>
 
-              <TouchableOpacity style={styles.saveButton}>
+              <TouchableOpacity style={styles.saveModalButton}>
                 <Text style={styles.saveButtonText}>Lưu</Text>
               </TouchableOpacity>
             </View>
@@ -283,28 +332,34 @@ const styles = StyleSheet.create({
     color: 'rgb(33, 53, 85)'
   },
   firstContainer: {
-    marginHorizontal: 15
+    marginTop: '5%',
+    marginHorizontal: '8%',
   },
   SecondContainer : {
-    marginHorizontal: 15
+    marginTop: '5%',
+    marginHorizontal: '8%',
   },
   ThirdContainer: {
-    marginHorizontal: 15
+    marginTop: '5%',
+    marginHorizontal: '8%',
   },
+     
   doMathButton: {
     display: 'flex',
+    width: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 15,
-    padding: 10,
+    marginTop: 5,
+    padding: 8,
     backgroundColor: 'rgb(33,53,85)',
     borderRadius: 10,
-    marginBottom:5
+    marginBottom: 0, 
+    alignSelf: 'flex-end'
   },
   doMathButtonText: {
     color: 'white',
     fontFamily: 'quicksand-semibold',
-    fontSize: 16
+    fontSize: 14
   },
   centeredView: {
     flex: 1,
@@ -314,9 +369,10 @@ const styles = StyleSheet.create({
   modalView: {
     position: 'relative',
     margin: 20,
-    backgroundColor: 'white',
+    backgroundColor: '#F5EFE7',
     borderRadius: 20,
-    padding: 30,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
@@ -347,7 +403,8 @@ const styles = StyleSheet.create({
     color: 'rgb(58, 65, 99)',
     fontFamily: 'quicksand-bold',
     fontSize: 14,
-    marginBottom: 4,
+    marginTop: 20,
+    marginBottom: 15,
     textAlign: 'center',
     width: 240
   },
@@ -363,9 +420,61 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   saveButton: {
-    backgroundColor: 'blue',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: 'rgb(33,53,85)',
+    borderRadius: 10,
+    marginBottom:'15%', 
   },
   saveButtonText: {
     color: 'white'
-  }
+  },
+
+  saveModalButton: {
+    alignSelf: 'flex-end',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 5,
+    paddingVertical:5,
+    paddingHorizontal: 20,
+    backgroundColor: 'rgb(33,53,85)',
+    borderRadius: 10,
+  },
+
+  collapseButton: {
+    marginTop: '5%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: 'rgb(33, 53, 85)',
+    borderRadius: 24,
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
+  },
+  collapseButtonActive: {
+    backgroundColor:'rgb(33,53,85)',
+    borderBottomRightRadius:0,
+    borderBottomLeftRadius:0
+  },
+  resultContainer: {
+    paddingVertical: '4%',
+    paddingHorizontal:'7%',
+    backgroundColor:'#F5EFE7',
+    
+  },
+  buttonText: {
+    fontFamily: 'quicksand-medium',
+    fontSize: 14,
+    color: 'rgb(33, 53, 85)'
+  },
+  buttonTextActive: {
+    fontFamily: 'quicksand-medium',
+    fontSize: 14,
+    color: '#DBE2EC'
+  },
 })
