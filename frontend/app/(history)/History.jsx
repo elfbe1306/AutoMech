@@ -3,6 +3,7 @@ import React from 'react'
 import { useRouter } from 'expo-router';
 import ReturnButton from '@/components/ReturnButton';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const timelineData = [
   { date: 'T2 10.3.25', time: '13:05', title: 'Bài tập lớn 1'},
@@ -36,11 +37,11 @@ const TimelineItem = ({ item, index, isLast }) => {
     <View style={containerStyle}>
         <View>
           <Text style={titleStyle}>{item.title}</Text>
-          <Text style={descStyle}>Kết quả tính toán</Text>
-          <Text style={descStyle}>Chi tiết máy đã chọn</Text>
+          <Text style={descStyle}>Kết quả tính toán</Text> 
         </View>
-        <View style>
-          <MaterialCommunityIcons name="trash-can-outline" size={24}  color="firebrick"/> 
+        <View style ={styles.icon}>
+          <MaterialCommunityIcons name="trash-can-outline" size={22}  color="firebrick"/> 
+          {/* <AntDesign name="delete" size={24} color="firebrick" /> */}
         </View>
     </View>
   </View>
@@ -56,7 +57,7 @@ const History = () => {
       <ReturnButton onPress={() => router.back()}/>
       
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>TÍNH CHỌN CHI TIẾT MÁY</Text>
+        <Text style={styles.title}>LỊCH SỬ TÍNH TOÁN</Text>
       </View>
 
       <SafeAreaView>
@@ -115,11 +116,11 @@ const styles = StyleSheet.create({
     paddingVertical:10,
     width: 20,
     marginLeft: 10,
-    alignItems:'center',
+    justifyContent:'space-between',
     gap: '20%',
   },
   icon:{
-    color:'89AC46',
+    marginTop: 0,
   },
   whiteBox: {
     flex: 1,
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     paddingVertical:10,
     width: 20,
     marginLeft: 10,
-    alignItems:'center',
+    justifyContent:'space-between',
     gap: '20%',
     backgroundColor: '#F5EFE7',
   },
@@ -150,14 +151,14 @@ const styles = StyleSheet.create({
   desc: {
     fontFamily: 'quicksand-bold',
     fontWeight:'500',
-    fontSize: 12,
+    fontSize: 13,
     color: '#F5EFE7',
     marginBottom: 6,
   },
   descWhiteBox:{
     fontFamily: 'quicksand-bold',
     fontWeight:'500',
-    fontSize: 12,
+    fontSize: 13,
     color: '#3E5879',
     marginBottom: 6,
   },
