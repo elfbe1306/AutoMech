@@ -287,7 +287,7 @@ const Chapter4Page = () => {
           <View style={styles.ThirdContainer}>
             <View style={[styles.collapseButton, !isCollapsedFastResult ? styles.collapseButtonActive : null]}>
               <Text style={[styles.buttonText, !isCollapsedFastResult ? styles.buttonTextActive : null]}>
-                Kết quả tính toán nhanh
+                Kết quả tính toán cấp nhanh - trụ nghiêng
               </Text>
               <TouchableOpacity onPress={() => setIsCollapsedFastResult(!isCollapsedFastResult)}>
                 <AntDesign 
@@ -303,7 +303,7 @@ const Chapter4Page = () => {
                 <DisplayResult variable={"Khoảng cách trục (a)"} value={FastResult.khoangCach} unit={"mm"} />
                 <DisplayResult variable={"Số bánh răng nhỏ (z1)"} value={FastResult.z1} unit={"răng"}/>
                 <DisplayResult variable={"Số bánh răng lớn (z2)"} value={FastResult.z2} unit={"răng"}/>
-                <DisplayResult variable={"Đường kính đỉnh răng 1(da1)"} value={Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(2)} unit={"mm"}/>
+                <DisplayResult variable={"Đường kính đỉnh răng 1 (da1)"} value={Number(FastResult.duong_kinh_dinh_rang_da1).toFixed(2)} unit={"mm"}/>
                 <DisplayResult variable={"Đường kính đỉnh răng 2 (da2)"} value={Number(FastResult.duong_kinh_dinh_rang_da2).toFixed(2)} unit={"mm"} />
               </View>
             </Collapsible>
@@ -311,7 +311,7 @@ const Chapter4Page = () => {
             {/* Collapsible - Tính toán chậm */}
             <View style={[styles.collapseButton, !isCollapsedSlowResult ? styles.collapseButtonActive : null]}>
               <Text style={[styles.buttonText, !isCollapsedSlowResult ? styles.buttonTextActive : null]}>
-                Kết quả tính toán chậm
+                Kết quả tính toán cấp chậm - trụ thẳng
               </Text>
               <TouchableOpacity onPress={() => setIsCollapsedSlowResult(!isCollapsedSlowResult)}>
                 <AntDesign 
