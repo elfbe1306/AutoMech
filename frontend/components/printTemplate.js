@@ -97,7 +97,7 @@ const generateHtml = (name, message) => `
 <body>
   <div class="a4-container">
     <h3>Thông tin hộp giảm tốc</h3>
-    <img style="width: 50%; height: auto; display: block; margin: auto" src="dc-removebg-preview.png" alt="">
+    <img style="width: 50%; height: auto; display: block; margin: auto" src="https://uugfontxgfherbarqtur.supabase.co/storage/v1/object/public/engine//engineLayout.jpeg" alt="">
     <div class="chapter_container">
       <table style="margin-top: 10px;">
         <caption>I – ĐỘNG CƠ</caption>

@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import React from 'react'
 import * as Print from 'expo-print';
 import { WebView } from 'react-native-webview';
-import generateHtml from '../../components/printTemplate'
+import generateHtml from '../../components/printTemplate';
 
 const PdfPage = () => {
   const name = "Ngọc Nhơn";
