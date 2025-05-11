@@ -53,7 +53,8 @@ const PdfPage = () => {
     await Print.printAsync({ html });
   };
 
-  const handleHome = () => {
+  const handleHome = async () => {
+    await AsyncStorage.removeItem("RECORDID");
     router.replace('/(main)/HomePage');
   }
 

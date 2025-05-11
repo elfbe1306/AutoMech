@@ -1,56 +1,78 @@
-import { StyleSheet, Text, View, ScrollView, SafeAreaView, FlatList } from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, FlatList, TouchableOpacity } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router';
 import ReturnButton from '@/components/ReturnButton';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import apiService from '@/api';
 
-const timelineData = [
-  { date: 'T2 10.3.25', time: '13:05', title: 'Bài tập lớn 1'},
-  { date: 'T5 13.3.25', time: '07:20', title: 'Bài tập lớn 2'},
-  { date: 'CN 9.3.25', time: '13:05', title: 'Đồ án đa ngành'},
-  { date: 'T6 10.2.22', time: '13:05', title: 'Bài tập lớn 1'},
-  { date: 'T3 12.3.21', time: '09:30', title: 'Bài tập lớn 2'},
-  { date: 'T2 28.6.04', time: '11:00', title: 'Đồ án đa ngành' },
-];
+// const timelineData = [
+//   { date: 'T2 10.3.25', time: '13:05', title: 'Bài tập lớn 1'},
+//   { date: 'T5 13.3.25', time: '07:20', title: 'Bài tập lớn 2'},
+//   { date: 'CN 9.3.25', time: '13:05', title: 'Đồ án đa ngành'},
+//   { date: 'T6 10.2.22', time: '13:05', title: 'Bài tập lớn 1'},
+//   { date: 'T3 12.3.21', time: '09:30', title: 'Bài tập lớn 2'},
+//   { date: 'T2 28.6.04', time: '11:00', title: 'Đồ án đa ngành' },
+// ];
 
-const TimelineItem = ({ item, index, isLast }) => {
+const TimelineItem = ({ item, index, isLast, handlePdfViewPage }) => {
   const isOdd = index % 2 === 0;
   const containerStyle = isOdd ? styles.contentBox : styles.whiteBox;
   const titleStyle = isOdd ? styles.titleContent : styles.titleWhiteBox;
   const descStyle = isOdd ? styles.desc : styles.descWhiteBox;
   return(
-      <View style={styles.itemContainer}>
-    {/* Time column */}
-    <View style={styles.timeContainer}>
-      <Text style={styles.date}>{item.date}</Text>
-      <Text style={styles.time}>{item.time}</Text>
-    </View>
+    <View style={styles.itemContainer}>
+      {/* Time column */}
+      <View style={styles.timeContainer}>
+        <Text style={styles.date}>{item.created_at}</Text>
+        <Text style={styles.time}>{item.time}</Text>
+      </View>
 
-    {/* Middle timeline column */}
-    <View style={styles.timelineContainer}>
-      <View style={styles.circle} />
-      {!isLast && <View style={styles.verticalLine} />}
-    </View>
+      {/* Middle timeline column */}
+      <View style={styles.timelineContainer}>
+        <View style={styles.circle} />
+        {!isLast && <View style={styles.verticalLine} />}
+      </View>
 
-    {/* Content box */}
-    <View style={containerStyle}>
-        <View>
-          <Text style={titleStyle}>{item.title}</Text>
+      {/* Content box */}
+      <View style={containerStyle}>
+        <TouchableOpacity onPress={() => handlePdfViewPage(item.id)}>
+          <Text style={titleStyle}>{item.name ? item.name : "Chưa được đặt tên"}</Text>
           <Text style={descStyle}>Kết quả tính toán</Text> 
-        </View>
+        </TouchableOpacity>
         <View style ={styles.icon}>
           <MaterialCommunityIcons name="trash-can-outline" size={22}  color="firebrick"/> 
           {/* <AntDesign name="delete" size={24} color="firebrick" /> */}
         </View>
+      </View>
     </View>
-  </View>
   );
 };
 
 
 const History = () => {
   const router = useRouter();
+
+  const [records, setRecords] = useState([]);
+
+  useEffect(() => {
+    const FetchData = async () => {
+      const response = await apiService.FetchHistoryData();
+      
+      if(response.success) {
+        setRecords(response.record);
+      }
+    }
+
+    FetchData();
+  }, []);
+
+  const handlePdfViewPage = (recordID) => {
+    router.push({
+      pathname: '/(history)/Pdf',
+      params: { recordID }
+    });
+  }
 
   return (
     <View>
@@ -62,10 +84,15 @@ const History = () => {
 
       <SafeAreaView>
         <FlatList
-          data={timelineData}
+          data={records}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
-            <TimelineItem item={item} index={index} isLast={index === timelineData.length} />
+            <TimelineItem 
+              item={item} 
+              index={index} 
+              isLast={index === records.length}
+              handlePdfViewPage={handlePdfViewPage}
+            />
           )}
         />
       </SafeAreaView>

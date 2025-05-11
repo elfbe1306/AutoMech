@@ -137,6 +137,24 @@ class ApiService {
       throw error;
     }
   }
+
+  async FetchHistoryData() {
+    try {
+      const response = await this.api.get(`/fetchhistory`);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
+
+  async FetchReportDataHistory(recordID) {
+    try {
+      const response = await this.api.post(`/fetchsecondcalculation/${recordID}`);
+      return response.data;
+    } catch(error) {
+      throw error;
+    }
+  }
 }
 
 // Singleton instance

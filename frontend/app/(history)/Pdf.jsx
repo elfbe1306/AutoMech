@@ -1,22 +1,64 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import * as Print from 'expo-print';
 import { WebView } from 'react-native-webview';
-import generateHtml from '../../components/printTemplate'
+import generateHtml from '../../components/printTemplate';
+import apiService from '@/api';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 
 const Pdf = () => {
-  const name = "Ngọc Nhơn";
-  const message = "This is a personalized message rendered into HTML.";
+  const router = useRouter();
+  const { recordID } = useLocalSearchParams();
 
-  const html = generateHtml(name, message); // Create the HTML
+  const [selectMaterial, setSelectMaterial] = useState({});
+  const [renderData, setRenderData] = useState({});
+  const [table1, setTable1] = useState([]);
+  const [table2, setTable2] = useState([]);
+  const [table3, setTable3] = useState([]);
+
+  useEffect(() => {
+    const FetchData = async () => { 
+      const response = await apiService.FetchReportDataHistory(recordID);
+
+      const materialMap = {
+        1: { material: "Gang xám", heatTreatment: "Tôi, ram" },
+        2: { material: "Thép 45", heatTreatment: "Tôi cải thiện" },
+        3: { material: "Thép 45", heatTreatment: "Tôi, ram" },
+        default: { material: "Thép 15", heatTreatment: "Thấm cacbon, tôi, ram" }
+      };
+
+      setSelectMaterial(materialMap[response.returnData.material]);
+      setRenderData(response.returnData);
+      setTable1(JSON.parse(response.returnData.table1));
+      setTable2(JSON.parse(response.returnData.table2));
+      setTable3(JSON.parse(response.returnData.table3));
+    }
+
+    FetchData();
+  }, [recordID]);
+
+  const html = useMemo(() => {
+    if (
+      Object.keys(selectMaterial).length &&
+      Object.keys(renderData).length &&
+      table1.length && table2.length && table3.length
+    ) {
+      return generateHtml(selectMaterial, renderData, table1, table2, table3);
+    }
+    return "";
+  }, [selectMaterial, renderData, table1, table2, table3]);
 
   const handlePrint = async () => {
     await Print.printAsync({ html });
   };
 
+  const handleHistory = () => {
+    router.back();
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>PDF Preview</Text>
+      <Text style={styles.title}>THÔNG TIN HỘP GIẢM TỐC</Text>
       <View style={styles.webviewContainer}>
         <WebView
           originWhitelist={['*']}
@@ -24,7 +66,11 @@ const Pdf = () => {
         />
       </View>
       <TouchableOpacity onPress={handlePrint} style={styles.button}>
-        <Text style={styles.buttonText}>Print</Text>
+        <Text style={styles.buttonText}>In ấn và chia sẻ</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={handleHistory} style={styles.button}>
+        <Text style={styles.buttonText}>Trở về lịch sử</Text>
       </TouchableOpacity>
     </View>
   );
@@ -37,11 +83,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingTop: 60,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   title: {
     fontSize: 20,
-    marginBottom: 10
+    marginBottom: 10,
+    marginTop: '10%',
+    color:'rgb(33,53,85)',
+    fontFamily: 'quicksand-bold',
   },
   webviewContainer: {
     height: 500,
@@ -51,15 +100,19 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   button: {
-    marginTop: 20,
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
+    display: 'flex',
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: 'rgb(33,53,85)',
+    borderRadius: 10,
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
+    fontFamily: 'quicksand-bold',
   }
 });
 
