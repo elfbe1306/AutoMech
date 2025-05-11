@@ -1,5 +1,9 @@
 // printTemplate.js
 
+const formatNumber = (value) => {
+  return parseFloat(value).toString();
+};
+
 const generateHtml = (SelectMaterial, RenderData) => `
 <!DOCTYPE html>
 <html lang="vi">
@@ -110,9 +114,9 @@ const generateHtml = (SelectMaterial, RenderData) => `
         </thead>
         <tbody>
           <tr>
-            <td><span>${RenderData.engine.kieu_dong_co}</span></td>
-            <td><span>${RenderData.engine.cong_suat}</span> kW</td>
-            <td><span>${RenderData.engine.van_toc_vong_quay}</span> vg/ph</td>
+            <td><span>${RenderData.engine?.kieu_dong_co}</span></td>
+            <td><span>${RenderData.engine?.cong_suat}</span> kW</td>
+            <td><span>${RenderData.engine?.van_toc_vong_quay}</span> vg/ph</td>
           </tr>
         </tbody>
       </table>
@@ -120,7 +124,7 @@ const generateHtml = (SelectMaterial, RenderData) => `
         <caption>
           II - BỘ TRUYỀN HỞ - XÍCH <br>
           <span class="sub-caption">
-            Loại xích: <span>${SelectMaterial.material}</span> Nhiệt luyện <span>${SelectMaterial.heatTreatment}</span> Số mắt xích <span>${RenderData.chapter3.so_mat_xich}</span>
+            Loại xích: <span>${SelectMaterial?.material}</span> Nhiệt luyện <span>${SelectMaterial?.heatTreatment}</span> Số mắt xích <span>${RenderData?.chapter3?.so_mat_xich}</span>
           </span>
         </caption>
         <thead>
@@ -140,17 +144,17 @@ const generateHtml = (SelectMaterial, RenderData) => `
         <tbody>
           <tr>
             <td>Trụ nghiêng</td>
-            <td><span>${Number(RenderData.tinhToanNhanh.duong_kinh_dinh_rang_da1).toFixed(4)}</span>mm</td>
-            <td><span>${Number(RenderData.tinhToanNhanh.duong_kinh_dinh_rang_da2).toFixed(4)}</span>mm</td>
-            <td>${RenderData.tinhToanNhanh.z1}</td><td>${RenderData.tinhToanNhanh.z2}</td>
-            <td><span>${RenderData.tinhToanNhanh.khoangCachNghieng}</span>mm</td>
+            <td><span>${formatNumber(RenderData?.tinhToanNhanh?.duong_kinh_dinh_rang_da1)}</span>mm</td>
+            <td><span>${formatNumber(RenderData?.tinhToanNhanh?.duong_kinh_dinh_rang_da2)}</span>mm</td>
+            <td>${RenderData?.tinhToanNhanh?.z1}</td><td>${RenderData?.tinhToanNhanh?.z2}</td>
+            <td><span>${RenderData?.tinhToanNhanh?.khoangCachNghieng}</span>mm</td>
           </tr>
           <tr>
             <td>Trụ thẳng</td>
-            <td><span>${Number(RenderData.tinhToanCham.duong_kinh_dinh_rang_da1).toFixed(4)}</span>mm</td>
-            <td><span>${Number(RenderData.tinhToanCham.duong_kinh_dinh_rang_da2).toFixed(4)}</span>mm</td>
-            <td>${RenderData.tinhToanCham.z1}</td><td>${RenderData.tinhToanCham.z2}</td>
-            <td><span>${RenderData.tinhToanCham.khoangCachThang}</span>mm</td>
+            <td><span>${formatNumber(RenderData?.tinhToanCham?.duong_kinh_dinh_rang_da1)}</span>mm</td>
+            <td><span>${formatNumber(RenderData?.tinhToanCham?.duong_kinh_dinh_rang_da2)}</span>mm</td>
+            <td>${RenderData?.tinhToanCham?.z1}</td><td>${RenderData?.tinhToanCham?.z2}</td>
+            <td><span>${RenderData?.tinhToanCham?.khoangCachThang}</span>mm</td>
           </tr>
         </tbody>
       </table>
