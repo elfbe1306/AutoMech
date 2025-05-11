@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity, TextInput } from 'react-native'
 import { useEffect, useState } from 'react'
 import apiService from '../../api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -152,27 +152,33 @@ const InputPage = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>TÍNH TOÁN{'\n'}CHỌN CHI TIẾT MÁY</Text>
-      <ScrollView style={styles.inputContainer}>
-        <Text style={styles.inputContainerTitle}>Hãy nhập các thông số đầu vào</Text>
-        <View style={styles.displayinputComponent}>
-          {inputName.map((name, index) => (
-            <View style={styles.inputComponent} key={index}>
-              <Text style={styles.inputField}>{name}</Text>
-              <TextInput 
-                style={styles.input} 
-                value={inputValues[index].toString()} 
-                onChangeText={(text) => inputFunc[index](text)}
-              />
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-      <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit} disabled={loading}>
-          <Text style={styles.doMathButtonText}>Tính toán</Text>
-      </TouchableOpacity>
-    </View>
+    <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={0} // adjust if needed
+    >
+      <View style={styles.container}>
+        <Text style={styles.title}>TÍNH TOÁN{'\n'}CHỌN CHI TIẾT MÁY</Text>
+        <ScrollView style={styles.inputContainer}>
+          <Text style={styles.inputContainerTitle}>Hãy nhập các thông số đầu vào</Text>
+          <View style={styles.displayinputComponent}>
+            {inputName.map((name, index) => (
+              <View style={styles.inputComponent} key={index}>
+                <Text style={styles.inputField}>{name}</Text>
+                <TextInput 
+                  style={styles.input} 
+                  value={inputValues[index].toString()} 
+                  onChangeText={(text) => inputFunc[index](text)}
+                />
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+        <TouchableOpacity style={styles.doMathButton} onPress={handleSubmit} disabled={loading}>
+            <Text style={styles.doMathButtonText}>Tính toán</Text>
+        </TouchableOpacity>
+      </View>
+    </KeyboardAvoidingView>
   )
 }
 

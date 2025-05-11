@@ -63,7 +63,7 @@ const EngineSelectPage = () => {
       <ReturnButton onPress={() => router.back()}/>
       
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>TÍNH TOÁN</Text>
+        <Text style={styles.title}>TÍNH TOÁN TỔNG QUAN</Text>
       </View>
 
       <ScrollView style={styles.inputContainer}>
@@ -93,18 +93,18 @@ const EngineSelectPage = () => {
 
         <Collapsible collapsed={isCollapsedResult}>
           <View style={styles.resultContainer}>
-            <DisplayResult variable={"Công suất trục công tác"} value={calculatedData.cong_suat_truc_cong_tac} unit={""} />
-            <DisplayResult variable={"Hiệu suất chung"} value={Number(calculatedData.hieu_suat_chung).toFixed(4)} unit={""} />
-            <DisplayResult variable={"Công suất tương đương trục công tác"} value={Number(calculatedData.cong_suat_tuong_duong_truc_cong_tac).toFixed(4)} unit={""} />
-            <DisplayResult variable={"Công suất cần thiết trên trục động cơ"} value={Number(calculatedData.cong_suat_can_thiet_tren_truc_dong_co).toFixed(4)} unit={""} />
-            <DisplayResult variable={"Số vòng quay trục công tác"} value={Number(calculatedData.so_vong_quay_truc_cong_tac).toFixed(4)} unit={""} />
-            <DisplayResult variable={"Số vòng quay sơ bộ"} value={Number(calculatedData.so_vong_quay_so_bo).toFixed(4)} unit={""} />
+            <DisplayResult variable={"Công suất trục công tác (Plv)"} value={calculatedData.cong_suat_truc_cong_tac} unit={"kW"} />
+            <DisplayResult variable={"Hiệu suất chung (η)"} value={Number(calculatedData.hieu_suat_chung).toFixed(4)} unit={""} />
+            <DisplayResult variable={"Công suất tương đương trục công tác (Ptd)"} value={Number(calculatedData.cong_suat_tuong_duong_truc_cong_tac).toFixed(4)} unit={"kW"} />
+            <DisplayResult variable={"Công suất cần thiết trên trục động cơ (Pct)"} value={Number(calculatedData.cong_suat_can_thiet_tren_truc_dong_co).toFixed(4)} unit={"kW"} />
+            <DisplayResult variable={"Số vòng quay trục công tác (nlv)"} value={Number(calculatedData.so_vong_quay_truc_cong_tac).toFixed(4)} unit={"vòng/phút"} />
+            <DisplayResult variable={"Số vòng quay sơ bộ (nsb)"} value={Number(calculatedData.so_vong_quay_so_bo).toFixed(4)} unit={"vòng/phút"} />
           </View>
         </Collapsible>
         <View style={[styles.collapseButton, !isCollapsedEngine ? styles.collapseButtonActive : null]}>
           <Text style={[styles.buttonText, !isCollapsedEngine ? styles.buttonTextActive : null]}>Chọn động cơ</Text>
           <TouchableOpacity onPress={() => setIsCollapsedEngine(!isCollapsedEngine)}>
-            <AntDesign name={isCollapsedEngine ? "caretright" : "caretdown"}  size={28} color={isCollapsedEngine ? "rgb(33,53,85)" : "#DBE2EC"} />
+            <AntDesign name={isCollapsedEngine ? "caretright" : "caretdown"}  size={28} color={isCollapsedEngine ? "rgb(33,53,85)" : "#DBE2EC"}  />
         </TouchableOpacity>
         </View>
 
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   titleContainer: {
     display: 'flex',
     alignItems: 'center',
-    marginTop: '20%'
+    marginTop: '30%'
   },
   title: {
     fontFamily: 'quicksand-bold',
@@ -145,8 +145,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginTop: '5%',
-    marginHorizontal: '10%',
-    marginBottom: '30%'
+    marginHorizontal: '8%',
+    marginBottom: '40%'
   },
   inputTitle: {
     fontFamily: 'quicksand-semibold',
@@ -160,10 +160,10 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   displayColumn: {
-    gap: 14
+    gap: 3
   },
   resultTitle: {
-    marginTop: '10%',
+    marginTop: '2%',
     fontFamily: 'quicksand-semibold',
     fontSize: 16,
     color: 'rgb(33, 53, 85)'
@@ -196,9 +196,8 @@ const styles = StyleSheet.create({
   },
   resultContainer: {
     paddingVertical: '4%',
-    paddingHorizontal:'8%',
+    paddingHorizontal:'6%',
     backgroundColor:'#F5EFE7',
-    
   },
   engineContainer: {
     backgroundColor:'#F5EFE7',
@@ -219,6 +218,6 @@ const styles = StyleSheet.create({
   saveButtonText: {
     color: 'white',
     fontFamily: 'quicksand-semibold',
-    fontSize: 16
+    fontSize: 16,
   }
 })

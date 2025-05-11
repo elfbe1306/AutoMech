@@ -25,7 +25,7 @@ const PickerModalButton = ({ onSelect, options = [] }) => {
         onPress={() => setModalVisible(true)}
       >
         <Text style={styles.buttonText}>
-          {selectedOption !== null ? selectedOption : 'Choose a value'}
+          {selectedOption !== null ? selectedOption : 'Chọn giá trị'}
         </Text>
       </TouchableOpacity>
 
@@ -37,7 +37,7 @@ const PickerModalButton = ({ onSelect, options = [] }) => {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Select a value</Text>
+            <Text style={styles.modalTitle}>Hãy chọn giá trị</Text>
             <FlatList
               data={options}
               keyExtractor={(item, index) => index.toString()}
@@ -54,7 +54,7 @@ const PickerModalButton = ({ onSelect, options = [] }) => {
               style={styles.closeButton}
               onPress={() => setModalVisible(false)}
             >
-              <Text style={{ color: 'white' }}>Cancel</Text>
+              <Text style={{ color: 'white'}}>Huỷ</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -68,13 +68,13 @@ export default PickerModalButton;
 const styles = StyleSheet.create({
   container: {
   },
-  button: {
-  },
+
   buttonText: {
     fontFamily: 'quicksand',
     color: 'rgb(33, 53, 85)',
     fontSize:14,
   },
+
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
@@ -83,7 +83,7 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: 250,
-    backgroundColor: 'white',
+    backgroundColor: '#F5EFE7',
     borderRadius: 10,
     padding: 16,
   },
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 12,
     fontWeight: '600',
+    color: 'rgb(33, 53, 85)',
   },
   optionItem: {
     paddingVertical: 10,
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginTop: 10,
-    backgroundColor: '#007AFF',
+    backgroundColor: 'rgb(33, 53, 85)',
     padding: 10,
     borderRadius: 8,
     alignItems: 'center',

@@ -23,8 +23,6 @@ export default InputField;
 const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 8,
     justifyContent: 'space-between',
   },
   labelContainer: {
@@ -35,12 +33,13 @@ const styles = StyleSheet.create({
     color: 'rgb(58, 65, 99)',
     fontFamily: 'quicksand-bold',
     fontSize: 14,
-    marginBottom: 2,
-    width: 250
+    marginBottom: 4,
+    width: 240
   },
   sublabel: {
     fontSize: 12,
     color: '#666',
+    marginBottom: 10,
   },
   input: {
     width: 80,
@@ -52,6 +51,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     backgroundColor: '#F8FAFC',
     textAlign: 'center',
+    marginBottom: 12
   },
 });
 
