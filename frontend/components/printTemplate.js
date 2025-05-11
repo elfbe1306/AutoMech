@@ -11,6 +11,10 @@ const generateHtml = (SelectMaterial, RenderData) => `
   <meta charset="UTF-8">
   <title>REPORT</title>
   <style>
+    @page {
+      margin: 0
+      size: A4
+    }
     body {
     -webkit-print-color-adjust: exact; /* Cho Chrome */
     print-color-adjust: exact;         /* Cho Firefox */
@@ -18,15 +22,15 @@ const generateHtml = (SelectMaterial, RenderData) => `
   }
     body {
       font-family: 'Times New Roman', Times, serif;
-      margin: 10;
+      margin: 0;
       padding: 0;
     }
 
     .a4-container {
       width: 210mm;
-      min-height: 297mm;
-      padding: 5mm;
-      padding-top: 2mm;
+      padding-left: 5mm;
+      padding-right: 5mm;
+      padding-top: 0mm;
       margin: auto;
       background: white;
     }
@@ -37,7 +41,7 @@ const generateHtml = (SelectMaterial, RenderData) => `
     }
 
     h3 {
-      font-size: 18px;
+      font-size: 16px;
       margin-bottom: 12px;
       font-weight: bold;
       text-align: center;
@@ -45,7 +49,7 @@ const generateHtml = (SelectMaterial, RenderData) => `
     }
 
     h4 {
-      font-size: 16px;
+      font-size: 14px;
       margin: 12px 0 6px;
       font-weight: bold;
     }
@@ -54,7 +58,7 @@ const generateHtml = (SelectMaterial, RenderData) => `
       width: 100%;
       border-collapse: collapse;
       text-align: center;
-      font-size: 14px;
+      font-size: 13px;
     }
 
     caption {
@@ -101,7 +105,7 @@ const generateHtml = (SelectMaterial, RenderData) => `
 <body>
   <div class="a4-container">
     <h3>Thông tin hộp giảm tốc</h3>
-    <img style="width: 50%; height: auto; display: block; margin: auto" src="https://uugfontxgfherbarqtur.supabase.co/storage/v1/object/public/engine//engineLayout.jpeg" alt="">
+    <img style="width: 35%; height: auto; display: block; margin: auto" src="https://uugfontxgfherbarqtur.supabase.co/storage/v1/object/public/engine//engineLayout.jpeg" alt="">
     <div class="chapter_container">
       <table style="margin-top: 10px;">
         <caption>I – ĐỘNG CƠ</caption>
