@@ -81,12 +81,14 @@ HistoryRoutes.route('/fetchcalculation/:recordid').post(async (request, response
     }
 })
 
-HistoryRoutes.route('/fetchhistory').get(async (request, response) => {
+HistoryRoutes.route('/fetchhistory/:userid').get(async (request, response) => {
   const supabase = request.supabase;
+  const decoded = jwt.verify(request.params.userid, process.env.SECRET_KEY);
+  const userid = decoded.id;
 
   try {
     // Lấy data từ history record
-    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('id, name, created_at');
+    const { data: recordData, error: recordDataError } = await supabase.from('HistoryRecord').select('id, name, created_at').eq('user_id', userid);
     if (recordDataError) {
       console.error("recordDataError", recordDataError)
       return response.status(400).json({ message: recordDataError.message });

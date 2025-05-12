@@ -49,7 +49,8 @@ const HomePage = () => {
   const [userData, setUserData] = useState({});
 
   const FetchData = async () => {
-    const response = await apiService.FetchHistoryData();
+    const userID = await AsyncStorage.getItem("USERID");
+    const response = await apiService.FetchHistoryData(userID);
     if (response.success) {
       const sorted = response.record
         .map(item => {
@@ -108,7 +109,7 @@ const HomePage = () => {
   return(
     <View>
       <TouchableOpacity style={styles.profileButton} onPress={() => router.navigate('/Profile')}>
-        {userData.image ? (
+        {userData?.image ? (
           <Image
             source={{ uri: userData.image }}
             style={{ width: 60, height: 60, borderRadius: 60 }}
