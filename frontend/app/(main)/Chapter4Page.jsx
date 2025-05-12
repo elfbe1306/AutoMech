@@ -142,29 +142,29 @@ const Chapter4Page = () => {
     try {
       setLoadingSecondTime(true);
 
-      // if(khoangCachNghieng < ASoboNhanh) {
-      //   alert(`Khoảng cách phải lớn hơn ${Number(ASoboNhanh).toFixed(4)}`)
-      //   setLoadingSecondTime(false);
-      //   return;
-      // }
+      if(khoangCachNghieng < ASoboNhanh) {
+        alert(`Khoảng cách phải lớn hơn ${Number(ASoboNhanh).toFixed(4)}`)
+        setLoadingSecondTime(false);
+        return;
+      }
 
-      // if(khoangCachThang < ASoboCham) {
-      //   alert(`Khoảng cách phải lớn hơn ${Number(ASoboCham).toFixed(4)}`)
-      //   setLoadingSecondTime(false);
-      //   return;
-      // }
+      if(khoangCachThang < ASoboCham) {
+        alert(`Khoảng cách phải lớn hơn ${Number(ASoboCham).toFixed(4)}`)
+        setLoadingSecondTime(false);
+        return;
+      }
 
-      // if(mNghieng < mNghiengMin || mNghieng > mNghiengMax) {
-      //   alert(`m phải nằm trong khoảng ${Number(mNghiengMin).toFixed(1)} - ${Number(mNghiengMax).toFixed(1)}`)
-      //   setLoadingSecondTime(false);
-      //   return;
-      // }
+      if(mNghieng < mNghiengMin || mNghieng > mNghiengMax) {
+        alert(`m phải nằm trong khoảng ${Number(mNghiengMin).toFixed(1)} - ${Number(mNghiengMax).toFixed(1)}`)
+        setLoadingSecondTime(false);
+        return;
+      }
 
-      // if(mThang < mThangMin || mThang > mThangMax) {
-      //   alert(`m phải nằm trong khoảng ${Number(mThangMin).toFixed(1)} - ${Number(mThangMax).toFixed(1)}`)
-      //   setLoadingSecondTime(false);
-      //   return;
-      // }
+      if(mThang < mThangMin || mThang > mThangMax) {
+        alert(`m phải nằm trong khoảng ${Number(mThangMin).toFixed(1)} - ${Number(mThangMax).toFixed(1)}`)
+        setLoadingSecondTime(false);
+        return;
+      }
 
       const userData = {
         mNghieng: mNghieng,
