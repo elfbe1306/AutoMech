@@ -161,14 +161,13 @@ const Chapter3Page = () => {
                 <DisplayResult variable={"Ứng suất tiếp xúc (sH2)"} value={Number(chapter3DataResult.oh2).toFixed(2)} unit={"Mpa"} />
               </View>
             </Collapsible>
-            
-            
+          <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
+            <Text style={styles.saveButtonText}>Lưu</Text>
+          </TouchableOpacity>
           </>
         )}
 
-        <TouchableOpacity style={styles.saveButton} onPress={handleSubmit}>
-          <Text style={styles.saveButtonText}>Lưu</Text>
-        </TouchableOpacity>
+        
       </ScrollView>
     </View>
   )
