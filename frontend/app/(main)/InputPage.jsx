@@ -186,8 +186,7 @@ export default InputPage
 
 const styles = StyleSheet.create({
   container: {
-    marginLeft: 'auto',
-    marginRight: 'auto',
+
     marginTop: '14%',
   },
 
@@ -200,7 +199,9 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-    width: 350,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    width: '90%',
     backgroundColor: '#DBE2EC',
     paddingVertical: 10,
     paddingHorizontal:20,
@@ -245,7 +246,8 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 15,
+    marginTop: '5%',
+    marginHorizontal:'5%',
     padding: 10,
     backgroundColor: 'rgb(33,53,85)',
     borderRadius: 10,
