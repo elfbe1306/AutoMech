@@ -171,7 +171,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 'auto',
     marginTop: '10%',
-    gap: 10
+    gap: 15
+    // justifyContent:'space-between'
   },
   CalculateButtonContainer: {
     backgroundColor: '#DBE2EC',
@@ -180,7 +181,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 10,
     paddingVertical: 30,
-    width: 170,
+    width: '40%',
+    // height:'50%',
     borderRadius: 15
   },
   historyText: {
