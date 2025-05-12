@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import apiService from '@/api';
 
 const TimelineItem = ({ item, index, isLast, handlePdfViewPage, handleDeleteRecord }) => {
@@ -107,11 +108,14 @@ const HomePage = () => {
   return(
     <View>
       <TouchableOpacity style={styles.profileButton} onPress={() => router.navigate('/Profile')}>
-        <Text style={styles.profileText}>{userData.name}</Text>
-        <Image
-          source={{ uri: userData.image }}
-          style={{ width: 60, height: 60, borderRadius: 60 }}
-        />
+        {userData.image ? (
+          <Image
+            source={{ uri: userData.image }}
+            style={{ width: 60, height: 60, borderRadius: 60 }}
+          />
+        ) : (
+          <AntDesign style={{marginRight: 15}} name="user" size={36} color="black" />
+        )}
       </TouchableOpacity>
 
       <View style={styles.ButtonContainer}>
@@ -160,11 +164,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: '20%',
     marginRight: '5%'
-  },
-  profileText: {
-    color: 'rgb(58, 65, 99)',
-    fontFamily: 'quicksand-bold',
-    fontSize: 16,
   },
   ButtonContainer: {
     display: 'flex',

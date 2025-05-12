@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router'
 import ReturnButton from '@/components/ReturnButton'
 import apiService from '@/api'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 const Profile = () => {
   const router = useRouter();
@@ -39,11 +40,14 @@ const Profile = () => {
 
       <View style={styles.container}>
         <Text style={styles.titleText}>Hồ sơ của tôi</Text>
-        <Image
-          source={{ uri: userData.image }}
-          style={{ width: 120, height: 120, borderRadius: 60 }}
-        />
-        <Text style={styles.nameBox}>{userData.name}</Text>
+        {userData.image ? (
+          <Image
+            source={{ uri: userData.image }}
+            style={{ width: 120, height: 120, borderRadius: 60, marginBottom: 15}}
+          />
+        ) : (
+          <AntDesign style={{marginBottom: 15}} name="user" size={48} color="black" />
+        )}
         <Text style={styles.emailBox}>{userData.email}</Text>
 
         <View style={styles.calculationBox}>

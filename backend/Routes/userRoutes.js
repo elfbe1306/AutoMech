@@ -6,9 +6,21 @@ require('dotenv').config({ path: '../config.env' });
 router.post('/Users', async (request, response) => {
   const supabase = request.supabase;
   const { email, password } = request.body;
-  const { data, error } = await supabase.auth.signUp({ email, password });
 
+  // Sign up the user
+  const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) return response.status(400).json({ message: error.message });
+
+  // Insert into your custom User table
+  const { data: userData, error: userDataError } = await supabase
+    .from('User')
+    .insert([{ email }]);
+
+  if (userDataError) {
+    console.error("userDataError", userDataError);
+    return response.status(400).json({ message: userDataError.message });
+  }
+
   response.status(201).json({ 
     message: 'Đã thành công tạo tài khoản', 
     user: data.user,
@@ -20,9 +32,10 @@ router.post('/Users/Login', async (request, response) => {
   const { email, password } = request.body;
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
+  if (error) return response.status(400).json({ message: error.message });
+
   const token = jwt.sign(data.user, process.env.SECRET_KEY, {expiresIn: "1h"})
 
-  if (error) return response.status(400).json({ message: error.message });
   response.status(200).json({
     message: 'Đăng nhập thành công',
     token: token,
