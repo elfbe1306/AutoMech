@@ -185,6 +185,6 @@ class ApiService {
 }
 
 // Singleton instance
-const apiService = new ApiService("https://2fb3-183-80-25-193.ngrok-free.app");
+const apiService = new ApiService("https://4f14-103-238-72-82.ngrok-free.app");
 
 export default apiService;

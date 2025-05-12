@@ -58,7 +58,7 @@ const Pdf = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>THÔNG TIN HỘP GIẢM TỐC</Text>
+      <Text style={styles.title}>THÔNG TIN HỘP GIẢM TỐC HAI CẤP PHÂN ĐÔI</Text>
       <View style={styles.webviewContainer}>
         <WebView
           originWhitelist={['*']}
