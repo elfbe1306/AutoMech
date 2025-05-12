@@ -169,6 +169,7 @@ const InputPage = () => {
                   style={styles.input} 
                   value={inputValues[index].toString()} 
                   onChangeText={(text) => inputFunc[index](text)}
+                  keyboardType={(index === 6 || index === 7) ? 'default' : 'numeric'}
                 />
               </View>
             ))}

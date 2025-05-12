@@ -58,7 +58,7 @@ const Pdf = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>THÔNG TIN HỘP GIẢM TỐC HAI CẤP PHÂN ĐÔI</Text>
+      <Text style={styles.title}>THÔNG TIN {"\n"} HỘP GIẢM TỐC HAI CẤP PHÂN ĐÔI</Text>
       <View style={styles.webviewContainer}>
         <WebView
           originWhitelist={['*']}
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   title: {
+    textAlign:'center',
     fontSize: 20,
     marginBottom: 10,
     marginTop: '10%',
