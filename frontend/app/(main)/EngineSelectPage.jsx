@@ -50,6 +50,11 @@ const EngineSelectPage = () => {
 
   async function handleSubmit() {
     try {
+      if(!selectedEngineId) {
+        alert("Vui lòng chọn động cơ")
+        return;
+      }
+
       let recordID = await AsyncStorage.getItem("RECORDID");
       let response = await apiService.Chapter2AfterChoosingEngine(recordID, selectedEngineId)
       router.push('/Chapter3Page');

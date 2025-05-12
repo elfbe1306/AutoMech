@@ -41,7 +41,8 @@ const Login = () => {
 
     try {
       let response = await apiService.UserLoginAccount(UserData);
-      AsyncStorage.setItem('USERID', response.token)
+      await AsyncStorage.removeItem("USERID");
+      await AsyncStorage.setItem('USERID', response.token)
       router.replace('/(main)/HomePage')
     } catch (error) {
       alert(error?.response?.data?.message || "Đăng nhập thất bại!");

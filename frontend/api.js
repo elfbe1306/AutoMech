@@ -138,9 +138,9 @@ class ApiService {
     }
   }
 
-  async FetchHistoryData() {
+  async FetchHistoryData(userID) {
     try {
-      const response = await this.api.get(`/fetchhistory`);
+      const response = await this.api.get(`/fetchhistory/${userID}`);
       return response.data;
     } catch(error) {
       throw error;

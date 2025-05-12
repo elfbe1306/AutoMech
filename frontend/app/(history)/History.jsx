@@ -5,6 +5,7 @@ import ReturnButton from '@/components/ReturnButton';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import apiService from '@/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // const timelineData = [
 //   { date: 'T2 10.3.25', time: '13:05', title: 'Bài tập lớn 1'},
@@ -58,7 +59,8 @@ const History = () => {
   const [records, setRecords] = useState([]);
 
   const FetchData = async () => {
-    const response = await apiService.FetchHistoryData();
+    const userID = await AsyncStorage.getItem("USERID");
+    const response = await apiService.FetchHistoryData(userID);
     
     if(response.success) {
       setRecords(response.record);
