@@ -20,8 +20,8 @@ const Chapter4Page = () => {
   const [c, setC] = useState(1);
   const [ASoboNhanh, setAsoboNhanh] = useState(0);
   const [ASoboCham, setAsoboCham] = useState(0);
-  const [khoangCachNghieng, setKhoangCachNghieng] = useState(160);
-  const [khoangCachThang, setKhoangCachThang] = useState(215);
+  const [khoangCachNghieng, setKhoangCachNghieng] = useState(0);
+  const [khoangCachThang, setKhoangCachThang] = useState(0);
   const [mNghieng, setMNghieng] = useState(3);
   const [mThang, setMThang] = useState(2.5);
 
