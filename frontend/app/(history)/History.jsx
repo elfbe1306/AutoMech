@@ -45,7 +45,6 @@ const TimelineItem = ({ item, index, isLast, handlePdfViewPage, handleDeleteReco
           <TouchableOpacity onPress={() => handleDeleteRecord(item.id)}>
             <MaterialCommunityIcons name="trash-can-outline" size={22}  color="firebrick"/> 
           </TouchableOpacity>
-          {/* <AntDesign name="delete" size={24} color="firebrick" /> */}
         </View>
       </View>
     </View>
@@ -156,7 +155,7 @@ const styles = StyleSheet.create({
     width: 20,
     marginLeft: 10,
     justifyContent:'space-between',
-    gap: '20%',
+    gap: '5%',
   },
   icon:{
     marginTop: 0,
@@ -170,7 +169,7 @@ const styles = StyleSheet.create({
     width: 20,
     marginLeft: 10,
     justifyContent:'space-between',
-    gap: '20%',
+    gap: '5%',
     backgroundColor: '#F5EFE7',
   },
   titleContent: {
