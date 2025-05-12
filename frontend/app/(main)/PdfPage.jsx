@@ -60,7 +60,7 @@ const PdfPage = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>THÔNG TIN HỘP GIẢM TỐC</Text>
+      <Text style={styles.title}>THÔNG TIN {'\n'}HỘP GIẢM TỐC HAI CẤP PHÂN ĐÔI</Text>
       <View style={styles.webviewContainer}>
         <WebView
           originWhitelist={['*']}
@@ -93,9 +93,10 @@ const styles = StyleSheet.create({
     marginTop: '10%',
     color:'rgb(33,53,85)',
     fontFamily: 'quicksand-bold',
+    textAlign:'center'
   },
   webviewContainer: {
-    height: 500,
+    height: '70%',
     width: '90%',
     borderWidth: 1,
     borderColor: '#ccc',
