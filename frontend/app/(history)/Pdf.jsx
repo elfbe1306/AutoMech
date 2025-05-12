@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     fontFamily: 'quicksand-bold',
   },
   webviewContainer: {
-    height: 500,
+    height: '75%',
     width: '90%',
     borderWidth: 1,
     borderColor: '#ccc',

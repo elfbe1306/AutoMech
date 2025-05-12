@@ -100,7 +100,7 @@ const generateHtml = (SelectMaterial, RenderData, Table1, Table2, Table3) => `
 
 <body>
   <div class="a4-container">
-    <h3>Thông tin hộp giảm tốc</h3>
+    <h3>Thông tin hộp giảm tốc hai cấp phân đôi</h3>
     <img style="width: 35%; height: auto; display: block; margin: auto" src="https://uugfontxgfherbarqtur.supabase.co/storage/v1/object/public/engine//engineLayout.jpeg" alt="">
     <div class="chapter_container">
       <table style="margin-top: 10px;">
